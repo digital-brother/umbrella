@@ -15,3 +15,13 @@ Saves your head on a rainy day
 ## Folders
 1. [backend](https://github.com/Riverus-Technologies/Umbrella/tree/main/backend)
 2. [keycloak](https://github.com/Riverus-Technologies/Umbrella/)
+
+## TODOs
+### General
+1. Coding guuideline
+2. Tests with coverage report using Actions CI to run on every commit to a PR
+### Coding and Architecture
+1. Change from Sqlite3 to Postgres
+2. Add Postgres folder for setp and deployment docker(-compose) files
+3. Integrate with Keycloak
+4. Create API Postman files
