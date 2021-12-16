@@ -3,10 +3,10 @@ from django.shortcuts import render
 from rest_framework import viewsets
 
 
-from .serializers import  TodoSerializer
-from .models import Todo
+from .serializers import  LeaseSerializer
+from .models import Lease
 
 
-class TodoViewSet(viewsets.ModelViewSet):
-    queryset = Todo.objects.all().order_by('title')
-    serializer_class = TodoSerializer
+class LeaseViewSet(viewsets.ModelViewSet):
+    queryset = Lease.objects.all().order_by('file_name')
+    serializer_class = LeaseSerializer

@@ -1,10 +1,8 @@
 from django.contrib import admin
-from .models import Todo, Lease
+from .models import Lease
 
-class TodoAdmin(admin.ModelAdmin):
-  list_display = ('title', 'description', 'completed')
+class LeaseAdmin(admin.ModelAdmin):
+  list_display = ('id', 'file_name', 'pdf', 'txt', 'extracted', 'address', 'createdon', 'createdby','modifiedon', 'modifiedby', 'activeflag', 'contract_type', 'textract', 'analyticsdata', 'pdf_hash', 'file_size', 'modified_file_name', 'analytics2', 'doc_type')
 
 # Register your models here.
-admin.site.register(Todo, TodoAdmin)
-admin.site.register(Lease)
-
+admin.site.register(Lease, LeaseAdmin)

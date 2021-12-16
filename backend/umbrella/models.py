@@ -1,14 +1,5 @@
 from django.db import models
 
-# Create your models here.
-class Todo(models.Model):
-    title = models.CharField(max_length=120)
-    description = models.TextField()
-    completed = models.BooleanField(default=False)
-
-    def _str_(self):
-        return self.title
-
 class Lease(models.Model):
     id = models.BigAutoField(primary_key=True)
     file_name = models.CharField(max_length=512, blank=True, null=True)
@@ -32,6 +23,6 @@ class Lease(models.Model):
 
     class Meta:
         db_table = "lease"
-        managed = False
+        managed = True
     def __str__(self):
         return self.file_name
