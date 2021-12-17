@@ -75,6 +75,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    'prod_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+         'OPTIONS': {
+            'options': '-c search_path=contract'
+        },
+        'NAME': 'contract',
+        'USER': 'riverus',
+        'PASSWORD': 'GSTDB#lt1517PROD',
+        'HOST': 'riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com',
+        'PORT': '5432',
+    },
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
          'OPTIONS': {
