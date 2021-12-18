@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-_nwx%_vty63ztiltariaf8df3#&4@s5nxjv0^1gqgpys+awwlb
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -70,36 +68,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+# docker run -it -p 5432:5432 -e POSTGRES_DB=umbrella -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres
 
 DATABASES = {
-    'prod_db': {
-        'ENGINE': 'django.db.backends.postgresql',
-         'OPTIONS': {
-            'options': '-c search_path=contract'
-        },
-        'NAME': 'contract',
-        'USER': 'riverus',
-        'PASSWORD': 'GSTDB#lt1517PROD',
-        'HOST': 'riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com',
-        'PORT': '5432',
-    },
+    # FIXME : Delete this!
+    # 'prod_db': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #      'OPTIONS': {
+    #         'options': '-c search_path=contract'
+    #     },
+    #     'NAME': 'contract',
+    #     'USER': 'riverus',
+    #     'PASSWORD': 'GSTDB#lt1517PROD',
+    #     'HOST': 'riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com',
+    #     'PORT': '5432',
+    # },
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-         'OPTIONS': {
-            'options': '-c search_path=contract'
-        },
-        'NAME': 'demo-db',
-        'DATABASE_SCHEMA' : 'contract',
+        'NAME': 'umbrella',
         'USER': 'postgres',
-        'PASSWORD': 'fruit1',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -119,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -132,7 +125,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
