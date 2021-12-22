@@ -14,4 +14,4 @@ Saves your head on a rainy day
 
 ## Folders
 1. [backend](https://github.com/Riverus-Technologies/Umbrella/tree/main/backend)
-2. [keycloak](https://github.com/Riverus-Technologies/Umbrella/)
+2. [keycloak](https://github.com/Riverus-Technologies/Umbrella/tree/main/keycloak)
