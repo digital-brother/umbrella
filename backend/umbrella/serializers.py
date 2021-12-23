@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Lease
+from .models.Lease import Lease
 
 
 class LeaseSerializer(serializers.HyperlinkedModelSerializer):

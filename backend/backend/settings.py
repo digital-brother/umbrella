@@ -87,9 +87,9 @@ DATABASES = {
     # },
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'umbrella',
+        'NAME': 'demo-db',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'PASSWORD': 'fruit1',
         'HOST': 'localhost',
         'PORT': '5432',
     }

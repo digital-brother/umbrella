@@ -4,7 +4,7 @@ from rest_framework import viewsets
 
 
 from .serializers import  LeaseSerializer
-from .models import Lease
+from .models.Lease import Lease
 
 
 class LeaseViewSet(viewsets.ModelViewSet):

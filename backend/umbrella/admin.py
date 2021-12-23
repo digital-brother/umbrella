@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Lease
+from .models.Lease import Lease
 
 
 class LeaseAdmin(admin.ModelAdmin):
