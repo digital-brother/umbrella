@@ -2,6 +2,7 @@ import pytest
 from datetime import datetime
 from umbrella.models.Lease import Lease
 
+
 @pytest.mark.django_db
 def testLeaseModel():
     assert Lease.objects.count() == 0
