@@ -76,26 +76,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-# docker run -it -p 5432:5432 -e POSTGRES_DB=umbrella -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres
-
 DATABASES = {
-    # FIXME : Delete this!
-    # 'prod_db': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #      'OPTIONS': {
-    #         'options': '-c search_path=contract'
-    #     },
-    #     'NAME': 'contract',
-    #     'USER': 'riverus',
-    #     'PASSWORD': 'GSTDB#lt1517PROD',
-    #     'HOST': 'riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com',
-    #     'PORT': '5432',
-    # },
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'demo-db',
+        'NAME': 'umbrella',
         'USER': 'postgres',
-        'PASSWORD': 'fruit1',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
     }
