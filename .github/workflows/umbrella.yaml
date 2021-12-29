@@ -7,7 +7,7 @@ jobs:
     container: python:3.10.1
 
     services:
-      localhost:
+      umbrella_db:
         image: postgres
         env:
           POSTGRES_USER: postgres

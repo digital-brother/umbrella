@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'umbrella',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'localhost',
+        'HOST': 'umbrella_db',
         'PORT': '5432',
     }
 }
