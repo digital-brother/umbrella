@@ -43,42 +43,16 @@ jobs:
         run: pip install --upgrade pip
       - name: Install pipenv
         run: pip install pipenv
-      - name: Install environment with pipenv
+      - name: Install environment
         run: pipenv install
-      - name: Install psycopg2 with pipenv
-        run: pipenv install psycopg2-binary
-      - name: Install django
-        run: pipenv install django
-      - name: Install django REST framework
-        run: pipenv install djangorestframework
-      - name: Install django pytest
-        run: pipenv install pytest pytest-django
-      - name: Install django pytest-cov
-        run: pipenv install pytest-cov
-      - name: Run django migrate
-        run: pipenv run python ./backend/manage.py migrate
-      - name: Run django makemigration umbrella
-        run: pipenv run python ./backend/manage.py makemigrations umbrella
-      - name: Run django migrate
-        run: pipenv run python ./backend/manage.py migrate
-      - name: Run django pytest
-        run: pipenv run pytest ./backend/umbrella
-      #- name: Change directory to backend
-      #  run: pipenv run cd backend
-      - name: Run django pytest-cov
+      - name: Activate environment
+        run: pipenv shell
+      - name: Migrate DB
         working-directory: ./backend
-        run: pipenv run pytest --cov=umbrella
-        
-      #- name: Connect to PostgreSQL
-      #  # Runs a script that creates a PostgreSQL table, populates
-      #  # the table with data, and then retrieves the data.
-      #  run: node client.js
-      #  # Environment variables used by the `client.js` script to create a new PostgreSQL table.
-      #  env:
-      #    # The hostname used to communicate with the PostgreSQL service container
-      #    POSTGRES_HOST: postgres
-      #    # The default PostgreSQL port
-      #    POSTGRES_PORT: 5432
+        run: python manage.py migrate
+      - name: Tests with coverage
+        working-directory: ./backend
+        run: pytest --cov=umbrella
 
 # id=$(docker create --health-cmd "curl --fail http://localhost:8080/auth/realms/master || exit 1" --health-interval 30s --health-timeout 3s --health-retries 3 -e "KEYCLOAK_USER=admin" quay.io/keycloak/keycloak:16.0.0)
 # docker start $id
