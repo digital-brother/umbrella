@@ -46,9 +46,13 @@ jobs:
       - name: Migrate DB
         working-directory: ./backend
         run: pipenv run python manage.py migrate
+        env:
+          DB_HOST: umbrella_db
       - name: Tests with coverage
         working-directory: ./backend
         run: pipenv run pytest --cov=umbrella
+        env:
+          DB_HOST: umbrella_db
 
 # id=$(docker create --health-cmd "curl --fail http://localhost:8080/auth/realms/master || exit 1" --health-interval 30s --health-timeout 3s --health-retries 3 -e "KEYCLOAK_USER=admin" quay.io/keycloak/keycloak:16.0.0)
 # docker start $id

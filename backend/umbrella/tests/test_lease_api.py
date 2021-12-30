@@ -1,12 +1,11 @@
 import json
+
 import pytest
 from umbrella.models.Lease import Lease
-from django.db.models import Model, NOT_PROVIDED, DateTimeField
-from datetime import datetime
+
 
 @pytest.mark.django_db
 class TestLeaseApiEndpoints:
-
     ENDPOINT = '/umbrella/lease/'
     ID = 1
     TEST_FILE_NAME = "test-file"
@@ -80,7 +79,6 @@ class TestLeaseApiEndpoints:
         assert delete_response.status_code == 204
         assert Lease.objects.count() == 0
 
-  
     def test_update(self, api_client):
         create_test_lease = Lease.objects.create(id=self.ID, file_name=self.TEST_FILE_NAME)
         assert Lease.objects.count() == 1
