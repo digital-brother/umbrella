@@ -1,13 +1,12 @@
-#/urls.py
+# /urls.py
 from django.urls import include, path
-from umbrella import views
-from umbrella.views.lease_view import LeaseViewSet
 from rest_framework.routers import DefaultRouter
+from umbrella.views.lease_view import LeaseViewSet
 
 router = DefaultRouter()
-router.register(r'lease', views.LeaseViewSet)
+router.register(r"lease", LeaseViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path("", include(router.urls)),
+    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
 ]

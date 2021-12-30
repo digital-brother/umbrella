@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+
 class Lease(models.Model):
     id = models.BigAutoField(primary_key=True)
     file_name = models.CharField(max_length=512, blank=True, null=True)
@@ -30,4 +31,4 @@ class Lease(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'lease'
+        db_table = "lease"

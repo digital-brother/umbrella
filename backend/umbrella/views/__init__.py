@@ -1,1 +1,1 @@
-from .lease_view  import LeaseViewSet
+from .lease_view import LeaseViewSet

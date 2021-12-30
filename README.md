@@ -8,6 +8,7 @@ Saves your head on a rainy day
 2. Create a pull request : name branch as `feature|bugfix|documentation/_two_letter_initial_/_jira_ticket_code_-summary-of-pr` (e.g. `document/jr/UM-11-keycloak-on-ec2`)
 3. Use git flavoured markdown (see: https://github.github.com/gfm/) instead of text file and add atleast one `README.md` in each new top level folder.
 4. Update the **Folders** section below adding a link to `README.md` of folder.
+5. Run `pre-commit run --all-files` to ensure coding quality and standard
 
 ## Folders
 
