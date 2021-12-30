@@ -31,7 +31,7 @@ Saves your head on a rainy day
 
 ## Setup
 
-1. `pipenv install`
+1. `pipenv install --deploy --dev`
 2. `pipenv shell`
 3. `docker run -it -p 5432:5432 -e POSTGRES_DB=umbrella -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres`
 4. `python backend/manage.py migrate`
@@ -43,5 +43,6 @@ Saves your head on a rainy day
 2. `pytest backend/ --cov=umbrella`
 
 ## Running locally
+
 1. `python backend/manage.py runserver`
 2. Point your browser to `http://127.0.0.1:8000/umbrella/` to browse the available REST APIs
