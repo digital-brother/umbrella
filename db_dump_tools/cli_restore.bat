@@ -1,5 +1,12 @@
 @echo off
 
+rem ------------------------------------------------------------------------------
+rem
+rem cli_restore.bat: Restore a PostgreSQL database from an archive file
+rem                  created by pg_dump.
+rem
+rem ------------------------------------------------------------------------------
+
 setlocal EnableDelayedExpansion
 
 set ENC_PASS=
@@ -15,7 +22,7 @@ echo:
 dir /b *_dump.sql.gpg
 echo --------------------------------------------------------------------------------
 echo:
-echo Enter DB connect parameters (enter to accept the defaults)
+echo Enter additional parameters (enter to accept the defaults)
 echo:
 
 set /P DB_NAME="Enter DB_NAME [default: %DB_NAME_DEFAULT%]: "
@@ -36,7 +43,7 @@ echo ---------------------------------------------------------------------------
 echo:| TIME
 echo ================================================================================
 
-gpg --decrypt --batch --verbose --no-symkey-cache --passphrase %ENC_PASS% ^
+gpg --decrypt --batch --verbose --no-symkey-cache --passphrase "%ENC_PASS%" ^
     %DB_NAME%_dump.sql.gpg | ^
 pg_restore -l
 

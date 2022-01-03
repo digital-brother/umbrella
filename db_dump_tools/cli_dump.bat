@@ -1,5 +1,12 @@
 @echo off
 
+rem ------------------------------------------------------------------------------
+rem
+rem cli_dump.bat: Extract a PostgreSQL database into a script file or
+rem               other archive file.
+rem
+rem ------------------------------------------------------------------------------
+
 setlocal EnableDelayedExpansion
 
 set DB_PASS=
@@ -22,7 +29,7 @@ echo ---------------------------------------------------------------------------
 echo Extract a PostgreSQL database into a archive file.
 echo --------------------------------------------------------------------------------
 echo:
-echo Enter DB connect parameters (enter to accept the defaults)
+echo Enter additional parameters (enter to accept the defaults)
 echo:
 
 set /P DB_HOST="Enter DB_HOST [default: %DB_HOST_DEFAULT%]: "
@@ -64,9 +71,9 @@ if ["%DB_SCHEMA%"] equ ["y"] (
     set DB_SCHEMA_ONLY=--schema-only
 )
 
-set /P ENC_PASS="Enter GPG decryption passphrase: "
+set /P ENC_PASS="Enter GPG encryption passphrase: "
 if ["!ENC_PASS!"] equ [""] (
-    echo MUST provide a decryption passphrase!
+    echo MUST provide an encryption passphrase!
     EXIT %ERRORLEVEL%
 )
 
@@ -85,7 +92,7 @@ echo ===========================================================================
 pg_dump --dbname=%DB_NAME% --host=%DB_HOST% --port=%DB_PORT% --username=%DB_USER% ^
         --clean %DB_SCHEMA_ONLY% --verbose --compress=9 --no-password --format=custom | ^
 gpg --batch --verbose --yes --symmetric --no-symkey-cache ^
-    --output %DB_NAME%_dump.sql.gpg --passphrase %ENC_PASS%
+    --output %DB_NAME%_dump.sql.gpg --passphrase "%ENC_PASS%"
 
 echo:
 echo --------------------------------------------------------------------------------

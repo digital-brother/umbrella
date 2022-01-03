@@ -41,11 +41,141 @@ The location of the `.pgpass` file is defined in the script with the environment
 
 The output filename is: `contract_dump.sql.bzip2.pgp`.
 
-    ./db_dump_tools/cli.sh dump
+    .../Umbrella$ ./db_dump_tools/cli.sh
+    =========================================================
+    dump    - Creating new dump files from the database
+    restore - Restoring existing dump files to the database
+    ---------------------------------------------------------
+    Enter the desired action [default: dump] dump
+    
+    ================================================================================
+    Start ./db_dump_tools/cli_dump.sh
+    --------------------------------------------------------------------------------
+    Extract a PostgreSQL database into a archive file.
+    --------------------------------------------------------------------------------
+    
+    Enter additional parameters (enter to accept the defaults)
+    
+    Enter DB_HOST [default: riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com] localhost
+    Enter DB_PORT [default: 5432] 
+    Enter DB_NAME [default: contract] testdb
+    Enter DB_USER [default: riverus] admin   
+    Enter DB Password: 
+    Enter DB schema only (y/n) [default: n] 
+    Enter GPG encryption passphrase: 
+    --------------------------------------------------------------------------------
+    DB_HOST                         : localhost
+    DB_PORT                         : 5432
+    DB_NAME                         : testdb
+    DB_USER                         : admin
+    DB_SCHEMA_ONLY                  : 
+    PGPASSFILE                      : /tmp/.pgpass
+    --------------------------------------------------------------------------------
+    DATE TIME : 03.01.2022 18:12:36
+    ================================================================================
+      (stdin): pg_dump: last built-in OID is 16383
+    pg_dump: reading extensions
+    pg_dump: identifying extension members
+    pg_dump: reading schemas
+    pg_dump: reading user-defined tables
+    pg_dump: reading user-defined functions
+    pg_dump: reading user-defined types
+    pg_dump: reading procedural languages
+    pg_dump: reading user-defined aggregate functions
+    pg_dump: reading user-defined operators
+    pg_dump: reading user-defined access methods
+    pg_dump: reading user-defined operator classes
+    pg_dump: reading user-defined operator families
+    pg_dump: reading user-defined text search parsers
+    pg_dump: reading user-defined text search templates
+    pg_dump: reading user-defined text search dictionaries
+    pg_dump: reading user-defined text search configurations
+    pg_dump: reading user-defined foreign-data wrappers
+    pg_dump: reading user-defined foreign servers
+    pg_dump: reading default privileges
+    pg_dump: reading user-defined collations
+    pg_dump: reading user-defined conversions
+    pg_dump: reading type casts
+    pg_dump: reading transforms
+    pg_dump: reading table inheritance information
+    pg_dump: reading event triggers
+    pg_dump: finding extension tables
+    pg_dump: finding inheritance relationships
+    pg_dump: reading column info for interesting tables
+    pg_dump: flagging inherited columns in subtables
+    pg_dump: reading indexes
+    pg_dump: flagging indexes in partitioned tables
+    pg_dump: reading extended statistics
+    pg_dump: reading constraints
+    pg_dump: reading triggers
+    pg_dump: reading rewrite rules
+    pg_dump: reading policies
+    pg_dump: reading row-level security policies
+    pg_dump: reading publications
+    pg_dump: reading publication membership
+    pg_dump: reading subscriptions
+    pg_dump: reading large objects
+    pg_dump: reading dependency data
+    pg_dump: saving encoding = UTF8
+    pg_dump: saving standard_conforming_strings = on
+    pg_dump: saving search_path = 
+    pg_dump: saving database definition
+     1.938:1,  4.127 bits/byte, 48.41% saved, 849 in, 438 out.
+    gpg: using cypher AES256
+    gpg: writing to 'testdb_dump.sql.bzip2.gpg'
+    
+    --------------------------------------------------------------------------------
+    DATE TIME : 03.01.2022 18:12:36
+    --------------------------------------------------------------------------------
+    End   ./db_dump_tools/cli_dump.sh
+    ================================================================================
 
 ### 2.3 Restoring existing dump files to the database
 
-    ./db_dump_tools/cli.sh restore
+    .../Umbrella$ ./db_dump_tools/cli.sh restore
+    
+    ================================================================================
+    Start ./db_dump_tools/cli_restore.sh
+    --------------------------------------------------------------------------------
+    Restore a PostgreSQL database from one of the following archive files:
+    
+    testdb_dump.sql.bzip2.gpg
+    --------------------------------------------------------------------------------
+    
+    Enter additional parameters (enter to accept the defaults)
+    
+    Enter DB_NAME [default: contract] testdb
+    Enter GPG decryption passphrase: 
+    --------------------------------------------------------------------------------
+    DB_NAME                         : testdb
+    --------------------------------------------------------------------------------
+    DATE TIME : 03.01.2022 18:15:41
+    ================================================================================
+      (stdin): gpg: AES256 encrypted data
+    gpg: encrypted with 1 passphrase
+    gpg: original file name=''
+    done
+    ;
+    ; Archive created at 2022-01-03 18:12:36 CET
+    ;     dbname: testdb
+    ;     TOC Entries: 4
+    ;     Compression: 9
+    ;     Dump Version: 1.14-0
+    ;     Format: CUSTOM
+    ;     Integer: 4 bytes
+    ;     Offset: 8 bytes
+    ;     Dumped from database version: 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
+    ;     Dumped by pg_dump version: 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
+    ;
+    ;
+    ; Selected TOC Entries:
+    ;
+    
+    --------------------------------------------------------------------------------
+    DATE TIME : 03.01.2022 18:15:41
+    --------------------------------------------------------------------------------
+    End   ./db_dump_tools/cli_restore.sh
+    ================================================================================
 
 ## 3. Windows specifics
 
@@ -61,15 +191,20 @@ The location of the `.pgpass` file is defined in the script with the environment
 
 The output filename is: `<database_name>_dump.sql.pgp`.
 
-    ...\Umbrella>db_dump_tools\cli dump
-
+    ...\Umbrella>db_dump_tools\cli
+    =========================================================
+    dump    - Creating new dump files from the database
+    restore - Restoring existing dump files to the database
+    ---------------------------------------------------------
+    Enter the desired action [default: dump]
+    
     ================================================================================
     Start db_dump_tools\cli_dump.bat
     --------------------------------------------------------------------------------
     Extract a PostgreSQL database into a archive file.
     --------------------------------------------------------------------------------
     
-    Enter DB connect parameters (enter to accept the defaults)
+    Enter additional parameters (enter to accept the defaults)
     
     Enter DB_HOST [default: riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com]: localhost
     Enter DB_PORT [default: 5432]:
@@ -77,7 +212,7 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     Enter DB_USER [default: riverus]: postgres
     Enter DB Password: postgres
     Enter DB schema only (y/n) [default: n]: y
-    Enter GPG decryption passphrase: konnexions
+    Enter GPG encryption passphrase: konnexions
     
     --------------------------------------------------------------------------------
     DB_HOST                         : localhost
@@ -87,7 +222,7 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     DB_SCHEMA_ONLY                  : --schema-only
     PGPASSFILE                      : tmp\.pgpass
     --------------------------------------------------------------------------------
-    The current time is: 14:41:10.20
+    The current time is: 18:19:01.83
     Enter the new time:
     ================================================================================
     gpg: Note: RFC4880bis features are enabled.
@@ -141,7 +276,7 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     gpg: Schreiben nach 'template1_dump.sql.gpg'
     
     --------------------------------------------------------------------------------
-    The current time is: 14:41:10.62
+    The current time is: 18:19:02.26
     Enter the new time:
     --------------------------------------------------------------------------------
     End   db_dump_tools\cli_dump.bat
