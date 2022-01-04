@@ -14,6 +14,7 @@ pytest = "*"
 pytest-cov = "*"
 pytest-django = "*"
 pre-commit = "*"
+pylint-django = "*"
 
 [requires]
 python_version = "3.10.1"
