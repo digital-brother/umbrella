@@ -1,30 +1,13 @@
-from django.contrib import admin
+"""The file is used to display your models in the Django admin panel."""
 
-from .models.Lease import Lease
+from django.contrib import admin
+from .models.lease import Lease
+from .utils.lease_util import LeaseColumns
 
 
 class LeaseAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "file_name",
-        "pdf",
-        "txt",
-        "extracted",
-        "address",
-        "createdon",
-        "createdby",
-        "modifiedon",
-        "modifiedby",
-        "activeflag",
-        "contract_type",
-        "textract",
-        "analyticsdata",
-        "pdf_hash",
-        "file_size",
-        "modified_file_name",
-        "analytics2",
-        "doc_type",
-    )
+    """Specialised admin view for the Lease model."""
+    list_display = LeaseColumns
 
 
 # Register your models here.

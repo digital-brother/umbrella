@@ -1,30 +1,30 @@
-from datetime import datetime
-
+"""This file is used for testing 'lease' model"""
 import pytest
-from umbrella.models.Lease import Lease
+from umbrella.models.lease import Lease
 
 
 @pytest.mark.django_db
-def testLeaseModel():
-    assert Lease.objects.count() == 0
+def test_lease_model():
+    """This function is used for testing 'lease' create"""
 
-    TEST_FILE_NAME = "test-file"
-    TEST_PDF = "test-pdf".encode("ascii")
-    TEST_TXT = "test-txt"
-    TEST_EXTRACTED = "test-extracted"
-    TEST_ADDRESS = "test-address"
+    test_file_name = "test-file"
+    test_pdf = "test-pdf".encode("ascii")
+    test_txt = "test-txt"
+    test_extracted = "test-extracted"
+    test_address = "test-address"
 
-    testLease = Lease.objects.create(
+    test_lease = Lease(
         id=1,
-        file_name=TEST_FILE_NAME,
-        pdf=TEST_PDF,
-        txt=TEST_TXT,
-        extracted=TEST_EXTRACTED,
-        address=TEST_ADDRESS,
+        file_name=test_file_name,
+        pdf=test_pdf,
+        txt=test_txt,
+        extracted=test_extracted,
+        address=test_address,
     )
-    assert Lease.objects.count() == 1
-    assert testLease.id == 1
-    assert testLease.file_name == TEST_FILE_NAME
-    assert testLease.txt == TEST_TXT
-    assert testLease.extracted == TEST_EXTRACTED
-    assert testLease.address == TEST_ADDRESS
+    test_lease.save()
+
+    assert test_lease.id == 1
+    assert test_lease.file_name == test_file_name
+    assert test_lease.txt == test_txt
+    assert test_lease.extracted == test_extracted
+    assert test_lease.address == test_address

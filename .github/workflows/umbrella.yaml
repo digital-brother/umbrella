@@ -59,6 +59,8 @@ jobs:
         run: pipenv run pytest --cov=umbrella
         env:
           DB_HOST: umbrella_db
+      - name: Code quality check with pylint
+        run: pipenv run pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations --django-settings-module=backend.settings backend/umbrella
 
 # id=$(docker create --health-cmd "curl --fail http://localhost:8080/auth/realms/master || exit 1" --health-interval 30s --health-timeout 3s --health-retries 3 -e "KEYCLOAK_USER=admin" quay.io/keycloak/keycloak:16.0.0)
 # docker start $id

@@ -1,4 +1,4 @@
-# /urls.py
+"""This file is responsible for mapping the routes and paths into umbrella app."""
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from umbrella.views.lease_view import LeaseViewSet

@@ -1,14 +1,10 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
+"""This file is a subclass of django.db.models.Model
+and each field of the Lease class represents a database field (column)."""
 from django.db import models
 
 
 class Lease(models.Model):
+    """A class that represents a lease table in your DB"""
     id = models.BigAutoField(primary_key=True)
     file_name = models.CharField(max_length=512, blank=True, null=True)
     pdf = models.BinaryField(blank=True, null=True)
@@ -25,10 +21,12 @@ class Lease(models.Model):
     analyticsdata = models.JSONField(blank=True, null=True)
     pdf_hash = models.TextField(blank=True, null=True)
     file_size = models.BigIntegerField(blank=True, null=True)
-    modified_file_name = models.CharField(max_length=256, blank=True, null=True)
+    modified_file_name = models.CharField(max_length=256, blank=True,
+                         null=True)
     analytics2 = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
 
     class Meta:
+        """A configuration class for lease model."""
         managed = True
         db_table = "lease"
