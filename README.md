@@ -66,6 +66,7 @@ Saves your head on a rainy day
    #### Current status
     ```shell
     $ pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations --django-settings-module=backend.settings backend/umbrella
+    
     ************* Module umbrella.migrations.0001_initial
     backend/umbrella/migrations/0001_initial.py:1:0: C0103: Module name "0001_initial" doesn't conform to snake_case naming style (invalid-name)
     backend/umbrella/migrations/0001_initial.py:1:0: C0114: Missing module docstring (missing-module-docstring)
