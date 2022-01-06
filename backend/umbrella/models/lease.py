@@ -5,6 +5,7 @@ from django.db import models
 
 class Lease(models.Model):
     """A class that represents a lease table in your DB"""
+
     id = models.BigAutoField(primary_key=True)
     file_name = models.CharField(max_length=512, blank=True, null=True)
     pdf = models.BinaryField(blank=True, null=True)
@@ -21,12 +22,12 @@ class Lease(models.Model):
     analyticsdata = models.JSONField(blank=True, null=True)
     pdf_hash = models.TextField(blank=True, null=True)
     file_size = models.BigIntegerField(blank=True, null=True)
-    modified_file_name = models.CharField(max_length=256, blank=True,
-                         null=True)
+    modified_file_name = models.CharField(max_length=256, blank=True, null=True)
     analytics2 = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
 
     class Meta:
         """A configuration class for lease model."""
+
         managed = True
         db_table = "lease"

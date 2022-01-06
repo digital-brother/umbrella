@@ -1,5 +1,6 @@
 """This file is used for testing 'lease' model CRUD API."""
 import json
+
 import pytest
 from umbrella.models.lease import Lease
 
@@ -7,6 +8,7 @@ from umbrella.models.lease import Lease
 @pytest.mark.django_db
 class TestLeaseApiEndpoints:
     """This Class is used to test 'lease' api CRUD."""
+
     ENDPOINT = "/umbrella/lease/"
     ID = 1
     test_file_name = "test-file"
@@ -63,7 +65,9 @@ class TestLeaseApiEndpoints:
 
     def test_create(self, api_client):
         """This function is used to test 'lease' api create."""
-        create_response = api_client().post(self.ENDPOINT, data=self.CREATE_JSON, format="json")
+        create_response = api_client().post(
+            self.ENDPOINT, data=self.CREATE_JSON, format="json"
+        )
 
         assert create_response.status_code == 201
         assert json.loads(create_response.content) == self.CREATE_JSON
@@ -80,7 +84,7 @@ class TestLeaseApiEndpoints:
 
     def test_update(self, api_client):
         """This function is used to test 'lease' api update."""
-        create_test_lease = Lease( id=self.ID, file_name=self.test_file_name)
+        create_test_lease = Lease(id=self.ID, file_name=self.test_file_name)
         create_test_lease.save()
 
         update_url = f"{self.ENDPOINT}{create_test_lease.id}/"

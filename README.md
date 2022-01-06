@@ -63,28 +63,45 @@ Saves your head on a rainy day
     ```
 2. `pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations --django-settings-module=backend.settings backend/umbrella` _<- This is work in progress. Please try to address as many as possible on every PR to keep score close to 10_
 
-   #### Current status
+# TODOs
+
+## 1. Fix Lint errors
+
     ```shell
-    $ pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations --django-settings-module=backend.settings backend/umbrella
-    
+    % pylint --load-plugins pylint_django --load-plugins pylint_django.checkers.migrations --django-settings-module=backend.settings backend/umbrella
+
+    ************* Module umbrella.admin
+    backend/umbrella/admin.py:4:0: E0611: No name 'lease' in module 'umbrella.models' (no-name-in-module)
     ************* Module umbrella.migrations.0001_initial
     backend/umbrella/migrations/0001_initial.py:1:0: C0103: Module name "0001_initial" doesn't conform to snake_case naming style (invalid-name)
     backend/umbrella/migrations/0001_initial.py:1:0: C0114: Missing module docstring (missing-module-docstring)
     backend/umbrella/migrations/0001_initial.py:6:0: C0115: Missing class docstring (missing-class-docstring)
+    ************* Module umbrella.tests.test_lease
+    backend/umbrella/tests/test_lease.py:3:0: E0611: No name 'lease' in module 'umbrella.models' (no-name-in-module)
+    ************* Module umbrella.tests.test_lease_api
+    backend/umbrella/tests/test_lease_api.py:4:0: E0611: No name 'lease' in module 'umbrella.models' (no-name-in-module)
+    ************* Module umbrella.serializers.lease_serializer
+    backend/umbrella/serializers/lease_serializer.py:5:0: E0611: No name 'lease' in module 'umbrella.models' (no-name-in-module)
     ************* Module umbrella.views.lease_view
+    backend/umbrella/views/lease_view.py:3:0: E0611: No name 'lease' in module 'umbrella.models' (no-name-in-module)
     backend/umbrella/views/lease_view.py:4:0: E0611: No name 'LeaseSerializer' in module 'umbrella.serializers' (no-name-in-module)
     backend/umbrella/views/lease_view.py:7:0: R0901: Too many ancestors (11/7) (too-many-ancestors)
 
     ------------------------------------------------------------------
-    Your code has been rated at 9.44/10 (previous run: 9.44/10, +0.00)
+    Your code has been rated at 6.96/10 (previous run: 6.96/10, +0.00)
+
     ```
 
-   #### Lint error patterns (above)
+### Lint error patterns (from above)
+
     1. Missing code comments and nonconforming PEP8 naming/casing convention
         - C0103: invalid-name
         - C0114: missing-module-docstring
         - C0115: missing-class-docstring
+        - C0116: missing-function-docstring
     3. Not sure why is this happening on boilerplate code, perhaps can be fixed by configuring linter correctly
         - R0901: too-many-ancestors
     4. Looks like module/package path setup issue, but not sure yet how to fix without breaking tests
         - E0611: no-name-in-module
+
+## 2. Add pylint-django to `.pre-commit-config.yaml`
