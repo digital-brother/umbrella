@@ -83,7 +83,7 @@ if [ -z "${ENC_PASS}" ]; then
     echo "MUST provide an encryption password!"
     exit 255
 fi
- 
+
 echo ""
 echo "--------------------------------------------------------------------------------"
 echo "DB_HOST                         : ${DB_HOST}"

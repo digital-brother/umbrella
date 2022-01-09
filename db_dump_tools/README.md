@@ -1,7 +1,7 @@
 # PostgreSQL Database Dump & Restore Tools
 
-This directory contains the necessary scripts and configuration files to extract files from database contents and 
-restore them into the database if required. 
+This directory contains the necessary scripts and configuration files to extract files from database contents and
+restore them into the database if required.
 
 ## 1. Cross operating system functionality
 
@@ -47,28 +47,28 @@ The output filename is: `contract_dump.sql.bzip2.pgp`.
     restore - Restoring existing dump files to the database
     ---------------------------------------------------------
     Enter the desired action [default: dump] dump
-    
+
     ================================================================================
     Start ./db_dump_tools/cli_dump.sh
     --------------------------------------------------------------------------------
     Extract a PostgreSQL database into a archive file.
     --------------------------------------------------------------------------------
-    
+
     Enter additional parameters (enter to accept the defaults)
-    
+
     Enter DB_HOST [default: riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com] localhost
-    Enter DB_PORT [default: 5432] 
+    Enter DB_PORT [default: 5432]
     Enter DB_NAME [default: contract] testdb
-    Enter DB_USER [default: riverus] admin   
-    Enter DB Password: 
-    Enter DB schema only (y/n) [default: n] 
-    Enter GPG encryption passphrase: 
+    Enter DB_USER [default: riverus] admin
+    Enter DB Password:
+    Enter DB schema only (y/n) [default: n]
+    Enter GPG encryption passphrase:
     --------------------------------------------------------------------------------
     DB_HOST                         : localhost
     DB_PORT                         : 5432
     DB_NAME                         : testdb
     DB_USER                         : admin
-    DB_SCHEMA_ONLY                  : 
+    DB_SCHEMA_ONLY                  :
     PGPASSFILE                      : /tmp/.pgpass
     --------------------------------------------------------------------------------
     DATE TIME : 03.01.2022 18:12:36
@@ -118,12 +118,12 @@ The output filename is: `contract_dump.sql.bzip2.pgp`.
     pg_dump: reading dependency data
     pg_dump: saving encoding = UTF8
     pg_dump: saving standard_conforming_strings = on
-    pg_dump: saving search_path = 
+    pg_dump: saving search_path =
     pg_dump: saving database definition
      1.938:1,  4.127 bits/byte, 48.41% saved, 849 in, 438 out.
     gpg: using cypher AES256
     gpg: writing to 'testdb_dump.sql.bzip2.gpg'
-    
+
     --------------------------------------------------------------------------------
     DATE TIME : 03.01.2022 18:12:36
     --------------------------------------------------------------------------------
@@ -133,19 +133,19 @@ The output filename is: `contract_dump.sql.bzip2.pgp`.
 ### 2.3 Restoring existing dump files to the database
 
     .../Umbrella$ ./db_dump_tools/cli.sh restore
-    
+
     ================================================================================
     Start ./db_dump_tools/cli_restore.sh
     --------------------------------------------------------------------------------
     Restore a PostgreSQL database from one of the following archive files:
-    
+
     testdb_dump.sql.bzip2.gpg
     --------------------------------------------------------------------------------
-    
+
     Enter additional parameters (enter to accept the defaults)
-    
+
     Enter DB_NAME [default: contract] testdb
-    Enter GPG decryption passphrase: 
+    Enter GPG decryption passphrase:
     --------------------------------------------------------------------------------
     DB_NAME                         : testdb
     --------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ The output filename is: `contract_dump.sql.bzip2.pgp`.
     ;
     ; Selected TOC Entries:
     ;
-    
+
     --------------------------------------------------------------------------------
     DATE TIME : 03.01.2022 18:15:41
     --------------------------------------------------------------------------------
@@ -197,15 +197,15 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     restore - Restoring existing dump files to the database
     ---------------------------------------------------------
     Enter the desired action [default: dump]
-    
+
     ================================================================================
     Start db_dump_tools\cli_dump.bat
     --------------------------------------------------------------------------------
     Extract a PostgreSQL database into a archive file.
     --------------------------------------------------------------------------------
-    
+
     Enter additional parameters (enter to accept the defaults)
-    
+
     Enter DB_HOST [default: riverus-gst-prod.craz02prps3z.ap-south-1.rds.amazonaws.com]: localhost
     Enter DB_PORT [default: 5432]:
     Enter DB_NAME [default: contract]: template1
@@ -213,7 +213,7 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     Enter DB Password: postgres
     Enter DB schema only (y/n) [default: n]: y
     Enter GPG encryption passphrase: konnexions
-    
+
     --------------------------------------------------------------------------------
     DB_HOST                         : localhost
     DB_PORT                         : 5432
@@ -274,7 +274,7 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     pg_dump: sichere Datenbankdefinition
     gpg: benutze Cipher AES256.CFB
     gpg: Schreiben nach 'template1_dump.sql.gpg'
-    
+
     --------------------------------------------------------------------------------
     The current time is: 18:19:02.26
     Enter the new time:
@@ -285,20 +285,20 @@ The output filename is: `<database_name>_dump.sql.pgp`.
 ### 3.3 Restoring existing dump files to the database
 
     ...\Umbrella>db_dump_tools\cli restore
-        
+
     Start db_dump_tools\cli_restore.bat
     --------------------------------------------------------------------------------
     Restore a PostgreSQL database from one of the following archive files:
-    
+
     postgres_dump.sql.gpg
     template1_dump.sql.gpg
     --------------------------------------------------------------------------------
-    
+
     Enter DB connect parameters (enter to accept the defaults)
-    
+
     Enter DB_NAME [default: contract]: template1
     Enter GPG decryption passphrase: konnexions
-    
+
     --------------------------------------------------------------------------------
     DB_NAME                         : template1
     --------------------------------------------------------------------------------
@@ -310,7 +310,7 @@ The output filename is: `<database_name>_dump.sql.pgp`.
     gpg: Verschlüsselt mit einem Passwort
     gpg: Ursprünglicher Dateiname=''
     pg_restore: Fehler: konnte nicht aus Eingabedatei lesen: Dateiende
-    
+
     --------------------------------------------------------------------------------
     The current time is: 14:43:01.71
     Enter the new time:

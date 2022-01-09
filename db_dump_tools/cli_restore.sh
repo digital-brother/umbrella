@@ -36,7 +36,7 @@ if [ -z "${ENC_PASS}" ]; then
     echo "MUST provide a decryption passphrase!"
     exit 255
 fi
- 
+
 echo ""
 echo "--------------------------------------------------------------------------------"
 echo "DB_NAME                         : ${DB_NAME}"

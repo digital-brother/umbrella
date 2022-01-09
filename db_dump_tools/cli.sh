@@ -11,6 +11,7 @@ set -e
 
 export DB_ACTION_DEFAULT=dump
 
+
 if [ -z "$1" ]; then
     echo "========================================================="
     echo "dump    - Creating new dump files from the database"
@@ -26,12 +27,16 @@ else
     export DB_ACTION=$1
 fi
 
+PATH_ROOT=$(dirname $0)
+
 if [ "${DB_ACTION}" = "dump" ]; then
-    if ! ( ./db_dump_tools/cli_dump.sh ); then
+    if ! ( "${PATH_ROOT}/cli_dump.sh" ); then
+        echo "File ${PATH_ROOT}/cli_dump.sh not found"
         exit 255
     fi
 elif [ "${DB_ACTION}" = "restore" ]; then
-    if ! ( ./db_dump_tools/cli_restore.sh ); then
+    if ! ( "${PATH_ROOT}/cli_restore.sh" ); then
+        echo "File ${PATH_ROOT}/cli_restore.sh not found"
         exit 255
     fi
 else
