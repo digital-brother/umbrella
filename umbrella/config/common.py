@@ -28,6 +28,10 @@ class Common(Configuration):
         'allauth.socialaccount',
         'allauth.socialaccount.providers.keycloak',
 
+        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
+        'dj_rest_auth',
+        'dj_rest_auth.registration',
+
         # Your apps
         'umbrella.users',
     )
