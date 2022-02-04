@@ -15,16 +15,21 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-
+        'django.contrib.sites',
 
         # Third party apps
         'rest_framework',            # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
         'django_filters',            # for filtering rest endpoints
 
+        # https://django-allauth.readthedocs.io/en/latest/installation.html
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+        'allauth.socialaccount.providers.keycloak',
+
         # Your apps
         'umbrella.users',
-
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -198,4 +203,27 @@ class Common(Configuration):
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         )
+    }
+
+
+    AUTHENTICATION_BACKENDS = [
+        # Needed to login by username in Django admin, regardless of `allauth`
+        'django.contrib.auth.backends.ModelBackend',
+
+        # `allauth` specific authentication methods, such as login by e-mail
+        'allauth.account.auth_backends.AuthenticationBackend',
+    ]
+
+    SITE_ID = 1
+
+    # https://django-allauth.readthedocs.io/en/latest/installation.html
+    # https://django-allauth.readthedocs.io/en/latest/providers.html#keycloak
+    SOCIALACCOUNT_PROVIDERS = {
+        'keycloak': {
+            'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://keycloak:8080/auth'),
+            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'myrealm'),
+            'APP': {
+                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'myclient'),
+            },
+        },
     }
