@@ -224,7 +224,7 @@ class Common(Configuration):
     # https://django-allauth.readthedocs.io/en/latest/providers.html#keycloak
     SOCIALACCOUNT_PROVIDERS = {
         'keycloak': {
-            'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://keycloak:8080/auth'),
+            'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://localhost:8080/auth'),
             'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'myrealm'),
             'APP': {
                 'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'myclient'),
