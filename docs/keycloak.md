@@ -17,8 +17,9 @@
    - Root URL: `http://127.0.0.1:8000/`
 3. Click Save
 4. Access Type: `confidential`
-5. Click Save
-6. Go to Credentials and copy secret code
+5. Valid Redirect URIs: `http://127.0.0.1:8000/*`
+6. Click Save
+7. Go to Credentials and copy secret code for Django admin
 
 ###Add Keycloak to Django admin
 You need have superuser account `docker-compose exec web python manage.py createsuperuser`
