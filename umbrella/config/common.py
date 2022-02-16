@@ -18,21 +18,21 @@ class Common(Configuration):
         'django.contrib.sites',
 
         # Third party apps
-        'rest_framework',  # utilities for rest apis
+        'rest_framework',            # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
-        'django_filters',  # for filtering rest endpoints
+        'django_filters',            # for filtering rest endpoints
         'drf_spectacular',
         'drf_spectacular_sidecar',
-
-        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
-        'dj_rest_auth',
-        'dj_rest_auth.registration',
 
         # https://django-allauth.readthedocs.io/en/latest/installation.html
         'allauth',
         'allauth.account',
         'allauth.socialaccount',
         'allauth.socialaccount.providers.keycloak',
+
+        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
+        'dj_rest_auth',
+        'dj_rest_auth.registration',
 
         # Your apps
         'umbrella.users',
@@ -240,5 +240,4 @@ class Common(Configuration):
         'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
         'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
         'REDOC_DIST': 'SIDECAR',
-        # OTHER SETTINGS
     }
