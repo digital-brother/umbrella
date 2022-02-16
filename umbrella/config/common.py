@@ -21,6 +21,8 @@ class Common(Configuration):
         'rest_framework',            # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
         'django_filters',            # for filtering rest endpoints
+        'drf_spectacular',
+        'drf_spectacular_sidecar',
 
         # Your apps
         'umbrella.users',
@@ -197,5 +199,16 @@ class Common(Configuration):
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
-        )
+        ),
+        'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    }
+
+    SPECTACULAR_SETTINGS = {
+        'TITLE': 'Your Project API',
+        'DESCRIPTION': 'Your project description',
+        'VERSION': '1.0.0',
+        'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+        'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+        'REDOC_DIST': 'SIDECAR',
+        # OTHER SETTINGS
     }

@@ -1,3 +1,7 @@
 .*
 !.coveragerc
 !.env
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+.git
+.gitignore
