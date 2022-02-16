@@ -3,11 +3,11 @@ from os.path import join
 from distutils.util import strtobool
 import dj_database_url
 from configurations import Configuration
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Common(Configuration):
-
     INSTALLED_APPS = (
         'django.contrib.admin',
         'django.contrib.auth',
@@ -15,12 +15,12 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-
+        'django.contrib.sites',
 
         # Third party apps
-        'rest_framework',            # utilities for rest apis
+        'rest_framework',  # utilities for rest apis
         'rest_framework.authtoken',  # token authentication
-        'django_filters',            # for filtering rest endpoints
+        'django_filters',  # for filtering rest endpoints
         'drf_spectacular',
         'drf_spectacular_sidecar',
 
@@ -36,7 +36,6 @@ class Common(Configuration):
 
         # Your apps
         'umbrella.users',
-
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -211,7 +210,6 @@ class Common(Configuration):
             'rest_framework.authentication.TokenAuthentication',
         )
     }
-
 
     AUTHENTICATION_BACKENDS = [
         # Needed to login by username in Django admin, regardless of `allauth`
