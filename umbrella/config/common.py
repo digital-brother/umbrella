@@ -24,15 +24,15 @@ class Common(Configuration):
         'drf_spectacular',
         'drf_spectacular_sidecar',
 
+        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
+        'dj_rest_auth',
+        'dj_rest_auth.registration',
+
         # https://django-allauth.readthedocs.io/en/latest/installation.html
         'allauth',
         'allauth.account',
         'allauth.socialaccount',
         'allauth.socialaccount.providers.keycloak',
-
-        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
-        'dj_rest_auth',
-        'dj_rest_auth.registration',
 
         # Your apps
         'umbrella.users',
@@ -208,7 +208,8 @@ class Common(Configuration):
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
-        )
+        ),
+        'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     }
 
     AUTHENTICATION_BACKENDS = [
