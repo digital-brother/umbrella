@@ -24,6 +24,16 @@ class Common(Configuration):
         'drf_spectacular',
         'drf_spectacular_sidecar',
 
+        # https://django-allauth.readthedocs.io/en/latest/installation.html
+        'allauth',
+        'allauth.account',
+        'allauth.socialaccount',
+        'allauth.socialaccount.providers.keycloak',
+
+        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
+        'dj_rest_auth',
+        'dj_rest_auth.registration',
+
         # Your apps
         'umbrella.users',
 
@@ -199,8 +209,30 @@ class Common(Configuration):
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
-        ),
-        'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+        )
+    }
+
+
+    AUTHENTICATION_BACKENDS = [
+        # Needed to login by username in Django admin, regardless of `allauth`
+        'django.contrib.auth.backends.ModelBackend',
+
+        # `allauth` specific authentication methods, such as login by e-mail
+        'allauth.account.auth_backends.AuthenticationBackend',
+    ]
+
+    SITE_ID = 1
+
+    # https://django-allauth.readthedocs.io/en/latest/installation.html
+    # https://django-allauth.readthedocs.io/en/latest/providers.html#keycloak
+    SOCIALACCOUNT_PROVIDERS = {
+        'keycloak': {
+            'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://keycloak:8080/auth'),
+            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'myrealm'),
+            'APP': {
+                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'myclient'),
+            },
+        },
     }
 
     SPECTACULAR_SETTINGS = {
