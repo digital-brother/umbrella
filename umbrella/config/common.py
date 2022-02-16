@@ -236,7 +236,7 @@ class Common(Configuration):
     }
 
     SPECTACULAR_SETTINGS = {
-        'TITLE': 'Umbrella',
+        'TITLE': 'Umbrella ',
         'VERSION': '1.0.0',
         'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
         'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
