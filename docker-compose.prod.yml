@@ -7,19 +7,22 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 5432:5432
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - web
   web:
     restart: always
     env_file:
-      - ./.env.dev
-    build: ./
-    command: >
-      bash -c "python wait_for_postgres.py &&
-               ./manage.py migrate &&
-               ./manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./:/code
-    ports:
-      - 8000:8000
+      - ./.env.prod
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.prod
+    command: gunicorn umbrella.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
     depends_on:
       - postgres
   documentation:
@@ -48,3 +51,4 @@ services:
     environment:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
+

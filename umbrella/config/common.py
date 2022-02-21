@@ -51,7 +51,7 @@ class Common(Configuration):
 
     ALLOWED_HOSTS = ["*"]
     ROOT_URLCONF = 'umbrella.urls'
-    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+    SECRET_KEY = os.environ.get("SECRET_KEY")
     WSGI_APPLICATION = 'umbrella.wsgi.application'
 
     # Email
