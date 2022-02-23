@@ -54,6 +54,8 @@ class Common(Configuration):
     SECRET_KEY = os.environ.get("SECRET_KEY")
     WSGI_APPLICATION = 'umbrella.wsgi.application'
 
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:1337']
+
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
