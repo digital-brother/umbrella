@@ -11,7 +11,9 @@ services:
     restart: always
     env_file:
       - .env.local
-    build: ./
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.local
     command: >
       bash -c "python wait_for_postgres.py &&
                ./manage.py migrate &&
