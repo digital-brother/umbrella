@@ -10,7 +10,7 @@ services:
   web:
     restart: always
     env_file:
-      - ./.env.dev
+      - .env.local
     build: ./
     command: >
       bash -c "python wait_for_postgres.py &&

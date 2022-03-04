@@ -114,3 +114,6 @@ venv.bak/
 
 # IDE
 .idea/
+
+# Env variables
+.env.prod
