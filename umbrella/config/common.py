@@ -56,7 +56,7 @@ class Common(Configuration):
 
     ALLOWED_HOSTS = ["*"]
     ROOT_URLCONF = 'umbrella.urls'
-    SECRET_KEY = os.environ.get("SECRET_KEY")
+    SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'umbrella.wsgi.application'
 
     CSRF_TRUSTED_ORIGINS = ['http://localhost:1337']
