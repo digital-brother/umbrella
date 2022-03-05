@@ -3,8 +3,13 @@ from os.path import join
 from distutils.util import strtobool
 import dj_database_url
 from configurations import Configuration
+import environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+ENV_FILE_PATH = os.path.normpath(join(os.path.dirname(BASE_DIR), '.env.prod'))
+env = environ.Env()
+env.read_env(ENV_FILE_PATH)
 
 
 class Common(Configuration):
