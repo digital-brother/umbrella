@@ -8,7 +8,7 @@ class Production(Common):
     SECRET_KEY = env("SECRET_KEY", default=None)
     # Site
     # https://docs.djangoproject.com/en/2.0/ref/settings/#allowed-hosts
-    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
     INSTALLED_APPS += ("gunicorn", )
 
     # Static files (CSS, JavaScript, Images)
@@ -23,6 +23,7 @@ class Production(Common):
     AWS_DEFAULT_ACL = 'public-read'
     AWS_AUTO_CREATE_BUCKET = True
     AWS_QUERYSTRING_AUTH = False
+    # MEDIA_URL = f'https://s3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}/'
 
     # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching#cache-control
     # Response can be cached by browser and any intermediary caches (i.e. it is "public") for up to 1 day
