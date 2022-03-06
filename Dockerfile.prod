@@ -1,41 +1,12 @@
-###########
-# BUILDER #
-###########
-
-# pull official base image
-FROM python:3.8 as builder
-
-# set work directory
-WORKDIR code
-
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-
-# lint
-RUN pip install --upgrade pip
-COPY . code
-
-
-# install dependencies
-COPY ./requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-
-#########
-# FINAL #
-#########
-
 # pull official base image
 FROM python:3.8
 
 # create directory for the app user
-RUN mkdir -p /home/umbrella
+RUN mkdir -p /home/app
 
 # create the appropriate directories
-ENV HOME=/home/umbrella
-ENV APP_HOME=/home/umbrella/web
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/web
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
@@ -53,5 +24,5 @@ RUN apt-get update \
     && apt-get install -yyq netcat
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["/home/umbrella/web/entrypoint.prod.sh"]
+ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
 RUN chmod +x entrypoint.sh

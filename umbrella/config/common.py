@@ -69,11 +69,22 @@ class Common(Configuration):
     )
 
     # Postgres
+    # DATABASES = {
+    #     'default': dj_database_url.config(
+    #         default='postgres://postgres:@postgres:5432/postgres',
+    #         conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
+    #     )
+    # }
+
     DATABASES = {
-        'default': dj_database_url.config(
-            default='postgres://postgres:@postgres:5432/postgres',
-            conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
-        )
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('POSTGRES_DATABASE'),
+            'USER': env('POSTGRES_USER'),
+            'PASSWORD': env('POSTGRES_PASSWORD'),
+            'HOST': env('POSTGRES_HOST'),
+            'PORT': env('POSTGRES_PORT', default=5432),
+        }
     }
 
     # General
@@ -89,7 +100,7 @@ class Common(Configuration):
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/
-    STATIC_ROOT = os.path.normpath(join(os.path.dirname(BASE_DIR), 'static'))
+    STATIC_ROOT = os.path.normpath(join(os.path.dirname(BASE_DIR), 'staticfiles'))
     STATICFILES_DIRS = []
     STATIC_URL = '/static/'
     STATICFILES_FINDERS = (
@@ -98,7 +109,7 @@ class Common(Configuration):
     )
 
     # Media files
-    MEDIA_ROOT = join(os.path.dirname(BASE_DIR), 'media')
+    MEDIA_ROOT = join(os.path.dirname(BASE_DIR), 'mediafiles')
     MEDIA_URL = '/media/'
 
     TEMPLATES = [
