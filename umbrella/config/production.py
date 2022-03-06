@@ -10,8 +10,6 @@ class Production(Common):
     # https://docs.djangoproject.com/en/2.0/ref/settings/#allowed-hosts
     ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
     INSTALLED_APPS += ("gunicorn", )
-    BASE_SITE_URL = env('BASE_SITE_URL', default='http://127.0.0.1:8000/')
-    DEBUG = env("DEBUG", default=0)
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/2.0/howto/static-files/
