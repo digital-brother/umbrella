@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.prod
     command: bash -c "
         ./manage.py migrate &&
-        ./manage.py collectstatic &&
+        ./manage.py collectstatic --noinput &&
         gunicorn umbrella.wsgi:application --bind 0.0.0.0:8000
       "
     volumes:
