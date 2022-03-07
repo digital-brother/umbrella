@@ -10,7 +10,7 @@ services:
   web:
     restart: always
     env_file:
-      - .env.local
+      - .envs/.env.local
     build:
       context: ./
       dockerfile: ./Dockerfile.local
