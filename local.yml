@@ -6,12 +6,14 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - 5432:5432
   web:
     restart: always
-    environment:
-      - DJANGO_SECRET_KEY=local
-    build: ./
+    env_file:
+      - .envs/.env.local
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.local
     command: >
       bash -c "python wait_for_postgres.py &&
                ./manage.py migrate &&
@@ -19,17 +21,19 @@ services:
     volumes:
       - ./:/code
     ports:
-      - "8000:8000"
+      - 8000:8000
     depends_on:
       - postgres
   documentation:
     restart: always
-    build: ./
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.local
     command: "mkdocs serve"
     volumes:
       - ./:/code
     ports:
-      - "8001:8001"
+      - 8001:8001
   keycloak:
     image: jboss/keycloak:16.1.1
     environment:

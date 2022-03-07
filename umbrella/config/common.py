@@ -1,10 +1,15 @@
 import os
 from os.path import join
+
+import environ
 from distutils.util import strtobool
-import dj_database_url
 from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+ENV_FILE_PATH = os.path.normpath(join(os.path.dirname(BASE_DIR), '.env.prod'))
+env = environ.Env()
+env.read_env(ENV_FILE_PATH)
 
 
 class Common(Configuration):
@@ -51,7 +56,7 @@ class Common(Configuration):
 
     ALLOWED_HOSTS = ["*"]
     ROOT_URLCONF = 'umbrella.urls'
-    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+    SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'umbrella.wsgi.application'
 
     # Email
@@ -61,12 +66,15 @@ class Common(Configuration):
         ('Author', 'shuryhin.oleksandr@gmail.com'),
     )
 
-    # Postgres
     DATABASES = {
-        'default': dj_database_url.config(
-            default='postgres://postgres:@postgres:5432/postgres',
-            conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
-        )
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('POSTGRES_DATABASE'),
+            'USER': env('POSTGRES_USER'),
+            'PASSWORD': env('POSTGRES_PASSWORD'),
+            'HOST': env('POSTGRES_HOST'),
+            'PORT': env('POSTGRES_PORT', default=5432),
+        }
     }
 
     # General
