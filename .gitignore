@@ -100,8 +100,9 @@ venv.bak/
 # mkdocs documentation
 /site
 
-# django staticfiles
+# django static and media files
 /static
+/media
 
 # mypy
 .mypy_cache/
