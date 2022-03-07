@@ -8,7 +8,7 @@ class Production(Common):
     SECRET_KEY = env("SECRET_KEY", default=None)
     # Site
     # https://docs.djangoproject.com/en/2.0/ref/settings/#allowed-hosts
-    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
+    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["api.riverus.in"])
     INSTALLED_APPS += ("gunicorn", )
 
     # Static files (CSS, JavaScript, Images)
