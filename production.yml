@@ -6,6 +6,7 @@ services:
       context: ./
       dockerfile: Dockerfile.prod
     command: bash -c "
+        python wait_for_postgres.py &&
         ./manage.py migrate --noinput &&
         ./manage.py collectstatic --noinput &&
         gunicorn umbrella.wsgi:application --bind 0.0.0.0:8000

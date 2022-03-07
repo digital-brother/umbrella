@@ -115,4 +115,4 @@ venv.bak/
 .idea/
 
 # Env variables
-.env.prod
+/.envs/
