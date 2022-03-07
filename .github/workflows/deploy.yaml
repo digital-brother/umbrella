@@ -9,10 +9,10 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: deploy to AWS EC2 via ssh
+      - name: Deploy to AWS EC2 via ssh.
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: ./deploy.sh
+          script: umbrella/deploy.sh

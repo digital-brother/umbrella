@@ -1,3 +1,4 @@
+ #!/bin/bash
 cd /home/ubuntu/umbrella
 git fetch
 git reset --hard origin/production
