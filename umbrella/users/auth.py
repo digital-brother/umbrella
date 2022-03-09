@@ -1,5 +1,6 @@
 import jwt
 from django.conf import settings
+from jwt import PyJWTError
 from mozilla_django_oidc.contrib.drf import OIDCAuthentication
 from rest_framework import exceptions
 
@@ -10,7 +11,12 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
         if not encoded_access_token:
             return None
 
-        access_token = jwt.decode(encoded_access_token, options={"verify_signature": False})
+        try:
+            access_token = jwt.decode(encoded_access_token, options={"verify_signature": False})
+        except PyJWTError as exc:
+            msg = f"Invalid JWT token"
+            raise exceptions.AuthenticationFailed(msg)
+
         keycloak_realm_url = access_token.get('iss')
 
         if not keycloak_realm_url:
