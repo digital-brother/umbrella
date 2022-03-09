@@ -249,9 +249,8 @@ class Common(Configuration):
     }
 
     # mozilla-django-oidc settings
-    OIDC_RP_CLIENT_ID = None    # Required, but not actually used
-    OIDC_RP_CLIENT_SECRET = None    # Required, but not actually used
-
+    OIDC_RP_CLIENT_ID = None    # Because OIDC auth flow is done on front end side
+    OIDC_RP_CLIENT_SECRET = None    # Because OIDC auth flow is done on front end side
     OIDC_OP_TOKEN_ENDPOINT = None    # Set dynamically in umbrella.users.auth.DynamicRealmOIDCAuthentication
     OIDC_OP_USER_ENDPOINT = None    # Set dynamically in umbrella.users.auth.DynamicRealmOIDCAuthentication
 
