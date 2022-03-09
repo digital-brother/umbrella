@@ -7,7 +7,7 @@ from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ENV_FILE_PATH = os.path.normpath(join(os.path.dirname(BASE_DIR), '.env.prod'))
+ENV_FILE_PATH = os.path.normpath(join(os.path.dirname(BASE_DIR), '.envs/.env.local'))
 env = environ.Env()
 env.read_env(ENV_FILE_PATH)
 
@@ -248,19 +248,13 @@ class Common(Configuration):
         },
     }
 
-    OIDC_RP_CLIENT_ID = env('OIDC_RP_CLIENT_ID', default='local_client')
+    OIDC_RP_CLIENT_ID = env('OIDC_RP_CLIENT_ID', default=None)
     OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default=None)
 
-    OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/auth"
-    OIDC_OP_TOKEN_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/token"
-    OIDC_OP_USER_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/userinfo"
-
-    LOGIN_REDIRECT_URL = '/keycloak-oidc/'
-    LOGOUT_REDIRECT_URL = '/keycloak-oidc/'
-    LOGIN_REDIRECT_URL_FAILURE = '/keycloak-oidc/'
-
-    OIDC_RP_SIGN_ALGO = 'RS256'
-    OIDC_OP_JWKS_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/certs"
+    KEYCLOAK_URL = env('KEYCLOAK_URL', default=None)
+    KEYCLOAK_REALM = env('KEYCLOAK_REALM', default=None)
+    OIDC_OP_TOKEN_ENDPOINT = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token"
+    OIDC_OP_USER_ENDPOINT = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/userinfo"
 
     SPECTACULAR_SETTINGS = {
         'TITLE': 'Umbrella ',
