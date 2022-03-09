@@ -39,6 +39,9 @@ class Common(Configuration):
         'dj_rest_auth',
         'dj_rest_auth.registration',
 
+        # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
+        'mozilla_django_oidc',
+
         # Your apps
         'umbrella.users',
     )
@@ -214,6 +217,7 @@ class Common(Configuration):
             'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
+            'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ),
@@ -226,6 +230,8 @@ class Common(Configuration):
 
         # `allauth` specific authentication methods, such as login by e-mail
         'allauth.account.auth_backends.AuthenticationBackend',
+
+        'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
     ]
 
     SITE_ID = 1
@@ -241,6 +247,20 @@ class Common(Configuration):
             },
         },
     }
+
+    OIDC_RP_CLIENT_ID = env('OIDC_RP_CLIENT_ID', default='local_client')
+    OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default=None)
+
+    OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/auth"
+    OIDC_OP_TOKEN_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/token"
+    OIDC_OP_USER_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/userinfo"
+
+    LOGIN_REDIRECT_URL = '/keycloak-oidc/'
+    LOGOUT_REDIRECT_URL = '/keycloak-oidc/'
+    LOGIN_REDIRECT_URL_FAILURE = '/keycloak-oidc/'
+
+    OIDC_RP_SIGN_ALGO = 'RS256'
+    OIDC_OP_JWKS_ENDPOINT = "http://localhost:8080/auth/realms/local_realm/protocol/openid-connect/certs"
 
     SPECTACULAR_SETTINGS = {
         'TITLE': 'Umbrella ',
