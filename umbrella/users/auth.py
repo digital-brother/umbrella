@@ -23,26 +23,29 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
 
         return access_token_payload
 
-    def get_cached_jwt_token_user(self, request):
-        expiration = request.session.get('oidc_id_token_expiration', 0)
-        now = time.time()
-        if expiration > now:
-            access_token_payload = self.get_access_token_payload(request)
-            user = User.objects.get(email=access_token_payload['email'])
-            return user
+    def authenticate_cached(self, request):
+        token_is_cached = request.session.get('oidc_access_token') == self.get_access_token(request)
+        token_is_active = request.session.get('oidc_id_token_expiration', 0) > time.time()
+        if token_is_active and token_is_cached:
+            access_token = request.session['oidc_access_token']
+            user_id = request.session['oidc_user_id']
+            user = User.objects.get(id=user_id)
+            return user, access_token
+        return None, None
 
     def authenticate(self, request):
-        user = self.get_cached_jwt_token_user(request)
-        if user:
-            return user, self.get_access_token(request)
+        user, access_token = self.authenticate_cached(request)
+        if user and access_token:
+            return user, access_token
 
         access_token_payload = self.get_access_token_payload(request)
-        keycloak_realm_url = access_token_payload['iss']
         self.backend.OIDC_OP_TOKEN_ENDPOINT = settings.OIDC_OP_TOKEN_ENDPOINT_TEMPLATE.format(
-            keycloak_realm_url=keycloak_realm_url)
+            keycloak_realm_url=access_token_payload['iss'])
         self.backend.OIDC_OP_USER_ENDPOINT = settings.OIDC_OP_USER_ENDPOINT_TEMPLATE.format(
-            keycloak_realm_url=keycloak_realm_url)
+            keycloak_realm_url=access_token_payload['iss'])
         user, access_token = super().authenticate(request)
 
         request.session['oidc_id_token_expiration'] = access_token_payload['exp']
+        request.session['oidc_access_token'] = access_token
+        request.session['oidc_user_id'] = user.id
         return user, access_token
