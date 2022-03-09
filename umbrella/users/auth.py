@@ -7,6 +7,9 @@ from rest_framework import exceptions
 class DynamicRealmOIDCAuthentication(OIDCAuthentication):
     def get_realm_url_from_jwt_token(self, request):
         encoded_access_token = self.get_access_token(request)
+        if not encoded_access_token:
+            return None
+
         access_token = jwt.decode(encoded_access_token, options={"verify_signature": False})
         keycloak_realm_url = access_token.get('iss')
 
