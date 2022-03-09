@@ -1,5 +1,6 @@
 import os
 from os.path import join
+from pathlib import Path
 
 import environ
 from distutils.util import strtobool
@@ -7,9 +8,14 @@ from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ENV_FILE_PATH = os.path.normpath(join(os.path.dirname(BASE_DIR), '.envs/.env.local'))
+# Replacement for BASE_DIR
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 env = environ.Env()
-env.read_env(ENV_FILE_PATH)
+
+READ_LOCAL_DOT_ENV_FILE = env.bool("DJANGO_READ_LOCAL_DOT_ENV_FILE", default=False)
+if READ_LOCAL_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    env.read_env(str(ROOT_DIR / ".envs/.env.local"))
 
 
 class Common(Configuration):
