@@ -217,7 +217,7 @@ class Common(Configuration):
             'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
+            'umbrella.users.auth.DynamicRealmOIDCAuthentication',
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ),
@@ -248,13 +248,15 @@ class Common(Configuration):
         },
     }
 
-    OIDC_RP_CLIENT_ID = env('OIDC_RP_CLIENT_ID', default=None)
-    OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default=None)
+    # mozilla-django-oidc settings
+    OIDC_RP_CLIENT_ID = None    # Required, but not actually used
+    OIDC_RP_CLIENT_SECRET = None    # Required, but not actually used
 
-    KEYCLOAK_URL = env('KEYCLOAK_URL', default=None)
-    KEYCLOAK_REALM = env('KEYCLOAK_REALM', default=None)
-    OIDC_OP_TOKEN_ENDPOINT = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/token"
-    OIDC_OP_USER_ENDPOINT = f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect/userinfo"
+    OIDC_OP_TOKEN_ENDPOINT = None    # Set dynamically in umbrella.users.auth.DynamicRealmOIDCAuthentication
+    OIDC_OP_USER_ENDPOINT = None    # Set dynamically in umbrella.users.auth.DynamicRealmOIDCAuthentication
+
+    OIDC_OP_TOKEN_ENDPOINT_TEMPLATE = "{keycloak_realm_url}/protocol/openid-connect/token"
+    OIDC_OP_USER_ENDPOINT_TEMPLATE = "{keycloak_realm_url}/protocol/openid-connect/userinfo"
 
     SPECTACULAR_SETTINGS = {
         'TITLE': 'Umbrella ',
