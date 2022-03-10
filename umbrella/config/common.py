@@ -247,9 +247,9 @@ class Common(Configuration):
     SOCIALACCOUNT_PROVIDERS = {
         'keycloak': {
             'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://keycloak:8080/auth'),
-            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'local_realm'),
+            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'local-realm'),
             'APP': {
-                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'local_client'),
+                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'local-client'),
             },
         },
     }
