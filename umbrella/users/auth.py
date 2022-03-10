@@ -47,5 +47,5 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
 
         request.session['oidc_id_token_expiration'] = access_token_payload['exp']
         request.session['oidc_access_token'] = access_token
-        request.session['oidc_user_id'] = user.id
+        request.session['oidc_user_id'] = str(user.id)
         return user, access_token
