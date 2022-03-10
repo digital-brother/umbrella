@@ -118,7 +118,7 @@ class Common(Configuration):
 
     # Set DEBUG to False as a default for safety
     # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-    DEBUG = strtobool(os.getenv('DJANGO_DEBUG', 'no'))
+    DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
     # Password Validation
     # https://docs.djangoproject.com/en/2.0/topics/auth/passwords/#module-django.contrib.auth.password_validation
@@ -202,7 +202,7 @@ class Common(Configuration):
     # Django Rest Framework
     REST_FRAMEWORK = {
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': int(os.getenv('DJANGO_PAGINATION_LIMIT', 10)),
+        'PAGE_SIZE': env.int('DJANGO_PAGINATION_LIMIT', default=10),
         'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
