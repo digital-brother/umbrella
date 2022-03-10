@@ -26,7 +26,6 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-        'django.contrib.sites',
 
         # Third party apps
         'rest_framework',            # utilities for rest apis
@@ -34,16 +33,6 @@ class Common(Configuration):
         'django_filters',            # for filtering rest endpoints
         'drf_spectacular',
         'drf_spectacular_sidecar',
-
-        # https://django-allauth.readthedocs.io/en/latest/installation.html
-        'allauth',
-        'allauth.account',
-        'allauth.socialaccount',
-        'allauth.socialaccount.providers.keycloak',
-
-        # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
-        'dj_rest_auth',
-        'dj_rest_auth.registration',
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',
@@ -234,25 +223,8 @@ class Common(Configuration):
         # Needed to login by username in Django admin, regardless of `allauth`
         'django.contrib.auth.backends.ModelBackend',
 
-        # `allauth` specific authentication methods, such as login by e-mail
-        'allauth.account.auth_backends.AuthenticationBackend',
-
         'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
     ]
-
-    SITE_ID = 1
-
-    # https://django-allauth.readthedocs.io/en/latest/installation.html
-    # https://django-allauth.readthedocs.io/en/latest/providers.html#keycloak
-    SOCIALACCOUNT_PROVIDERS = {
-        'keycloak': {
-            'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://keycloak:8080/auth'),
-            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'local-realm'),
-            'APP': {
-                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'local-client'),
-            },
-        },
-    }
 
     # mozilla-django-oidc settings
     OIDC_RP_CLIENT_ID = None    # Because OIDC auth flow is done on front end side

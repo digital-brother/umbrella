@@ -39,6 +39,9 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
             return user, access_token
 
         access_token_payload = self.get_access_token_payload(request)
+        if not access_token_payload:
+            return None
+
         self.backend.OIDC_OP_TOKEN_ENDPOINT = settings.OIDC_OP_TOKEN_ENDPOINT_TEMPLATE.format(
             keycloak_realm_url=access_token_payload['iss'])
         self.backend.OIDC_OP_USER_ENDPOINT = settings.OIDC_OP_USER_ENDPOINT_TEMPLATE.format(
