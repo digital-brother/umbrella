@@ -1,5 +1,6 @@
 import os
 from os.path import join
+from pathlib import Path
 
 import environ
 from distutils.util import strtobool
@@ -7,9 +8,14 @@ from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ENV_FILE_PATH = os.path.normpath(join(os.path.dirname(BASE_DIR), '.env.prod'))
+# Replacement for BASE_DIR
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 env = environ.Env()
-env.read_env(ENV_FILE_PATH)
+
+READ_LOCAL_DOT_ENV_FILE = env.bool("DJANGO_READ_LOCAL_DOT_ENV_FILE", default=False)
+if READ_LOCAL_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    env.read_env(str(ROOT_DIR / ".envs/.env.local"))
 
 
 class Common(Configuration):
@@ -38,6 +44,9 @@ class Common(Configuration):
         # https://dj-rest-auth.readthedocs.io/en/latest/installation.html
         'dj_rest_auth',
         'dj_rest_auth.registration',
+
+        # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
+        'mozilla_django_oidc',
 
         # Your apps
         'umbrella.users',
@@ -214,6 +223,7 @@ class Common(Configuration):
             'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
+            'umbrella.users.auth.DynamicRealmOIDCAuthentication',
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ),
@@ -226,6 +236,8 @@ class Common(Configuration):
 
         # `allauth` specific authentication methods, such as login by e-mail
         'allauth.account.auth_backends.AuthenticationBackend',
+
+        'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
     ]
 
     SITE_ID = 1
@@ -235,12 +247,21 @@ class Common(Configuration):
     SOCIALACCOUNT_PROVIDERS = {
         'keycloak': {
             'KEYCLOAK_URL': os.getenv('KEYCLOAK_URL', 'http://keycloak:8080/auth'),
-            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'myrealm'),
+            'KEYCLOAK_REALM': os.getenv('KEYCLOAK_REALM', 'local-realm'),
             'APP': {
-                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'myclient'),
+                'client_id': os.getenv('KEYCLOAK_CLIENT_ID', 'local-client'),
             },
         },
     }
+
+    # mozilla-django-oidc settings
+    OIDC_RP_CLIENT_ID = None    # Because OIDC auth flow is done on front end side
+    OIDC_RP_CLIENT_SECRET = None    # Because OIDC auth flow is done on front end side
+    OIDC_OP_TOKEN_ENDPOINT = None    # Set dynamically in umbrella.users.auth.DynamicRealmOIDCAuthentication
+    OIDC_OP_USER_ENDPOINT = None    # Set dynamically in umbrella.users.auth.DynamicRealmOIDCAuthentication
+
+    OIDC_OP_TOKEN_ENDPOINT_TEMPLATE = "{keycloak_realm_url}/protocol/openid-connect/token"
+    OIDC_OP_USER_ENDPOINT_TEMPLATE = "{keycloak_realm_url}/protocol/openid-connect/userinfo"
 
     SPECTACULAR_SETTINGS = {
         'TITLE': 'Umbrella ',
