@@ -26,6 +26,7 @@ timeout ${TIMEOUT_SECONDS}s \
         -Dkeycloak.migration.action=export \
         -Dkeycloak.migration.provider=singleFile \
         -Dkeycloak.migration.file=${JSON_EXPORT_FILE} \
+        -Dkeycloak.migration.realmName=local-realm \
         -Djboss.socket.binding.port-offset=99 \
     > ${LOGFILE} &
 
