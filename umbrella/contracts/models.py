@@ -1,4 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+
+User = get_user_model()
 
 
 class Lease(models.Model):
@@ -21,7 +24,8 @@ class Lease(models.Model):
     modified_file_name = models.CharField(max_length=256, blank=True, null=True)
     analytics2 = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
+    created_by_django_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'lease'
