@@ -45,7 +45,7 @@ services:
       KEYCLOAK_PASSWORD: admin
       KEYCLOAK_IMPORT: /tmp/local-realm.json
     volumes:
-      - ./local-realm.json:/tmp/local-realm.json
+      - ./compose/keycloak/local-realm.json:/tmp/local-realm.json
     ports:
       - 8080:8080
     depends_on:
