@@ -1,2 +1,2 @@
 FROM jboss/keycloak:16.1.1
-COPY compose/Dockerfile.local.Keycloak /opt/jboss/keycloak/
+COPY ./keycloak-startup-config.json /opt/jboss/keycloak/
