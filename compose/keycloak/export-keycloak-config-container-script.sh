@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# export-keycloak-config-container-script.sh
+# docker-exec-cmd.sh
 
 set -o errexit
 set -o errtrace
@@ -16,7 +16,7 @@ LOGFILE=/tmp/standalone.sh.log
 
 # Remove files from old backups inside the container
 # You could also move the files or change the name with timestamp prefix
-rm -f ${LOGFILE} ${JSON_EXPORT_FILE}JSON_EXPORT_FILE
+rm -f ${LOGFILE} ${JSON_EXPORT_FILE}
 
 # Start a new keycloak instance with exporting options enabled.
 # Use the port offset argument to prevent port conflicts
