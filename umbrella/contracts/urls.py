@@ -1,7 +1,7 @@
 from django.urls import path
 
-from umbrella.contracts.views import AddFileView
+from umbrella.contracts.views import GetAddFilePresignedUrlView
 
 urlpatterns = [
-    path('add-file/', AddFileView.as_view(), name='add_file'),
+    path('get-add-file-presigned-url/', GetAddFilePresignedUrlView.as_view(), name='add_file'),
 ]

@@ -243,3 +243,5 @@ class Common(Configuration):
         'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
         'REDOC_DIST': 'SIDECAR',
     }
+
+    AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
