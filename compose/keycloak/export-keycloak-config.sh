@@ -4,7 +4,7 @@
 
 KEYCLOAK_CONTAINER=$(docker inspect -f '{{.Name}}' $(docker ps -q --filter "name=keycloak_1") | cut -c2-)
 CURRENT_SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-CONTAINER_EXPORT_SCRIPT=export-keycloak-config-container-script.sh
+CONTAINER_EXPORT_SCRIPT=keycloak-export-config-script.sh
 export JSON_EXPORT_FILE=/tmp/keycloak-config.json
 
 # Copy the export bash script to the (already running) keycloak container
