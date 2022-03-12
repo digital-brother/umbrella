@@ -35,7 +35,9 @@ services:
     ports:
       - 8001:8001
   keycloak:
-    image: jboss/keycloak:16.1.1
+    build:
+      context: ./compose/keycloak/
+      dockerfile: ./Dockerfile.local.Keycloak
     environment:
       DB_VENDOR: postgres
       DB_ADDR: keycloak_postgres
@@ -43,6 +45,7 @@ services:
       DB_PASSWORD: keycloak
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /opt/jboss/keycloak/keycloak_startup_config.json
     ports:
       - 8080:8080
     depends_on:
