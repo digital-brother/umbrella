@@ -12,10 +12,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 env = environ.Env()
 
-READ_LOCAL_DOT_ENV_FILE = env.bool("DJANGO_READ_LOCAL_DOT_ENV_FILE", default=False)
-if READ_LOCAL_DOT_ENV_FILE:
+DJANGO_READ_DOT_ENV_FILES = env.bool("DJANGO_READ_DOT_ENV_FILES", default=False)
+if DJANGO_READ_DOT_ENV_FILES:
     # OS environment variables take precedence over variables from .env
-    env.read_env(str(ROOT_DIR / ".envs/.env.local"))
+    DJANGO_DOT_ENV_FILE_PATHS = env.list('DJANGO_DOT_ENV_FILE_PATHS', default=[])
+    for dot_env_file_path in DJANGO_DOT_ENV_FILE_PATHS:
+        env.read_env(str(ROOT_DIR / dot_env_file_path))
 
 
 class Common(Configuration):
@@ -33,6 +35,7 @@ class Common(Configuration):
         'django_filters',            # for filtering rest endpoints
         'drf_spectacular',
         'drf_spectacular_sidecar',
+        'django_extensions',
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',

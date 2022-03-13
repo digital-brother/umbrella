@@ -32,4 +32,4 @@ class Production(Common):
         'Cache-Control': 'max-age=86400, s-maxage=86400, must-revalidate',
     }
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = env('DJANGO_SECURE_SSL_REDIRECT', default=True)
