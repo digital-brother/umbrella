@@ -6,11 +6,12 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
 from umbrella.config.common import ROOT_DIR
 from umbrella.contracts.models import Lease
+from umbrella.contracts.serializers import UploadsSerializer
 
 
 def create_presigned_post(bucket_name, object_name,
@@ -89,3 +90,8 @@ class AddFileView(GetAddFilePresignedUrlView):
         msg = f'File upload HTTP status code: {http_response.status_code}'
 
         return Response(msg)
+
+
+class UploadsView(ListAPIView):
+    queryset = Lease.objects.all()
+    serializer_class = UploadsSerializer

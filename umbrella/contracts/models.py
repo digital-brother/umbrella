@@ -26,6 +26,10 @@ class Lease(models.Model):
     doc_type = models.CharField(max_length=258, blank=True, null=True)
     created_by_django_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
 
+    @property
+    def status(self):
+        return 'Not implemented'
+
     class Meta:
         # managed = False
         db_table = 'lease'
