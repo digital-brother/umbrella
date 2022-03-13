@@ -28,6 +28,7 @@ class Lease(models.Model):
 
     @property
     def status(self):
+        # TODO: Add status calculatio once Bikram updates the schema
         return 'Not implemented'
 
     class Meta:
