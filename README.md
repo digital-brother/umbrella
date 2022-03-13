@@ -11,12 +11,18 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 
 # Local Development
 
-Start the dev server for local development:
+- Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
+
+You should do auth requests to Keycloak using 'http://keycloak:8080' host.
+Otherwise JWT token check will fail in Docker container. 
+That is because web container sees keycloak container under 'keycloak' name.
+
+- Start the dev server for local development:
 ```bash
-docker-compose up
+docker-compose -f local.yml up -d
 ```
 
-Run a command inside the docker container:
+- Run a command inside the docker container:
 
 ```bash
 docker-compose run --rm web [command]
