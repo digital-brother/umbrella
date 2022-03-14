@@ -43,6 +43,7 @@ class Common(Configuration):
 
         # Your apps
         'umbrella.users',
+        'umbrella.notifications',
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
