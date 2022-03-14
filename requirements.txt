@@ -46,3 +46,6 @@ PyJWT==2.3.0
 # Swagger
 drf-spectacular==0.21.2
 drf-spectacular-sidecar==2022.2.7
+
+# Asynchronous server
+channels==3.0.4

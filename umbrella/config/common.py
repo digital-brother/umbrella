@@ -36,6 +36,7 @@ class Common(Configuration):
         'drf_spectacular',
         'drf_spectacular_sidecar',
         'django_extensions',
+        'channels',
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',
@@ -59,6 +60,7 @@ class Common(Configuration):
     ROOT_URLCONF = 'umbrella.urls'
     SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'umbrella.wsgi.application'
+    ASGI_APPLICATION = 'umbrella.asgi.application'
 
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
