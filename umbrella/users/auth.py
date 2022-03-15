@@ -73,4 +73,3 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
         request.session['oidc_access_token'] = access_token
         request.session['oidc_user_id'] = str(user.id)
         return user, access_token
-

@@ -222,13 +222,7 @@ class Common(Configuration):
         ),
         'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     }
-
-    AUTHENTICATION_BACKENDS = [
-        'django.contrib.auth.backends.ModelBackend',
-        'umbrella.users.auth.DynamicRealmOIDCAuthenticationBackend'
-    ]
     OIDC_DRF_AUTH_BACKEND = 'umbrella.users.auth.DynamicRealmOIDCAuthenticationBackend'
-
 
     # mozilla-django-oidc settings
     OIDC_RP_CLIENT_ID = None    # Because OIDC auth flow is done on front end side
