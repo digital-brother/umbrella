@@ -20,10 +20,6 @@ def decode_token(encoded_access_token):
 
 
 class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
-    @property
-    def realm(self):
-        return self.access_token_payload['iss'].split('/')[-1]
-
     def create_user(self, claims):
         """Return object for a newly created user account."""
         email = claims.get('email')
@@ -31,19 +27,12 @@ class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         return self.UserModel.objects.create_user(username, email=email, realm=self.realm)
 
     def get_or_create_user(self, access_token, id_token, payload):
-        self.access_token_payload = decode_token(access_token)
+        access_token_payload = decode_token(access_token)
+        self.realm = access_token_payload['iss'].split('/')[-1]
         return super().get_or_create_user(access_token, id_token, payload)
 
 
 class DynamicRealmOIDCAuthentication(OIDCAuthentication):
-    def get_access_token_payload(self, request):
-        encoded_access_token = self.get_access_token(request)
-        if not encoded_access_token:
-            return None
-
-        access_token_payload = decode_token(encoded_access_token)
-        return access_token_payload
-
     def authenticate_cached(self, request):
         token_is_cached = request.session.get('oidc_access_token') == self.get_access_token(request)
         token_is_active = request.session.get('oidc_id_token_expiration', 0) > time.time()
@@ -59,10 +48,11 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
         if user and access_token:
             return user, access_token
 
-        access_token_payload = self.get_access_token_payload(request)
-        if not access_token_payload:
+        encoded_access_token = self.get_access_token(request)
+        if not encoded_access_token:
             return None
 
+        access_token_payload = decode_token(encoded_access_token)
         self.backend.OIDC_OP_TOKEN_ENDPOINT = settings.OIDC_OP_TOKEN_ENDPOINT_TEMPLATE.format(
             keycloak_realm_url=access_token_payload['iss'])
         self.backend.OIDC_OP_USER_ENDPOINT = settings.OIDC_OP_USER_ENDPOINT_TEMPLATE.format(
