@@ -66,7 +66,7 @@ class GetAddFilePresignedUrlView(GenericAPIView):
         Lease.create(
             file_name=file_name,
             file_size=file_size,
-            createdby=request.user,
+            created_by=request.user,
             modified_file_name=self.generate_modified_file_name(file_name),
         )
 

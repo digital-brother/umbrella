@@ -16,18 +16,18 @@ class Lease(models.Model):
     txt = models.TextField(blank=True, null=True)
     extracted = models.JSONField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    createdon = models.DateTimeField(auto_now_add=True)
-    modifiedon = models.DateTimeField(auto_now=True)
-    createdby = models.ForeignKey(User, on_delete=models.CASCADE)
-    modifiedby = models.CharField(max_length=128, blank=True, null=True)
-    activeflag = models.BooleanField(blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    modified_by = models.CharField(max_length=128, blank=True, null=True)
+    active_flag = models.BooleanField(blank=True, null=True)
     contract_type = models.CharField(max_length=32, blank=True, null=True)
     textract = models.JSONField(blank=True, null=True)
-    analyticsdata = models.JSONField(blank=True, null=True)
+    analytics_data = models.JSONField(blank=True, null=True)
     pdf_hash = models.TextField(blank=True, null=True)
     file_size = models.BigIntegerField()
     modified_file_name = models.CharField(max_length=256, unique=True)
-    analytics2 = models.JSONField(blank=True, null=True)
+    analytics_2 = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
     textract_done = models.BooleanField(blank=False, null=False, default=False)
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
@@ -37,7 +37,7 @@ class Lease(models.Model):
         db_table = 'lease'
 
     @classmethod
-    def create(cls, file_name, createdby, **kwargs):
+    def create(cls, file_name, created_by, **kwargs):
         errors = {}
 
         _, file_extension = os.path.splitext(file_name)
@@ -45,8 +45,8 @@ class Lease(models.Model):
             allowed_file_extensions_str = ', '.join(settings.ALLOWED_FILE_UPLOAD_EXTENSIONS)
             errors['file_name'] = f"Invalid file extension {file_extension}. Allowed are: {allowed_file_extensions_str}"
 
-        realm = createdby.realm or User.NO_REALM
-        is_duplicate = Lease.objects.filter(file_name=file_name, createdby__realm=realm).exists()
+        realm = created_by.realm or User.NO_REALM
+        is_duplicate = Lease.objects.filter(file_name=file_name, created_by__realm=realm).exists()
         if is_duplicate:
             errors['__all__'] = f"Duplicate file name {file_name} for realm {realm}"
 
@@ -55,7 +55,7 @@ class Lease(models.Model):
 
         cls.objects.create(
             file_name=file_name,
-            createdby=createdby,
+            created_by=created_by,
             **kwargs
         )
 
