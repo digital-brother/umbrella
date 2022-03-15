@@ -62,33 +62,17 @@ class GetAddFilePresignedUrlView(GenericAPIView):
     def get(self, request):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        # TODO: Get rid of self once testing is done (needed in AddFileView)
-        self.file_name = serializer.validated_data['file_name']
-        self.file_size = serializer.validated_data['file_size']
+        file_name = serializer.validated_data['file_name']
+        file_size = serializer.validated_data['file_size']
 
-        self.response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, self.file_name)
+        response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, file_name)
 
         Lease.objects.create(
-            file_name=self.file_name,
-            modified_file_name=self.generate_modified_file_name(self.file_name),
+            file_name=file_name,
+            modified_file_name=self.generate_modified_file_name(file_name),
             createdby=request.user,
-            file_size=self.file_size,
+            file_size=file_size,
             createdon=timezone.now(),
         )
 
-        return Response(self.response)
-
-
-class AddFileView(GetAddFilePresignedUrlView):
-    def get(self, request):
-        super().get(request)
-
-        # Demonstrate how another Python program can use the presigned URL to upload a file
-        file_path = ROOT_DIR / f'umbrella/contracts/{self.file_name}'
-        with open(file_path, 'rb') as f:
-            files = {'file': (self.file_name, f)}
-            http_response = requests.post(self.response['url'], data=self.response['fields'], files=files)
-        # If successful, returns HTTP status code 204
-        msg = f'File upload HTTP status code: {http_response.status_code}'
-
-        return Response(msg)
+        return Response(response)
