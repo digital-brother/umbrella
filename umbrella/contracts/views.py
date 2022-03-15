@@ -3,16 +3,15 @@ import os
 import uuid
 
 import boto3
-import requests
 from botocore.exceptions import ClientError
 from django.conf import settings
 from django.utils import timezone
-from rest_framework import serializers
+from rest_framework.exceptions import APIException
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-from umbrella.config.common import ROOT_DIR
 from umbrella.contracts.models import Lease
+from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer
 
 
 def create_presigned_post(bucket_name, object_name,
@@ -46,11 +45,6 @@ def create_presigned_post(bucket_name, object_name,
     return response
 
 
-class GetAddFilePresignedUrlSerializer(serializers.Serializer):
-    file_name = serializers.CharField()
-    file_size = serializers.IntegerField()
-
-
 class GetAddFilePresignedUrlView(GenericAPIView):
     serializer_class = GetAddFilePresignedUrlSerializer
 
@@ -66,6 +60,8 @@ class GetAddFilePresignedUrlView(GenericAPIView):
         file_size = serializer.validated_data['file_size']
 
         response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, file_name)
+        if response is None:
+            raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
 
         Lease.objects.create(
             file_name=file_name,

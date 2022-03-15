@@ -30,5 +30,4 @@ class Lease(models.Model):
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
 
     class Meta:
-        # managed = False
         db_table = 'lease'
