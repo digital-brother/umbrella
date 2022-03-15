@@ -42,6 +42,7 @@ class Common(Configuration):
 
         # Your apps
         'umbrella.users',
+        'umbrella.contracts',
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -215,9 +216,9 @@ class Common(Configuration):
             'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'umbrella.users.auth.DynamicRealmOIDCAuthentication',
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
+            'umbrella.users.auth.DynamicRealmOIDCAuthentication',
         ),
         'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     }
@@ -245,3 +246,5 @@ class Common(Configuration):
         'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
         'REDOC_DIST': 'SIDECAR',
     }
+
+    AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
