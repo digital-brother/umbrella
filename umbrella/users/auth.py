@@ -3,10 +3,36 @@ import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from mozilla_django_oidc.contrib.drf import OIDCAuthentication
 from rest_framework import exceptions
 
 User = get_user_model()
+
+
+def decode_token(encoded_access_token):
+    try:
+        access_token_payload = jwt.decode(encoded_access_token, options={"verify_signature": False})
+        return access_token_payload
+    except jwt.PyJWTError:
+        msg = f"Invalid JWT token"
+        raise exceptions.AuthenticationFailed(msg)
+
+
+class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
+    @property
+    def realm(self):
+        return self.access_token_payload['iss'].split('/')[-1]
+
+    def create_user(self, claims):
+        """Return object for a newly created user account."""
+        email = claims.get('email')
+        username = self.get_username(claims)
+        return self.UserModel.objects.create_user(username, email=email, realm=self.realm)
+
+    def get_or_create_user(self, access_token, id_token, payload):
+        self.access_token_payload = decode_token(access_token)
+        return super().get_or_create_user(access_token, id_token, payload)
 
 
 class DynamicRealmOIDCAuthentication(OIDCAuthentication):
@@ -15,12 +41,7 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
         if not encoded_access_token:
             return None
 
-        try:
-            access_token_payload = jwt.decode(encoded_access_token, options={"verify_signature": False})
-        except jwt.PyJWTError:
-            msg = f"Invalid JWT token"
-            raise exceptions.AuthenticationFailed(msg)
-
+        access_token_payload = decode_token(encoded_access_token)
         return access_token_payload
 
     def authenticate_cached(self, request):
@@ -52,3 +73,4 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
         request.session['oidc_access_token'] = access_token
         request.session['oidc_user_id'] = str(user.id)
         return user, access_token
+

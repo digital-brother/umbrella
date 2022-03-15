@@ -224,11 +224,11 @@ class Common(Configuration):
     }
 
     AUTHENTICATION_BACKENDS = [
-        # Needed to login by username in Django admin, regardless of `allauth`
         'django.contrib.auth.backends.ModelBackend',
-
-        'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+        'umbrella.users.auth.DynamicRealmOIDCAuthenticationBackend'
     ]
+    OIDC_DRF_AUTH_BACKEND = 'umbrella.users.auth.DynamicRealmOIDCAuthenticationBackend'
+
 
     # mozilla-django-oidc settings
     OIDC_RP_CLIENT_ID = None    # Because OIDC auth flow is done on front end side
