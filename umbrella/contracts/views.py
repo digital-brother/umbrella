@@ -56,12 +56,13 @@ class GetAddFilePresignedUrlView(GenericAPIView):
         query_params_serializer = self.query_params_serializer(data=request.query_params)
         query_params_serializer.is_valid(raise_exception=True)
         file_name = query_params_serializer.validated_data['file_name']
-        file_size = query_params_serializer.validated_data['file_size']
+        modified_file_name = self.generate_modified_file_name(file_name)
 
-        response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, file_name)
+        response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, modified_file_name)
         if response is None:
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
 
+        file_size = query_params_serializer.validated_data['file_size']
         Lease.create(
             file_name=file_name,
             file_size=file_size,
