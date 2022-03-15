@@ -14,7 +14,7 @@ class Lease(models.Model):
     address = models.TextField(blank=True, null=True)
     createdon = models.DateTimeField(auto_now_add=True)
     modifiedon = models.DateTimeField(auto_now=True)
-    createdby = models.CharField(max_length=128, blank=True, null=True)
+    createdby = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     modifiedby = models.CharField(max_length=128, blank=True, null=True)
     activeflag = models.BooleanField(blank=True, null=True)
     contract_type = models.CharField(max_length=32, blank=True, null=True)
