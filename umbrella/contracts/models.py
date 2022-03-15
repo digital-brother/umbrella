@@ -43,12 +43,12 @@ class Lease(models.Model):
         _, file_extension = os.path.splitext(file_name)
         if file_extension not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
             allowed_file_extensions_str = ', '.join(settings.ALLOWED_FILE_UPLOAD_EXTENSIONS)
-            errors['file_name'] = f"Invalid file extension. Allowed are: {allowed_file_extensions_str}"
+            errors['file_name'] = f"Invalid file extension {file_extension}. Allowed are: {allowed_file_extensions_str}"
 
         realm = createdby.realm or User.NO_REALM
         is_duplicate = Lease.objects.filter(file_name=file_name, createdby__realm=realm).exists()
         if is_duplicate:
-            errors['__all__'] = f"Duplicate file name for realm {realm}"
+            errors['__all__'] = f"Duplicate file name {file_name} for realm {realm}"
 
         if errors:
             raise APIException(errors)
