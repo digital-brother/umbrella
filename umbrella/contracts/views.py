@@ -1,4 +1,6 @@
 import logging
+import os
+import uuid
 
 import boto3
 import requests
@@ -52,6 +54,11 @@ class GetAddFilePresignedUrlSerializer(serializers.Serializer):
 class GetAddFilePresignedUrlView(GenericAPIView):
     serializer_class = GetAddFilePresignedUrlSerializer
 
+    def generate_modified_file_name(self, file_name):
+        _, file_extension = os.path.splitext(file_name)
+        file_uuid = uuid.uuid4()
+        return f"{file_uuid}{file_extension}"
+
     def get(self, request):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -63,14 +70,10 @@ class GetAddFilePresignedUrlView(GenericAPIView):
 
         Lease.objects.create(
             file_name=self.file_name,
-            # TODO: generate once algorithm is provided by Riasat
-            modified_file_name=None,  # Generated on BE
-            # TODO: change fk to django user
-            createdby='FRONTIER',
+            modified_file_name=self.generate_modified_file_name(self.file_name),
+            createdby=request.user,
             file_size=self.file_size,
             createdon=timezone.now(),
-            # TODO: remove onc createdby is working
-            created_by_django_user=request.user
         )
 
         return Response(self.response)
