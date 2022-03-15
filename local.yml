@@ -24,16 +24,6 @@ services:
       - 8000:8000
     depends_on:
       - postgres
-  documentation:
-    restart: always
-    build:
-      context: ./
-      dockerfile: ./Dockerfile.local
-    command: "mkdocs serve"
-    volumes:
-      - ./:/code
-    ports:
-      - 8001:8001
   keycloak:
     image: jboss/keycloak:16.1.1
     environment:

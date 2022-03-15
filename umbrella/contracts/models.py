@@ -4,6 +4,7 @@ from django.db import models
 User = get_user_model()
 
 
+# TODO: Rename to Contract
 class Lease(models.Model):
     id = models.BigAutoField(primary_key=True)
     file_name = models.CharField(max_length=512, blank=True, null=True)
@@ -11,9 +12,9 @@ class Lease(models.Model):
     txt = models.TextField(blank=True, null=True)
     extracted = models.JSONField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
-    createdon = models.DateTimeField(blank=True, null=True)
-    createdby = models.CharField(max_length=128, blank=True, null=True)
-    modifiedon = models.DateTimeField(blank=True, null=True)
+    createdon = models.DateTimeField(auto_now_add=True)
+    modifiedon = models.DateTimeField(auto_now=True)
+    createdby = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     modifiedby = models.CharField(max_length=128, blank=True, null=True)
     activeflag = models.BooleanField(blank=True, null=True)
     contract_type = models.CharField(max_length=32, blank=True, null=True)
@@ -24,7 +25,9 @@ class Lease(models.Model):
     modified_file_name = models.CharField(max_length=256, blank=True, null=True)
     analytics2 = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
-    created_by_django_user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    textract_done = models.BooleanField(blank=False, null=False, default=False)
+    analytics_done = models.BooleanField(blank=False, null=False, default=False)
+    normalization_done = models.BooleanField(blank=False, null=False, default=False)
 
     @property
     def status(self):
@@ -32,5 +35,4 @@ class Lease(models.Model):
         return 'Not implemented'
 
     class Meta:
-        # managed = False
         db_table = 'lease'
