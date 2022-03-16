@@ -23,11 +23,11 @@ class Task(models.Model):
     contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
     clause_type = models.CharField(max_length=128)
     bl_type = models.CharField(max_length=128)
-    link_to_text = models.CharField()
+    link_to_text = models.CharField(max_length=1024)
 
     title = models.CharField(max_length=128)
     assigned_to = models.ManyToManyField(User, related_name="executors")
-    due_date = models.DateField()
+    due_date = models.DateField(null=True, blank=True)
     progress = models.CharField(
         max_length=32, choices=ProgressChoices.choices, default=ProgressChoices.NOT_STARTED
     )
@@ -47,16 +47,16 @@ class Task(models.Model):
     repeats = models.CharField(
         max_length=32, choices=RepeatsChoices.choices, default=RepeatsChoices.EVERYDAY
     )
-    until = models.DateField(default=two_days_ahead())
+    until = models.DateField(null=True, blank=True)
 
 
-class ChecklistModel(models.Model):
+class TaskChecklist(models.Model):
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
 
-class TaskCommentModel(models.Model):
+class TaskComment(models.Model):
     message = models.CharField(max_length=1024)
     created_at = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
