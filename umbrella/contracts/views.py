@@ -64,7 +64,7 @@ class GetAddFilePresignedUrlView(GenericAPIView):
 
         file_size = data_serializer.validated_data['file_size']
         file_hash = data_serializer.validated_data['file_hash']
-        Lease.create(
+        Lease.objects.create_lease(
             file_name=file_name,
             file_size=file_size,
             file_hash=file_hash,
