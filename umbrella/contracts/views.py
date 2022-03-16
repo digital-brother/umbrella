@@ -45,27 +45,29 @@ def create_presigned_post(bucket_name, object_name,
 
 
 class GetAddFilePresignedUrlView(GenericAPIView):
-    query_params_serializer = GetAddFilePresignedUrlSerializer
+    data_serializer = GetAddFilePresignedUrlSerializer
 
     def generate_modified_file_name(self, file_name):
         _, file_extension = os.path.splitext(file_name)
         file_uuid = uuid.uuid4()
         return f"{file_uuid}{file_extension}"
 
-    def get(self, request):
-        query_params_serializer = self.query_params_serializer(data=request.query_params)
-        query_params_serializer.is_valid(raise_exception=True)
-        file_name = query_params_serializer.validated_data['file_name']
+    def post(self, request):
+        data_serializer = self.data_serializer(data=request.data)
+        data_serializer.is_valid(raise_exception=True)
+        file_name = data_serializer.validated_data['file_name']
         modified_file_name = self.generate_modified_file_name(file_name)
 
         response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, modified_file_name)
         if response is None:
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
 
-        file_size = query_params_serializer.validated_data['file_size']
+        file_size = data_serializer.validated_data['file_size']
+        file_hash = data_serializer.validated_data['file_hash']
         Lease.create(
             file_name=file_name,
             file_size=file_size,
+            file_hash=file_hash,
             created_by=request.user,
             modified_file_name=self.generate_modified_file_name(file_name),
         )
