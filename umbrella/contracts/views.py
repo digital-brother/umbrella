@@ -1,12 +1,10 @@
 import logging
-import os
-import uuid
 
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
-from django.utils import timezone
 from rest_framework.exceptions import APIException
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
@@ -46,32 +44,20 @@ def create_presigned_post(bucket_name, object_name,
     return response
 
 
-class GetAddFilePresignedUrlView(GenericAPIView):
+class GetAddFilePresignedUrlView(CreateAPIView):
     serializer_class = GetAddFilePresignedUrlSerializer
 
-    def generate_modified_file_name(self, file_name):
-        _, file_extension = os.path.splitext(file_name)
-        file_uuid = uuid.uuid4()
-        return f"{file_uuid}{file_extension}"
-
-    def get(self, request):
-        serializer = self.get_serializer(data=request.query_params)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        file_name = serializer.validated_data['file_name']
-        file_size = serializer.validated_data['file_size']
 
-        response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, file_name)
+        file_name = serializer.validated_data['file_name']
+        modified_file_name = Lease.generate_modified_file_name(file_name)
+        response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, modified_file_name)
         if response is None:
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
 
-        Lease.objects.create(
-            file_name=file_name,
-            modified_file_name=self.generate_modified_file_name(file_name),
-            createdby=request.user,
-            file_size=file_size,
-            createdon=timezone.now(),
-        )
-
+        self.perform_create(serializer)
         return Response(response)
 
 
