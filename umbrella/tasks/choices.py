@@ -25,8 +25,10 @@ class WhenChoices(models.TextChoices):
     AFTER = 'AFTER', 'After'
 
 
-# class StatusChoices(models.TextChoices):
-#     NEVER = 'NEVER', 'Not Never'
-#     EVERYDAY = 'EVERYDAY', 'Everyday'
-#     EVERY_WEEK = 'EVERY_WEEK', 'Every week'
-#     EVERY_MONTH = 'EVERY_MONTH', 'Every month'
+class StatusChoices(models.TextChoices):
+    DONE = 'DONE', 'Done'
+    OVERDUE = 'OVERDUE', 'Overdue'
+    DUE_TODAY = 'DUE_TODAY', 'Due Today'
+    DUE_IN_A_WEEK = 'DUE_IN_A_WEEK', 'Due in a Week'
+    DUE_IN_A_MONTH = 'DUE_IN_A_MONTH', 'Due in a Month'
+    NOT_DUE_SOON = 'NOT_DUE_SOON', 'Not Due Soon'

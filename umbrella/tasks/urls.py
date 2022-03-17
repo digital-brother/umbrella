@@ -9,5 +9,6 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet)
+# router.register(r'tasks-checklist', TaskChecklistViewSet)
 
 urlpatterns += router.urls
