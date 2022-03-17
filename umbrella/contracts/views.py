@@ -1,12 +1,10 @@
 import logging
-import os
-import uuid
 
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
 from rest_framework.exceptions import APIException
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Lease
@@ -44,31 +42,19 @@ def create_presigned_post(bucket_name, object_name,
     return response
 
 
-class GetAddFilePresignedUrlView(GenericAPIView):
-    query_params_serializer = GetAddFilePresignedUrlSerializer
+class GetAddFilePresignedUrlView(CreateAPIView):
+    serializer_class = GetAddFilePresignedUrlSerializer
 
-    def generate_modified_file_name(self, file_name):
-        _, file_extension = os.path.splitext(file_name)
-        file_uuid = uuid.uuid4()
-        return f"{file_uuid}{file_extension}"
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-    def get(self, request):
-        query_params_serializer = self.query_params_serializer(data=request.query_params)
-        query_params_serializer.is_valid(raise_exception=True)
-        file_name = query_params_serializer.validated_data['file_name']
-        modified_file_name = self.generate_modified_file_name(file_name)
-
+        file_name = serializer.validated_data['file_name']
+        modified_file_name = Lease.generate_modified_file_name(file_name)
         response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, modified_file_name)
         if response is None:
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
 
-        file_size = query_params_serializer.validated_data['file_size']
-        Lease.create(
-            file_name=file_name,
-            file_size=file_size,
-            created_by=request.user,
-            modified_file_name=self.generate_modified_file_name(file_name),
-        )
-
+        self.perform_create(serializer)
         return Response(response)
 
