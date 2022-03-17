@@ -1,4 +1,5 @@
 import os
+import uuid
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -9,27 +10,19 @@ User = get_user_model()
 
 
 class LeaseManager(models.Manager):
-    def create_lease(self, file_name, created_by, file_hash, **kwargs):
-        errors = {}
+    def create_lease(self, **data):
+        """
+        Typical Django business logic placement
+        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
+        """
+        file_name = data['file_name']
+        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
 
-        _, file_extension = os.path.splitext(file_name)
-        if file_extension not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
-            allowed_file_extensions_str = ', '.join(settings.ALLOWED_FILE_UPLOAD_EXTENSIONS)
-            errors['file_name'] = f"Invalid file extension {file_extension}. Allowed are: {allowed_file_extensions_str}"
+        lease = self.model(**data)
+        lease.full_clean()
 
-        realm = created_by.realm or User.NO_REALM
-        is_duplicate = Lease.objects.filter(file_name=file_name, created_by__realm=realm).exists()
-        if is_duplicate:
-            errors['__all__'] = f"Duplicate file name {file_name} for realm {realm}"
-
-        if errors:
-            raise APIException(errors)
-
-        self.model.objects.create(
-            file_name=file_name,
-            created_by=created_by,
-            **kwargs
-        )
+        lease.save()
+        return lease
 
 
 # TODO: Rename to Contract
@@ -64,3 +57,29 @@ class Lease(models.Model):
 
     def __str__(self):
         return self.file_name
+
+    @staticmethod
+    def generate_modified_file_name(file_name):
+        _, file_extension = os.path.splitext(file_name)
+        file_uuid = uuid.uuid4()
+        return f"{file_uuid}{file_extension}"
+
+    def clean(self):
+        errors = {}
+
+        _, file_extension = os.path.splitext(self.file_name)
+        if file_extension not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
+            allowed_file_extensions_str = ', '.join(settings.ALLOWED_FILE_UPLOAD_EXTENSIONS)
+            errors['file_name'] = f"Invalid file extension {file_extension}. Allowed are: {allowed_file_extensions_str}"
+
+        if not self.created_by:
+            errors['created_by'] = "created_by field is required"
+            raise APIException(errors)
+
+        realm = self.created_by.realm or User.NO_REALM
+        is_duplicate = Lease.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
+        if is_duplicate:
+            errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
+
+        if errors:
+            raise APIException(errors)
