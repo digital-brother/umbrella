@@ -102,6 +102,7 @@ class GetAddFilePresignedUrlSerializer(BusinessLogicModelSerializer):
         Validate before call to AWS presigned url
         https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
         """
-        instance = Lease(**attrs)
-        instance.clean()
+        data = {**attrs, **{'modified_file_name': Lease.generate_modified_file_name(attrs['file_name'])}}
+        instance = Lease(**data)
+        instance.full_clean()
         return attrs

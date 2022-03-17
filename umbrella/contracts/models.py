@@ -4,21 +4,19 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 
 
 class LeaseManager(models.Manager):
-    def create_lease(self, **data):
+    def create_lease(self, file_name, **data):
         """
         Typical Django business logic placement
         (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
         """
-        file_name = data['file_name']
         data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
-
-        lease = self.model(**data)
+        lease = self.model(file_name=file_name, **data)
         lease.full_clean()
 
         lease.save()
@@ -74,7 +72,7 @@ class Lease(models.Model):
 
         if not self.created_by:
             errors['created_by'] = "created_by field is required"
-            raise APIException(errors)
+            raise ValidationError(errors)
 
         realm = self.created_by.realm or User.NO_REALM
         is_duplicate = Lease.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
@@ -82,4 +80,4 @@ class Lease(models.Model):
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
         if errors:
-            raise APIException(errors)
+            raise ValidationError(errors)

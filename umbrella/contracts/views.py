@@ -46,7 +46,6 @@ class GetAddFilePresignedUrlView(CreateAPIView):
     serializer_class = GetAddFilePresignedUrlSerializer
 
     def post(self, request, *args, **kwargs):
-        # TODO: fix modified_file_name passing
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
