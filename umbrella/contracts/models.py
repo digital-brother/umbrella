@@ -50,22 +50,11 @@ class Lease(models.Model):
 
     objects = LeaseManager()
 
-    @property
-    def status(self):
-        # TODO: Add status calculatio once Bikram updates the schema
-        return 'Not implemented'
-
     class Meta:
         db_table = 'lease'
 
     def __str__(self):
         return self.file_name
-
-    @staticmethod
-    def generate_modified_file_name(file_name):
-        _, file_extension = os.path.splitext(file_name)
-        file_uuid = uuid.uuid4()
-        return f"{file_uuid}{file_extension}"
 
     def clean(self):
         errors = {}
@@ -86,3 +75,14 @@ class Lease(models.Model):
 
         if errors:
             raise ValidationError(errors)
+
+    @staticmethod
+    def generate_modified_file_name(file_name):
+        _, file_extension = os.path.splitext(file_name)
+        file_uuid = uuid.uuid4()
+        return f"{file_uuid}{file_extension}"
+
+    @property
+    def status(self):
+        # TODO: Add status calculatio once Bikram updates the schema
+        return 'Not implemented'
