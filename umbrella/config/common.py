@@ -63,6 +63,14 @@ class Common(Configuration):
     SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'umbrella.wsgi.application'
     ASGI_APPLICATION = 'umbrella.asgi.application'
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [('redis', 6379)],
+            },
+        },
+    }
 
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

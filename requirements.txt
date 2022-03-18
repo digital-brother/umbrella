@@ -49,3 +49,4 @@ drf-spectacular-sidecar==2022.2.7
 
 # Asynchronous server
 channels==3.0.4
+channels-redis==3.4.0
