@@ -56,12 +56,6 @@ class Lease(models.Model):
     def __str__(self):
         return self.file_name
 
-    @staticmethod
-    def generate_modified_file_name(file_name):
-        _, file_extension = os.path.splitext(file_name)
-        file_uuid = uuid.uuid4()
-        return f"{file_uuid}{file_extension}"
-
     def clean(self):
         errors = {}
 
@@ -81,3 +75,14 @@ class Lease(models.Model):
 
         if errors:
             raise ValidationError(errors)
+
+    @staticmethod
+    def generate_modified_file_name(file_name):
+        _, file_extension = os.path.splitext(file_name)
+        file_uuid = uuid.uuid4()
+        return f"{file_uuid}{file_extension}"
+
+    @property
+    def status(self):
+        # TODO: Add status calculation
+        return 'Not implemented'

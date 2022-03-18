@@ -5,10 +5,12 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from rest_framework.exceptions import APIException
 from rest_framework.generics import CreateAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Lease
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer
+from umbrella.contracts.serializers import UploadsSerializer
 
 
 def create_presigned_post(bucket_name, object_name,
@@ -58,3 +60,7 @@ class GetAddFilePresignedUrlView(CreateAPIView):
         self.perform_create(serializer)
         return Response(response)
 
+
+class UploadsView(ListAPIView):
+    queryset = Lease.objects.all()
+    serializer_class = UploadsSerializer
