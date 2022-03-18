@@ -57,7 +57,7 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
 
         try:
             # instance = ModelClass._default_manager.create(**validated_data)
-            instance = self.perform_create_budiness_logic(**validated_data)
+            instance = self.perform_create_business_logic(**validated_data)
         except TypeError:
             tb = traceback.format_exc()
             msg = (
