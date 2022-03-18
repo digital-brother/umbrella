@@ -57,7 +57,7 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
 
         try:
             # instance = ModelClass._default_manager.create(**validated_data)
-            instance = self.perform_create_budiness_logic(**validated_data)
+            instance = self.perform_create_business_logic(**validated_data)
         except TypeError:
             tb = traceback.format_exc()
             msg = (
@@ -94,7 +94,7 @@ class GetAddFilePresignedUrlSerializer(BusinessLogicModelSerializer):
         model = Lease
         fields = ('file_name', 'file_size', 'file_hash', 'created_by')
 
-    def perform_create_budiness_logic(self, **validated_data):
+    def perform_create_business_logic(self, **validated_data):
         return Lease.objects.create_lease(**validated_data)
 
     def validate(self, attrs):
@@ -106,3 +106,9 @@ class GetAddFilePresignedUrlSerializer(BusinessLogicModelSerializer):
         instance = Lease(**data)
         instance.full_clean()
         return attrs
+
+
+class UploadsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lease
+        fields = ['file_name', 'created_by', 'created_on', 'file_size', 'status']
