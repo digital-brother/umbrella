@@ -1,12 +1,12 @@
 from django.conf import settings
-from django.urls import path, re_path, include, reverse_lazy
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import path, re_path, include, reverse_lazy
 from django.views.generic.base import RedirectView
-from rest_framework.routers import DefaultRouter
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken import views
-from rest_framework.schemas import get_schema_view
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from rest_framework.routers import DefaultRouter
+
 from .users.views import UserViewSet, UserCreateViewSet
 
 router = DefaultRouter()
@@ -22,7 +22,6 @@ urlpatterns = [
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
     path('api/v1/contracts/', include('umbrella.contracts.urls')),
-    path('api/v1/notifications/', include('umbrella.notifications.urls')),
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
