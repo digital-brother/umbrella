@@ -5,6 +5,18 @@ from channels.generic.websocket import WebsocketConsumer
 
 
 class NotificationsConsumer(WebsocketConsumer):
+    """
+    To send a message from shell:
+
+        import channels
+
+        channel_layer = channels.layers.get_channel_layer()
+
+        async_to_sync(channel_layer.group_send)(
+            "no_realm", {"type": "chat_message", "message": "Hi"}
+        )
+
+    """
     realm = 'no_realm'
 
     def connect(self):
