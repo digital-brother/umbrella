@@ -1,16 +1,16 @@
 import json
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
 
 class NotificationsConsumer(WebsocketConsumer):
-    def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+    realm = 'no_realm'
 
+    def connect(self):
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
+            self.realm,
             self.channel_name
         )
 
@@ -19,7 +19,7 @@ class NotificationsConsumer(WebsocketConsumer):
     def disconnect(self, close_code):
         # Leave room group
         async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
+            self.realm,
             self.channel_name
         )
 
@@ -30,7 +30,7 @@ class NotificationsConsumer(WebsocketConsumer):
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
+            self.realm,
             {
                 'type': 'chat_message',
                 'message': message
