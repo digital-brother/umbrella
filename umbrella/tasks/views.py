@@ -1,10 +1,10 @@
 from rest_framework import viewsets, mixins
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from umbrella.tasks.models import Task, TaskChecklist
+from umbrella.tasks.models import Task, TaskChecklist, TaskComment
 from umbrella.tasks.serializers import TaskSerializer, TaskChecklistSerializer, \
-    TaskUpdateSerializer
+    TaskUpdateSerializer, TaskCommentSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -21,12 +21,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         return serializer_class
 
 
-# class TaskChecklistViewSet(mixins.DestroyModelMixin,
-#                            mixins.UpdateModelMixin,
-#                            viewsets.GenericViewSet):
-#     """
-#     Update and Destroy task checklist item
-#     """
-#     queryset = TaskChecklist.objects.all()
-#     serializer_class = TaskChecklistSerializer
-#     permission_classes = [IsAuthenticated]
+class TaskCommentCreateView(CreateAPIView):
+    queryset = TaskComment.objects.all()
+    serializer_class = TaskCommentSerializer
+    permission_classes = [IsAuthenticated]

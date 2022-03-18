@@ -10,32 +10,35 @@ from umbrella.tasks.choices import ProgressChoices, RepeatsChoices, PeriodChoice
 User = get_user_model()
 
 
+class TaskChecklistManager(models.Manager):
+    def create_checklist(self, **data):
+        checklist = self.model(**data)
+        checklist.full_clean()
+        checklist.save()
+
+        return checklist
+
+
+class TaskManager(models.Manager):
+    def create_task(self, task_checklist, **data):
+        task = self.model(**data)
+        task.full_clean()
+        task.save()
+        for item in task_checklist:
+            TaskChecklist.objects.create_checklist(item)
+
+        return task
+
+
 def get_sentinel_user():
     return get_user_model().objects.get_or_create(username='deleted')[0]
 
 
-def set_status_if_due_date(task):
+def now_and_due_date_diff(task):
     due_date = task.due_date
     today = date.today()
     date_dif = due_date - today
-    progress = task.progress
-    status = status_from_date_dif(date_dif.days, progress)
-    return status
-
-
-def status_from_date_dif(date_dif, progress):
-    if date_dif < 0 and progress == ProgressChoices.COMPLETED:
-        return StatusChoices.DONE
-    elif date_dif < 0:
-        return StatusChoices.OVERDUE
-    elif date_dif == 0:
-        return StatusChoices.DUE_TODAY
-    elif date_dif <= 7:
-        return StatusChoices.DUE_IN_A_WEEK
-    elif date_dif <= 31:
-        return StatusChoices.DUE_IN_A_MONTH
-    elif date_dif > 31:
-        return StatusChoices.NOT_DUE_SOON
+    return date_dif.days
 
 
 def two_days_ahead():
@@ -47,13 +50,11 @@ class Task(models.Model):
     title = models.CharField(max_length=128)
     assigned_to = models.ManyToManyField(User, related_name="executors", blank=True)
     due_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     progress = models.CharField(
         max_length=32, choices=ProgressChoices.choices, default=ProgressChoices.NOT_STARTED
     )
     notes = models.TextField(null=True, blank=True)
-    status = models.CharField(
-        max_length=32, choices=StatusChoices.choices, default=StatusChoices.DONE
-    )
 
     # Contract info
     contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
@@ -74,19 +75,39 @@ class Task(models.Model):
     )
     until = models.DateField(null=True, blank=True)
 
-    @transaction.atomic
-    def save(self, *args, **kwargs):
-        is_created = not self.pk
-        if is_created:
-            status = set_status_if_due_date(self)
-            self.status = status
-        super().save(*args, **kwargs)
+    objects = TaskManager()
+
+    class Meta:
+        ordering = ['-created_at']
+
+    @property
+    def status(self):
+        if not self.due_date:
+            return "Overdue"
+        elif not self.due_date and self.progress == ProgressChoices.COMPLETED:
+            return "Done"
+
+        date_diff = now_and_due_date_diff(self)
+        if date_diff < 0 and self.progress == ProgressChoices.COMPLETED:
+            return "Done"
+        elif date_diff < 0:
+            return 'Overdue'
+        elif date_diff == 0:
+            return 'Due Today'
+        elif date_diff <= 7:
+            return 'Due in a Week'
+        elif date_diff <= 31:
+            return 'Due in a Month'
+        elif date_diff > 31:
+            return 'Not Due Soon'
 
 
 class TaskChecklist(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task_checklist")
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
+
+    objects = TaskChecklistManager()
 
 
 class TaskComment(models.Model):
