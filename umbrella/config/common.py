@@ -43,6 +43,7 @@ class Common(Configuration):
 
         # Your apps
         'umbrella.users',
+        'umbrella.contracts',
         'umbrella.notifications',
     )
 
@@ -208,7 +209,7 @@ class Common(Configuration):
     # Django Rest Framework
     REST_FRAMEWORK = {
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': env.int('DJANGO_PAGINATION_LIMIT', default=10),
+        'PAGE_SIZE': env.int('DJANGO_PAGINATION_LIMIT', default=1000),
         'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
@@ -218,19 +219,13 @@ class Common(Configuration):
             'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'umbrella.users.auth.DynamicRealmOIDCAuthentication',
             'rest_framework.authentication.SessionAuthentication',
             'rest_framework.authentication.TokenAuthentication',
+            'umbrella.users.auth.DynamicRealmOIDCAuthentication',
         ),
         'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     }
-
-    AUTHENTICATION_BACKENDS = [
-        # Needed to login by username in Django admin, regardless of `allauth`
-        'django.contrib.auth.backends.ModelBackend',
-
-        'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
-    ]
+    OIDC_DRF_AUTH_BACKEND = 'umbrella.users.auth.DynamicRealmOIDCAuthenticationBackend'
 
     # mozilla-django-oidc settings
     OIDC_RP_CLIENT_ID = None    # Because OIDC auth flow is done on front end side
@@ -248,3 +243,6 @@ class Common(Configuration):
         'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
         'REDOC_DIST': 'SIDECAR',
     }
+
+    AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
+    ALLOWED_FILE_UPLOAD_EXTENSIONS = ('.pdf', '.docx', '.doc', '.txt', '.jpeg')
