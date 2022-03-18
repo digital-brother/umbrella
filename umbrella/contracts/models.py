@@ -84,5 +84,5 @@ class Lease(models.Model):
 
     @property
     def status(self):
-        # TODO: Add status calculatio once Bikram updates the schema
+        # TODO: Add status calculation
         return 'Not implemented'
