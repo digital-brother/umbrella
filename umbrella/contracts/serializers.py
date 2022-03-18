@@ -111,4 +111,4 @@ class GetAddFilePresignedUrlSerializer(BusinessLogicModelSerializer):
 class UploadsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lease
-        fields = ['file_name', 'createdby', 'createdon', 'file_size', 'status']
+        fields = ['file_name', 'created_by', 'created_on', 'file_size', 'status']
