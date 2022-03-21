@@ -27,45 +27,9 @@ class TaskCommentSerializer(serializers.ModelSerializer):
             "task",
         ]
 
-    # def validate_user(self, value):
-    #     return self.context['request'].user
 
-
-class TaskSerializer(serializers.ModelSerializer):
-    task_checklist = TaskChecklistSerializer(many=True)
-
-    class Meta:
-        model = Task
-        fields = [
-            "id",
-            "contract",
-            "task_checklist",
-            "clause_type",
-            "bl_type",
-            "link_to_text",
-            "title",
-            "assigned_to",
-            "due_date",
-            "progress",
-            "notes",
-            "number",
-            "status",
-            "period",
-            "when",
-            "repeats",
-            "until",
-        ]
-
-    def create(self, validated_data):
-        task_checklist = validated_data.pop("task_checklist")
-        obj = super().create(validated_data)
-        for point_data in task_checklist:
-            TaskChecklist.objects.create_checklist(task=obj, **point_data)
-        return obj
-
-
-# class TaskSerializer(BusinessLogicModelSerializer):
-#     task_checklist = serializers.ListField(allow_empty=True)
+# class TaskSerializer(serializers.ModelSerializer):
+#     task_checklist = TaskChecklistSerializer(many=True)
 #
 #     class Meta:
 #         model = Task
@@ -89,19 +53,56 @@ class TaskSerializer(serializers.ModelSerializer):
 #             "until",
 #         ]
 #
-#     def perform_create_business_logic(self, **validated_data):
-#         return Task.objects.create_task(**validated_data)
-#
-#     def validate(self, attrs):
-#         """
-#         Validate before call to AWS presigned url
-#         https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
-#         """
-#         data = {**attrs,
-#                 **{'task_checklist': attrs['task_checklist']}}
-#         instance = Task(**data)
-#         instance.full_clean()
-#         return attrs
+#     def create(self, validated_data):
+#         task_checklist = validated_data.pop("task_checklist")
+#         obj = super().create(validated_data)
+#         for item_data in task_checklist:
+#             TaskChecklist.objects.create_checklist(task=obj, **item_data)
+#         return obj
+
+
+class TaskSerializer(BusinessLogicModelSerializer):
+    task_checklist = serializers.ListField(child=serializers.DictField(), allow_empty=True)
+
+    class Meta:
+        model = Task
+        fields = [
+            "id",
+            "contract",
+            "task_checklist",
+            "clause_type",
+            "bl_type",
+            "link_to_text",
+            "title",
+            "assigned_to",
+            "due_date",
+            "progress",
+            "notes",
+            "number",
+            "status",
+            "period",
+            "when",
+            "repeats",
+            "until",
+        ]
+
+    def perform_create_business_logic(self, **validated_data):
+        task_checklist = self.validated_data.pop("task_checklist")
+        task = Task.objects.create_task(task_checklist=task_checklist, **validated_data)
+        # if not task_checklist:
+        #     return task
+        #
+        # for item in task_checklist:
+        #     item["task"] = task
+        #     TaskChecklist.objects.create_checklist(**item)
+
+        return task
+
+    # def validate(self, attrs):
+    #     task_checklist = attrs.pop("task_checklist")
+    #     instance = Task(**attrs)
+    #     instance.full_clean()
+    #     return attrs
 
 
 class TaskRetrieveSerializer(TaskSerializer):

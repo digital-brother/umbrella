@@ -11,8 +11,8 @@ User = get_user_model()
 
 
 class TaskChecklistManager(models.Manager):
-    def create_checklist(self, **data):
-        checklist = self.model(**data)
+    def create_checklist(self, task, **data):
+        checklist = self.model(task=task, **data)
         checklist.full_clean()
         checklist.save()
 
@@ -25,7 +25,8 @@ class TaskManager(models.Manager):
         task.full_clean()
         task.save()
         for item in task_checklist:
-            TaskChecklist.objects.create_checklist(item)
+            # item["task"] = task
+            TaskChecklist.objects.create_checklist(task=task, **item)
 
         return task
 
