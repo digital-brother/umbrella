@@ -4,14 +4,18 @@ from django.contrib.auth import get_user_model
 from django.db import models, transaction
 
 from umbrella.contracts.models import Lease
-from umbrella.tasks.choices import ProgressChoices, RepeatsChoices, PeriodChoices, \
-    WhenChoices, StatusChoices
+from umbrella.tasks.choices import (
+    ProgressChoices,
+    RepeatsChoices,
+    PeriodChoices,
+    WhenChoices,
+)
 
 User = get_user_model()
 
 
-class TaskChecklistManager(models.Manager):
-    def create_checklist(self, task, **data):
+class SubtaskManager(models.Manager):
+    def create_subtask(self, task, **data):
         checklist = self.model(task=task, **data)
         checklist.full_clean()
         checklist.save()
@@ -20,19 +24,38 @@ class TaskChecklistManager(models.Manager):
 
 
 class TaskManager(models.Manager):
-    def create_task(self, task_checklist, **data):
+    def create_task(self, **data):
         task = self.model(**data)
         task.full_clean()
         task.save()
-        for item in task_checklist:
-            # item["task"] = task
-            TaskChecklist.objects.create_checklist(task=task, **item)
+        # for item in task_checklist:
+        #     # item["task"] = task
+        #     Subtask.objects.create_checklist(task=task, **item)
 
         return task
 
+    def task_update(self, task, **kwargs):
+        allowed_attributes = {
+            "title",
+            "assigned_to",
+            "due_date",
+            "progress",
+            "notes",
+            "number",
+            "period",
+            "when",
+            "repeats",
+            "until",
+        }
+        for name, value in kwargs.items():
+            assert name in allowed_attributes
+            setattr(task, name, value)
+        task.full_clean()
+        task.save()
+
 
 def get_sentinel_user():
-    return get_user_model().objects.get_or_create(username='deleted')[0]
+    return get_user_model().objects.get_or_create(username="deleted")[0]
 
 
 def now_and_due_date_diff(task):
@@ -53,7 +76,9 @@ class Task(models.Model):
     due_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     progress = models.CharField(
-        max_length=32, choices=ProgressChoices.choices, default=ProgressChoices.NOT_STARTED
+        max_length=32,
+        choices=ProgressChoices.choices,
+        default=ProgressChoices.NOT_STARTED,
     )
     notes = models.TextField(null=True, blank=True)
 
@@ -79,7 +104,7 @@ class Task(models.Model):
     objects = TaskManager()
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     @property
     def status(self):
@@ -92,27 +117,27 @@ class Task(models.Model):
         if date_diff < 0 and self.progress == ProgressChoices.COMPLETED:
             return "Done"
         elif date_diff < 0:
-            return 'Overdue'
+            return "Overdue"
         elif date_diff == 0:
-            return 'Due Today'
+            return "Due Today"
         elif date_diff <= 7:
-            return 'Due in a Week'
+            return "Due in a Week"
         elif date_diff <= 31:
-            return 'Due in a Month'
+            return "Due in a Month"
         elif date_diff > 31:
-            return 'Not Due Soon'
+            return "Not Due Soon"
 
 
-class TaskChecklist(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task_checklist")
+class Subtask(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="subtasks")
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
 
-    objects = TaskChecklistManager()
+    objects = SubtaskManager()
 
 
-class TaskComment(models.Model):
+class Comment(models.Model):
     message = models.CharField(max_length=1024)
     created_at = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")

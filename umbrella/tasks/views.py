@@ -1,10 +1,9 @@
-from rest_framework import viewsets, mixins
-from rest_framework.generics import UpdateAPIView, CreateAPIView
+from rest_framework import viewsets
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from umbrella.tasks.models import Task, TaskChecklist, TaskComment
-from umbrella.tasks.serializers import TaskSerializer, TaskChecklistSerializer, \
-    TaskUpdateSerializer, TaskCommentSerializer
+from umbrella.tasks.models import Task, Comment
+from umbrella.tasks.serializers import TaskUpdateSerializer, TaskCommentSerializer, TaskSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -22,6 +21,9 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 
 class TaskCommentCreateView(CreateAPIView):
-    queryset = TaskComment.objects.all()
+    queryset = Comment.objects.all()
     serializer_class = TaskCommentSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
