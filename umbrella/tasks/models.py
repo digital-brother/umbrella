@@ -1,7 +1,8 @@
 from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
-from django.db import models, transaction
+from django.core.validators import MinLengthValidator
+from django.db import models
 
 from umbrella.contracts.models import Lease
 from umbrella.tasks.choices import (
@@ -25,12 +26,11 @@ class SubtaskManager(models.Manager):
 
 class TaskManager(models.Manager):
     def create_task(self, **data):
+        assigned_to = data.pop("assigned_to", [])
         task = self.model(**data)
         task.full_clean()
         task.save()
-        # for item in task_checklist:
-        #     # item["task"] = task
-        #     Subtask.objects.create_checklist(task=task, **item)
+        task.assigned_to.set(assigned_to)
 
         return task
 
@@ -50,8 +50,10 @@ class TaskManager(models.Manager):
         for name, value in kwargs.items():
             assert name in allowed_attributes
             setattr(task, name, value)
+
         task.full_clean()
         task.save()
+        return task
 
 
 def get_sentinel_user():
@@ -71,7 +73,7 @@ def two_days_ahead():
 
 class Task(models.Model):
     # Common data
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=500, validators=[MinLengthValidator(5)])
     assigned_to = models.ManyToManyField(User, related_name="executors", blank=True)
     due_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -137,7 +139,7 @@ class Subtask(models.Model):
 
 
 class Comment(models.Model):
-    message = models.CharField(max_length=1024)
+    message = models.TextField()
     created_at = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")
