@@ -245,8 +245,3 @@ class Common(Configuration):
 
     AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
     ALLOWED_FILE_UPLOAD_EXTENSIONS = ('.pdf', '.docx', '.doc', '.txt', '.jpeg')
-
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ]
