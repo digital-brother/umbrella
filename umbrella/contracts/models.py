@@ -60,7 +60,7 @@ class Lease(models.Model):
         errors = {}
 
         _, file_extension = os.path.splitext(self.file_name)
-        if file_extension not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
+        if file_extension.lower() not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
             allowed_file_extensions_str = ', '.join(settings.ALLOWED_FILE_UPLOAD_EXTENSIONS)
             errors['file_name'] = f"Invalid file extension {file_extension}. Allowed are: {allowed_file_extensions_str}"
 
