@@ -22,7 +22,7 @@ That is because web container sees keycloak container under 'keycloak' name.
 
 - Start the dev server for local development:
 ```bash
-docker-compose -f local.yml up -d
+docker-compose -f local.yml up -d --build
 ```
 
 - Run a command inside the docker container:
