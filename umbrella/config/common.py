@@ -36,6 +36,7 @@ class Common(Configuration):
         'drf_spectacular',
         'drf_spectacular_sidecar',
         'django_extensions',
+        'corsheaders',               # for add cors headers to responses
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',
@@ -47,6 +48,7 @@ class Common(Configuration):
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
     MIDDLEWARE = (
+        'corsheaders.middleware.CorsMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -243,3 +245,8 @@ class Common(Configuration):
 
     AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
     ALLOWED_FILE_UPLOAD_EXTENSIONS = ('.pdf', '.docx', '.doc', '.txt', '.jpeg')
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
