@@ -71,9 +71,9 @@ class Task(models.Model):
     # Contract info
     contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
     # TODO: Add Clause Types and convert current field to ChoiceField
-    clause_type = models.CharField(max_length=128)
-    business_intelligence_type = models.CharField(max_length=128)
-    link_to_text = models.CharField(max_length=1024)
+    clause_type = models.TextField()
+    business_intelligence_type = models.TextField()
+    link_to_text = models.TextField()
 
     # Reminder
     reminder_number = models.PositiveIntegerField(default=1)
