@@ -8,11 +8,10 @@ from umbrella.tasks.serializers import TaskUpdateSerializer, TaskCommentSerializ
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
-    serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        serializer_class = self.serializer_class
+        serializer_class = TaskSerializer
 
         if self.request.method in ['PUT', 'PATCH']:
             serializer_class = TaskUpdateSerializer

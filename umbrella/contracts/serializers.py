@@ -14,11 +14,11 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
     """
 
     def perform_create_business_logic(self, **validated_data):
-        msg = 'Derived class should self.implement perform_create_business_logic() method'
+        msg = 'Derived class should implement perform_create_business_logic() method'
         raise NotImplementedError(msg)
 
     def perform_update_business_logic(self, instance, **validated_data):
-        msg = 'Derived class should self.implement perform_update_business_logic() method'
+        msg = 'Derived class should implement perform_update_business_logic() method'
         raise NotImplementedError(msg)
 
     # Default `create` and `update` behavior...

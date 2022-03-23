@@ -20,7 +20,7 @@ class PeriodChoices(models.TextChoices):
     MONTHS = 'MONTHS', 'Months'
 
 
-class WhenChoices(models.TextChoices):
+class BeforeAfterChoices(models.TextChoices):
     BEFORE = 'BEFORE', 'Before'
     AFTER = 'AFTER', 'After'
 

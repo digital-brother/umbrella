@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.db import models
 
@@ -9,46 +10,27 @@ from umbrella.tasks.choices import (
     ProgressChoices,
     RepeatsChoices,
     PeriodChoices,
-    WhenChoices,
+    BeforeAfterChoices,
+    StatusChoices,
 )
 
 User = get_user_model()
 
 
-class SubtaskManager(models.Manager):
-    def create_subtask(self, task, **data):
-        checklist = self.model(task=task, **data)
-        checklist.full_clean()
-        checklist.save()
-
-        return checklist
-
-
 class TaskManager(models.Manager):
     def create_task(self, **data):
-        assigned_to = data.pop("assigned_to", [])
+        assignees = data.pop("assignees", [])
         task = self.model(**data)
         task.full_clean()
         task.save()
-        task.assigned_to.set(assigned_to)
+        task.assignees.set(assignees)
 
         return task
 
     def task_update(self, task, **kwargs):
-        allowed_attributes = {
-            "title",
-            "assigned_to",
-            "due_date",
-            "progress",
-            "notes",
-            "number",
-            "period",
-            "when",
-            "repeats",
-            "until",
-        }
         for name, value in kwargs.items():
-            assert name in allowed_attributes
+            if name not in Task.EDITABLE_FIELDS:
+                raise ValidationError(f"Field {name} is not allowed for update")
             setattr(task, name, value)
 
         task.full_clean()
@@ -60,21 +42,23 @@ def get_sentinel_user():
     return get_user_model().objects.get_or_create(username="deleted")[0]
 
 
-def now_and_due_date_diff(task):
-    due_date = task.due_date
-    today = date.today()
-    date_dif = due_date - today
-    return date_dif.days
-
-
-def two_days_ahead():
-    return date.today() + timedelta(days=2)
-
-
 class Task(models.Model):
+    EDITABLE_FIELDS = [
+        "title",
+        "assignees",
+        "due_date",
+        "progress",
+        "notes",
+        "reminder_number",
+        "reminder_period",
+        "reminder_before_or_after",
+        "repeats",
+        "until",
+    ]
+
     # Common data
     title = models.CharField(max_length=500, validators=[MinLengthValidator(5)])
-    assigned_to = models.ManyToManyField(User, related_name="executors", blank=True)
+    assignees = models.ManyToManyField(User, related_name="tasks", blank=True)
     due_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     progress = models.CharField(
@@ -82,21 +66,22 @@ class Task(models.Model):
         choices=ProgressChoices.choices,
         default=ProgressChoices.NOT_STARTED,
     )
-    notes = models.TextField(null=True, blank=True)
+    notes = models.TextField(blank=True)
 
     # Contract info
     contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
+    # TODO: Add Clause Types and convert current field to ChoiceField
     clause_type = models.CharField(max_length=128)
-    bl_type = models.CharField(max_length=128)
+    business_intelligence_type = models.CharField(max_length=128)
     link_to_text = models.CharField(max_length=1024)
 
     # Reminder
-    number = models.PositiveIntegerField(default=1)
-    period = models.CharField(
+    reminder_number = models.PositiveIntegerField(default=1)
+    reminder_period = models.CharField(
         max_length=32, choices=PeriodChoices.choices, default=PeriodChoices.DAYS
     )
-    when = models.CharField(
-        max_length=32, choices=WhenChoices.choices, default=WhenChoices.BEFORE
+    reminder_before_or_after = models.CharField(
+        max_length=32, choices=BeforeAfterChoices.choices, default=BeforeAfterChoices.BEFORE
     )
     repeats = models.CharField(
         max_length=32, choices=RepeatsChoices.choices, default=RepeatsChoices.NEVER
@@ -111,23 +96,45 @@ class Task(models.Model):
     @property
     def status(self):
         if not self.due_date:
-            return "Overdue"
+            return StatusChoices.OVERDUE
         elif not self.due_date and self.progress == ProgressChoices.COMPLETED:
-            return "Done"
+            return StatusChoices.DONE
 
-        date_diff = now_and_due_date_diff(self)
+        date_diff = self.now_and_due_date_diff()
         if date_diff < 0 and self.progress == ProgressChoices.COMPLETED:
-            return "Done"
+            return StatusChoices.DONE
         elif date_diff < 0:
-            return "Overdue"
+            return StatusChoices.OVERDUE
         elif date_diff == 0:
-            return "Due Today"
+            return StatusChoices.DUE_TODAY
         elif date_diff <= 7:
-            return "Due in a Week"
+            return StatusChoices.DUE_IN_A_WEEK
         elif date_diff <= 31:
-            return "Due in a Month"
+            return StatusChoices.DUE_IN_A_MONTH
         elif date_diff > 31:
-            return "Not Due Soon"
+            return StatusChoices.NOT_DUE_SOON
+
+    def now_and_due_date_diff(self):
+        today = date.today()
+        date_dif = self.due_date - today
+        return date_dif.days
+
+    def create_subtask(self, **data):
+        subtask = Subtask(task=self, **data)
+        subtask.full_clean()
+        subtask.save()
+
+        return subtask
+
+    def update(self, **kwargs):
+        for name, value in kwargs.items():
+            if name not in Task.EDITABLE_FIELDS:
+                raise ValidationError(f"Field {name} is not allowed for update")
+            setattr(self, name, value)
+
+        self.full_clean()
+        self.save()
+        return self
 
 
 class Subtask(models.Model):
@@ -135,11 +142,9 @@ class Subtask(models.Model):
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
 
-    objects = SubtaskManager()
-
 
 class Comment(models.Model):
     message = models.TextField()
     created_at = models.DateField(auto_now_add=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user))
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")

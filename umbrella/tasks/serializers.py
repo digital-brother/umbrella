@@ -15,7 +15,7 @@ class SubtaskSerializer(serializers.ModelSerializer):
 
 
 class TaskCommentSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = serializers.SerializerMethodField()
     created_at = serializers.DateField(read_only=True)
 
     class Meta:
@@ -26,6 +26,12 @@ class TaskCommentSerializer(serializers.ModelSerializer):
             "created_at",
             "task",
         ]
+
+    def get_created_by(self, obj):
+        if obj.created_by:
+            return obj.created_by.username
+
+        return "Deleted"
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -38,17 +44,17 @@ class TaskSerializer(serializers.ModelSerializer):
             "id",
             "contract",
             "clause_type",
-            "bl_type",
+            "business_intelligence_type",
             "link_to_text",
             "title",
-            "assigned_to",
+            "assignees",
             "due_date",
             "progress",
             "notes",
-            "number",
             "status",
-            "period",
-            "when",
+            "reminder_number",
+            "reminder_period",
+            "reminder_before_or_after",
             "repeats",
             "until",
             "subtasks",
@@ -59,26 +65,27 @@ class TaskSerializer(serializers.ModelSerializer):
         subtasks = validated_data.pop("subtasks", [])
         task = Task.objects.create_task(**validated_data)
         for item_data in subtasks:
-            Subtask.objects.create_subtask(task=task, **item_data)
+            Task.create_subtask(task, **item_data)
         return task
 
 
 class TaskUpdateSerializer(TaskSerializer):
+    comments = TaskCommentSerializer(many=True, read_only=True)
+    subtasks = SubtaskSerializer(many=True, required=False)
+
     class Meta:
         model = Task
-        fields = TaskSerializer.Meta.fields
-        read_only_fields = ['clause_type', 'bl_type', 'link_to_text']
+        fields = Task.EDITABLE_FIELDS + ["subtasks", "comments"]
 
     @transaction.atomic
     def update(self, instance, validated_data):
         subtasks = validated_data.pop("subtasks", None)
-        updated_task = Task.objects.task_update(instance, **validated_data)
-        if not subtasks and not isinstance(subtasks, list):
-            return updated_task
-
-        old_checklists = Subtask.objects.filter(task=instance)
-        old_checklists.delete()
-        for point_data in subtasks:
-            Subtask.objects.create_subtask(task=instance, **point_data)
+        updated_task = Task.update(instance, **validated_data)
+        replace_subtasks = subtasks or subtasks == []
+        if replace_subtasks:
+            old_checklists = Subtask.objects.filter(task=instance)
+            old_checklists.delete()
+            for item_data in subtasks:
+                Task.create_subtask(instance, **item_data)
 
         return updated_task
