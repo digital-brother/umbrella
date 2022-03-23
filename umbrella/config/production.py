@@ -33,3 +33,5 @@ class Production(Common):
     }
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = env('DJANGO_SECURE_SSL_REDIRECT', default=True)
+
+    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=Common.CORS_ALLOWED_ORIGINS)

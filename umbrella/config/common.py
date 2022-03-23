@@ -36,7 +36,7 @@ class Common(Configuration):
         'drf_spectacular',
         'drf_spectacular_sidecar',
         'django_extensions',
-        'corsheaders',               # for add cors headers to responses
+        'corsheaders',
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',
