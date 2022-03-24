@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
-from django.db import models
+from django.db import models, transaction
 
 from umbrella.contracts.models import Lease
 from umbrella.tasks.choices import (
@@ -18,6 +18,7 @@ User = get_user_model()
 
 
 class TaskManager(models.Manager):
+    @transaction.atomic
     def create_task(self, **data):
         assignees = data.pop("assignees", [])
         task = self.model(**data)
@@ -26,20 +27,6 @@ class TaskManager(models.Manager):
         task.assignees.set(assignees)
 
         return task
-
-    def task_update(self, task, **kwargs):
-        for name, value in kwargs.items():
-            if name not in Task.EDITABLE_FIELDS:
-                raise ValidationError(f"Field {name} is not allowed for update")
-            setattr(task, name, value)
-
-        task.full_clean()
-        task.save()
-        return task
-
-
-def get_sentinel_user():
-    return get_user_model().objects.get_or_create(username="deleted")[0]
 
 
 class Task(models.Model):
@@ -116,8 +103,8 @@ class Task(models.Model):
 
     def now_and_due_date_diff(self):
         today = date.today()
-        date_dif = self.due_date - today
-        return date_dif.days
+        date_diff = self.due_date - today
+        return date_diff.days
 
     def create_subtask(self, **data):
         subtask = Subtask(task=self, **data)

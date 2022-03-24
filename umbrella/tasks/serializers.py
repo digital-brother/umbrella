@@ -61,6 +61,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "comments",
         ]
 
+    @transaction.atomic
     def create(self, validated_data):
         subtasks = validated_data.pop("subtasks", [])
         task = Task.objects.create_task(**validated_data)
