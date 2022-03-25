@@ -24,7 +24,7 @@ class TaskManager(models.Manager):
         task = self.model(**data)
         task.full_clean()
         task.save()
-        task.assignees.set(assignees)
+        task.assign(assignees)
 
         return task
 
@@ -39,8 +39,12 @@ class Task(models.Model):
         "reminder_number",
         "reminder_period",
         "reminder_before_or_after",
-        "repeats",
-        "until",
+        "reminder_repeats",
+        "reminder_until",
+    ]
+
+    M2M_FIELDS = [
+        "assignees"
     ]
 
     # Common data
@@ -55,14 +59,12 @@ class Task(models.Model):
     )
     notes = models.TextField(blank=True)
 
-    # Contract info
     contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
     # TODO: Add Clause Types and convert current field to ChoiceField
-    clause_type = models.TextField()
-    business_intelligence_type = models.TextField()
-    link_to_text = models.TextField()
+    contract_clause_type = models.TextField()
+    contract_business_intelligence_type = models.TextField()
+    link_to_contract_text = models.TextField()
 
-    # Reminder
     reminder_number = models.PositiveIntegerField(default=1)
     reminder_period = models.CharField(
         max_length=32, choices=PeriodChoices.choices, default=PeriodChoices.DAYS
@@ -70,10 +72,10 @@ class Task(models.Model):
     reminder_before_or_after = models.CharField(
         max_length=32, choices=BeforeAfterChoices.choices, default=BeforeAfterChoices.BEFORE
     )
-    repeats = models.CharField(
+    reminder_repeats = models.CharField(
         max_length=32, choices=RepeatsChoices.choices, default=RepeatsChoices.NEVER
     )
-    until = models.DateField(null=True, blank=True)
+    reminder_until = models.DateField(null=True, blank=True)
 
     objects = TaskManager()
 
@@ -113,11 +115,22 @@ class Task(models.Model):
 
         return subtask
 
+    def assign(self, assignees):
+        self.assignees.set(assignees)
+
     def update(self, **kwargs):
+        m2m_fields = []
         for name, value in kwargs.items():
             if name not in Task.EDITABLE_FIELDS:
                 raise ValidationError(f"Field {name} is not allowed for update")
-            setattr(self, name, value)
+            if name in Task.M2M_FIELDS:
+                m2m_fields.append((name, value))
+            else:
+                setattr(self, name, value)
+
+        for name, value in m2m_fields:
+            field = getattr(self, name)
+            field.set(value)
 
         self.full_clean()
         self.save()

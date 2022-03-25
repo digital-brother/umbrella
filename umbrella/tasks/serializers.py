@@ -43,9 +43,9 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "contract",
-            "clause_type",
-            "business_intelligence_type",
-            "link_to_text",
+            "contract_clause_type",
+            "contract_business_intelligence_type",
+            "link_to_contract_text",
             "title",
             "assignees",
             "due_date",
@@ -55,8 +55,8 @@ class TaskSerializer(serializers.ModelSerializer):
             "reminder_number",
             "reminder_period",
             "reminder_before_or_after",
-            "repeats",
-            "until",
+            "reminder_repeats",
+            "reminder_until",
             "subtasks",
             "comments",
         ]
@@ -81,11 +81,11 @@ class TaskUpdateSerializer(TaskSerializer):
     @transaction.atomic
     def update(self, instance, validated_data):
         subtasks = validated_data.pop("subtasks", None)
-        updated_task = Task.update(instance, **validated_data)
+        updated_task = instance.update(**validated_data)
         replace_subtasks = subtasks or subtasks == []
         if replace_subtasks:
-            old_checklists = Subtask.objects.filter(task=instance)
-            old_checklists.delete()
+            old_subtasks = Subtask.objects.filter(task=instance)
+            old_subtasks.delete()
             for item_data in subtasks:
                 Task.create_subtask(instance, **item_data)
 
