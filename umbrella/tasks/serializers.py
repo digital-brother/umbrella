@@ -87,6 +87,6 @@ class TaskUpdateSerializer(TaskSerializer):
             old_subtasks = Subtask.objects.filter(task=instance)
             old_subtasks.delete()
             for item_data in subtasks:
-                Task.create_subtask(instance, **item_data)
+                updated_task.create_subtask(instance, **item_data)
 
         return updated_task
