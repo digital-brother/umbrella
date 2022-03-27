@@ -60,6 +60,10 @@ class GetAddFilePresignedUrlView(CreateAPIView):
         self.perform_create(serializer)
         return Response(response)
 
+    def perform_create(self, serializer):
+        user_groups = self.request.user.groups.all()
+        serializer.save(groups=user_groups)
+
 
 class UploadsView(ListAPIView):
     queryset = Lease.objects.all()
