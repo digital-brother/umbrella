@@ -2,7 +2,6 @@ from django.db import transaction
 from rest_framework import serializers
 
 from umbrella.tasks.models import Task, Subtask, Comment
-from umbrella.users.serializers import UserSerializer
 
 
 class SubtaskSerializer(serializers.ModelSerializer):
@@ -37,12 +36,14 @@ class TaskCommentSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     comments = TaskCommentSerializer(many=True, read_only=True)
     subtasks = SubtaskSerializer(many=True, required=False)
+    contract_file_name = serializers.CharField(source="contract.file_name", read_only=True)
 
     class Meta:
         model = Task
         fields = [
             "id",
             "contract",
+            "contract_file_name",
             "contract_clause_type",
             "contract_business_intelligence_type",
             "link_to_contract_text",
