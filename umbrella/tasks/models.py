@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -119,18 +119,10 @@ class Task(models.Model):
         self.assignees.set(assignees)
 
     def update(self, **kwargs):
-        m2m_fields = []
         for name, value in kwargs.items():
             if name not in Task.EDITABLE_FIELDS:
                 raise ValidationError(f"Field {name} is not allowed for update")
-            if name in Task.M2M_FIELDS:
-                m2m_fields.append((name, value))
-            else:
-                setattr(self, name, value)
-
-        for name, value in m2m_fields:
-            field = getattr(self, name)
-            field.set(value)
+            setattr(self, name, value)
 
         self.full_clean()
         self.save()

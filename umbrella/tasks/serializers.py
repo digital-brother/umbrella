@@ -82,7 +82,8 @@ class TaskUpdateSerializer(TaskSerializer):
     @transaction.atomic
     def update(self, instance, validated_data):
         subtasks = validated_data.pop("subtasks", None)
-        updated_task = instance.update(**validated_data)
+        updated_task = super().update(instance, validated_data)
+
         replace_subtasks = subtasks or subtasks == []
         if replace_subtasks:
             old_subtasks = Subtask.objects.filter(task=instance)

@@ -99,13 +99,14 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
         # relationships as being a special case. During updates we already
         # have an instance pk for the relationships to be associated with.
         m2m_fields = []
+        data = {}
         for attr, value in validated_data.items():
             if attr in info.relations and info.relations[attr].to_many:
                 m2m_fields.append((attr, value))
             else:
-                setattr(instance, attr, value)
+                data[attr] = value
 
-        instance.save()
+        instance.update(**data)
 
         # Note that many-to-many fields are set after updating instance.
         # Setting m2m fields triggers signals which could potentially change
