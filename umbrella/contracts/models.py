@@ -3,6 +3,7 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
@@ -47,6 +48,7 @@ class Lease(models.Model):
     textract_done = models.BooleanField(blank=False, null=False, default=False)
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
+    groups = models.ManyToManyField(Group, blank=True, related_name='leases')
 
     objects = LeaseManager()
 

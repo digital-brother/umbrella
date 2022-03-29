@@ -3,9 +3,10 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
+from rest_framework import filters
 from rest_framework.exceptions import APIException
 from rest_framework.generics import CreateAPIView
-from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Lease
@@ -60,7 +61,22 @@ class GetAddFilePresignedUrlView(CreateAPIView):
         self.perform_create(serializer)
         return Response(response)
 
+    def perform_create(self, serializer):
+        user_groups = self.request.user.groups.all()
+        serializer.save(groups=user_groups)
+
+
+class GroupFilterBackend(filters.BaseFilterBackend):
+    """
+    Filter that only allows users to see objects related to their group
+    """
+
+    def filter_queryset(self, request, queryset, view):
+        user_groups = request.user.groups.all()
+        return queryset.filter(groups__in=user_groups)
+
 
 class UploadsView(ListAPIView):
     queryset = Lease.objects.all()
     serializer_class = UploadsSerializer
+    filter_backends = [GroupFilterBackend]

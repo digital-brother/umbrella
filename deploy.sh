@@ -1,5 +1,5 @@
- #!/bin/bash
+#!/bin/bash
 cd /home/ubuntu/umbrella
 git fetch
-git reset --hard origin/production
-docker-compose -f production.yml up --build -d --remove-orphans
+git reset --hard origin/$1
+docker-compose -f $1.yml up --build -d --remove-orphans
