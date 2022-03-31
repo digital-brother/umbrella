@@ -43,10 +43,6 @@ class Task(models.Model):
         "reminder_until",
     ]
 
-    M2M_FIELDS = [
-        "assignees"
-    ]
-
     # Common data
     title = models.CharField(max_length=500, validators=[MinLengthValidator(5)])
     assignees = models.ManyToManyField(User, related_name="tasks", blank=True)
