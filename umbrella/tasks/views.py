@@ -1,16 +1,36 @@
+import django_filters
+from django.db.models import QuerySet
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
+from umbrella.tasks.choices import StatusChoices
 from umbrella.tasks.models import Task, Comment
 from umbrella.tasks.serializers import TaskUpdateSerializer, TaskCommentSerializer, TaskSerializer
+
+
+class CustomOrderingFilter(django_filters.OrderingFilter):
+    def filter(self, qs, value):
+        # OrderingFilter is CSV-based, so `value` is a list
+        if any(v in ['status', '-status'] for v in value):
+            new_qs = QuerySet()
+            statuses = [x for x in StatusChoices.values]
+            for status in statuses:
+                ids_list = []
+                for obj in qs:
+                    if obj.status == status:
+                        ids_list.append(obj.id)
+
+            return super().filter(qs, value)
+
+        return super().filter(qs, value)
 
 
 class TaskFilter(filters.FilterSet):
     assignees__id = filters.CharFilter(lookup_expr="icontains")
 
-    ordering = filters.OrderingFilter(
+    ordering = CustomOrderingFilter(
         # tuple-mapping retains order
         fields=(
             ('title', 'title'),
@@ -18,7 +38,7 @@ class TaskFilter(filters.FilterSet):
             ('due_date', 'due_date'),
             ('contract__file_name', 'contract'),
             ('progress', 'progress'),
-            # ('status', 'status'), property fields doesn't work for filtering
+            # ('status', 'status'),
         )
     )
 
