@@ -1,18 +1,15 @@
 from rest_framework import serializers
 
 from umbrella.contracts.models import Lease
-from umbrella.core.serializers import BusinessLogicModelSerializer
+from umbrella.core.serializers import CustomModelSerializer
 
 
-class GetAddFilePresignedUrlSerializer(BusinessLogicModelSerializer):
+class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Lease
         fields = ('file_name', 'file_size', 'file_hash', 'created_by')
-
-    def perform_create_business_logic(self, **validated_data):
-        return Lease.create(**validated_data)
 
     def validate(self, attrs):
         """

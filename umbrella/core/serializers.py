@@ -5,19 +5,20 @@ from rest_framework.serializers import raise_errors_on_nested_writes
 from rest_framework.utils import model_meta
 
 
-class BusinessLogicModelSerializer(serializers.ModelSerializer):
+class CustomModelSerializer(serializers.ModelSerializer):
     """
     Updated serializer create to call business logic
     https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
     """
 
-    def perform_create_business_logic(self, **validated_data):
-        msg = 'Derived class should implement perform_create_business_logic() method'
-        raise NotImplementedError(msg)
+    def create_instance(self, **validated_data):
+        ModelClass = self.Meta.model
+        instance = ModelClass.create(**validated_data)
+        return instance
 
-    def perform_update_business_logic(self, instance, **validated_data):
-        msg = 'Derived class should implement perform_update_business_logic() method'
-        raise NotImplementedError(msg)
+    def update_instance(self, instance, **validated_data):
+        instance.update(**validated_data)
+        return instance
 
     # Default `create` and `update` behavior...
     def create(self, validated_data):
@@ -42,7 +43,7 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
             # The only updated place in ModelSerializer.create
             # ===============================================================
             # instance = ModelClass._default_manager.create(**validated_data)
-            instance = self.perform_create_business_logic(**validated_data)
+            instance = self.create_instance(**validated_data)
             # ===============================================================
         except TypeError:
             tb = traceback.format_exc()
@@ -99,7 +100,7 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
             else:
                 data[attr] = value
 
-        instance.update(**data)
+        self.update_instance(instance, **data)
         # =============================================================
 
         # Note that many-to-many fields are set after updating instance.
