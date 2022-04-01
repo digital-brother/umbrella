@@ -69,8 +69,7 @@ class Task(UUIDModel):
         ordering = ["-created_at"]
 
     def save(self, *args, **kwargs):
-        current_status = self.get_status()
-        self.status = current_status
+        self.status = self.get_status()
         super().save(*args, **kwargs)
 
     @transaction.atomic
