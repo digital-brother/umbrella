@@ -26,25 +26,6 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
         """
         Updated serializer create to call business logic
         https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
-
-        We have a bit of extra checking around this in order to provide
-        descriptive messages when something goes wrong, but this method is
-        essentially just:
-
-            return ExampleModel.objects.create(**validated_data)
-
-        If there are many to many fields present on the instance then they
-        cannot be set until the model is instantiated, in which case the
-        implementation is like so:
-
-            example_relationship = validated_data.pop('example_relationship')
-            instance = ExampleModel.objects.create(**validated_data)
-            instance.example_relationship = example_relationship
-            return instance
-
-        The default implementation also does not handle nested relationships.
-        If you want to support writable nested relationships you'll need
-        to write an explicit `.create()` method.
         """
         raise_errors_on_nested_writes('create', self, validated_data)
 
@@ -60,8 +41,11 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
                 many_to_many[field_name] = validated_data.pop(field_name)
 
         try:
+            # The only updated place in ModelSerializer.create
+            # ===============================================================
             # instance = ModelClass._default_manager.create(**validated_data)
             instance = self.perform_create_business_logic(**validated_data)
+            # ===============================================================
         except TypeError:
             tb = traceback.format_exc()
             msg = (
@@ -99,6 +83,17 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
         # relationships as being a special case. During updates we already
         # have an instance pk for the relationships to be associated with.
         m2m_fields = []
+
+        # The only updated place in ModelSerializer.create
+        # =============================================================
+        # for attr, value in validated_data.items():
+        #     if attr in info.relations and info.relations[attr].to_many:
+        #         m2m_fields.append((attr, value))
+        #     else:
+        #         setattr(instance, attr, value)
+        #
+        # instance.save()
+        # =============================================================
         data = {}
         for attr, value in validated_data.items():
             if attr in info.relations and info.relations[attr].to_many:
@@ -107,6 +102,7 @@ class BusinessLogicModelSerializer(serializers.ModelSerializer):
                 data[attr] = value
 
         instance.update(**data)
+        # =============================================================
 
         # Note that many-to-many fields are set after updating instance.
         # Setting m2m fields triggers signals which could potentially change
