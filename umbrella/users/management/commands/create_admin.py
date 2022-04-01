@@ -25,10 +25,6 @@ class Command(BaseCommand):
             raise CommandError(error_msg)
 
         admin_user = User.objects.create_superuser(username=USERNAME, email=EMAIL, password=PASSWORD)
-        print(f"Created user '{USERNAME}' with email '{EMAIL}'.")
-
         group = Group.objects.create(name=GROUP)
-        print(f"Created group '{GROUP}'.")
-
         admin_user.groups.set([group])
-        print(f"Added user '{USERNAME}' to group '{GROUP}'.")
+        print('Admin created successfully.')
