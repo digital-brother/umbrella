@@ -73,8 +73,8 @@ class Task(UUIDModel):
         self.status = current_status
         super().save(*args, **kwargs)
 
-    @transaction.atomic()
-    def create_task(**kwargs):
+    @transaction.atomic
+    def create(**kwargs):
         assignees = kwargs.pop("assignees", [])
         task = Task(**kwargs)
         task.full_clean()
