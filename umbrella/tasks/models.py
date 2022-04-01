@@ -1,12 +1,11 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
-from django.db import models, transaction
-from model_utils.models import UUIDModel
+from django.db import models
 
 from umbrella.contracts.models import Lease
+from umbrella.core.models import CustomModel
 from umbrella.tasks.choices import (
     ProgressChoices,
     RepeatsChoices,
@@ -18,7 +17,7 @@ from umbrella.tasks.choices import (
 User = get_user_model()
 
 
-class Task(UUIDModel):
+class Task(CustomModel):
     EDITABLE_FIELDS = [
         "title",
         "assignees",
@@ -72,23 +71,6 @@ class Task(UUIDModel):
         self.status = self.get_status()
         super().save(*args, **kwargs)
 
-    @transaction.atomic
-    def create(**kwargs):
-        task = Task(**kwargs)
-        task.full_clean()
-        task.save()
-        return task
-
-    def update(self, **kwargs):
-        for name, value in kwargs.items():
-            if name not in Task.EDITABLE_FIELDS:
-                raise ValidationError(f"Field {name} is not allowed for update")
-            setattr(self, name, value)
-
-        self.full_clean()
-        self.save()
-        return self
-
     def get_status(self):
         if not self.due_date:
             return StatusChoices.OVERDUE
@@ -125,13 +107,13 @@ class Task(UUIDModel):
         self.assignees.set(assignees)
 
 
-class Subtask(UUIDModel):
+class Subtask(CustomModel):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="subtasks")
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
 
 
-class Comment(UUIDModel):
+class Comment(CustomModel):
     message = models.TextField()
     created_at = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
