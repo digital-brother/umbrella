@@ -12,7 +12,7 @@ class GetAddFilePresignedUrlSerializer(BusinessLogicModelSerializer):
         fields = ('file_name', 'file_size', 'file_hash', 'created_by')
 
     def perform_create_business_logic(self, **validated_data):
-        return Lease.objects.create_lease(**validated_data)
+        return Lease.create(**validated_data)
 
     def validate(self, attrs):
         """

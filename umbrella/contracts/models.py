@@ -10,20 +10,6 @@ from rest_framework.exceptions import ValidationError
 User = get_user_model()
 
 
-class LeaseManager(models.Manager):
-    def create_lease(self, file_name, **data):
-        """
-        Typical Django business logic placement
-        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
-        """
-        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
-        lease = self.model(file_name=file_name, **data)
-        lease.full_clean()
-
-        lease.save()
-        return lease
-
-
 # TODO: Rename to Contract
 class Lease(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -50,13 +36,24 @@ class Lease(models.Model):
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
     groups = models.ManyToManyField(Group, blank=True, related_name='leases')
 
-    objects = LeaseManager()
-
     class Meta:
         db_table = 'lease'
 
     def __str__(self):
         return self.file_name
+
+    @classmethod
+    def create(cls, file_name, **data):
+        """
+        Typical Django business logic placement
+        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
+        """
+        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
+        lease = cls(file_name=file_name, **data)
+        lease.full_clean()
+
+        lease.save()
+        return lease
 
     def clean(self):
         errors = {}
