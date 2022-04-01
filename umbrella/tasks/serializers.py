@@ -1,4 +1,5 @@
 from django.db import transaction
+from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
 
 from umbrella.tasks.models import Task, Subtask, Comment
@@ -33,7 +34,7 @@ class TaskCommentSerializer(serializers.ModelSerializer):
         return "Deleted"
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskSerializer(WritableNestedModelSerializer):
     comments = TaskCommentSerializer(many=True, read_only=True)
     subtasks = SubtaskSerializer(many=True, required=False)
     contract_file_name = serializers.CharField(source="contract.file_name", read_only=True)
@@ -61,14 +62,6 @@ class TaskSerializer(serializers.ModelSerializer):
             "subtasks",
             "comments",
         ]
-
-    @transaction.atomic
-    def create(self, validated_data):
-        subtasks = validated_data.pop("subtasks", [])
-        task = Task.create(**validated_data)
-        for item_data in subtasks:
-            Task.create_subtask(task, **item_data)
-        return task
 
 
 class TaskUpdateSerializer(TaskSerializer):

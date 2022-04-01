@@ -74,12 +74,9 @@ class Task(UUIDModel):
 
     @transaction.atomic
     def create(**kwargs):
-        assignees = kwargs.pop("assignees", [])
         task = Task(**kwargs)
         task.full_clean()
         task.save()
-        task.assign(assignees)
-
         return task
 
     def update(self, **kwargs):
