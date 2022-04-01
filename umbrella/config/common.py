@@ -3,7 +3,6 @@ from os.path import join
 from pathlib import Path
 
 import environ
-from distutils.util import strtobool
 from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,12 +11,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 env = environ.Env()
 
-DJANGO_READ_DOT_ENV_FILES = env.bool("DJANGO_READ_DOT_ENV_FILES", default=False)
-if DJANGO_READ_DOT_ENV_FILES:
-    # OS environment variables take precedence over variables from .env
-    DJANGO_DOT_ENV_FILE_PATHS = env.list('DJANGO_DOT_ENV_FILE_PATHS', default=[])
-    for dot_env_file_path in DJANGO_DOT_ENV_FILE_PATHS:
-        env.read_env(str(ROOT_DIR / dot_env_file_path))
+# OS environment variables take precedence over variables from .env
+DOT_ENV_FILE_PATHS = env.list('DJANGO_DOT_ENV_FILE_PATHS', default=[])
+for dot_env_file_path in DOT_ENV_FILE_PATHS:
+    env.read_env(str(ROOT_DIR / dot_env_file_path))
 
 
 class Common(Configuration):
