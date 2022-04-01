@@ -96,16 +96,6 @@ class Task(CustomModel):
         date_diff = self.due_date - today
         return date_diff.days
 
-    def create_subtask(self, **data):
-        subtask = Subtask(task=self, **data)
-        subtask.full_clean()
-        subtask.save()
-
-        return subtask
-
-    def assign(self, assignees):
-        self.assignees.set(assignees)
-
 
 class Subtask(CustomModel):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="subtasks")

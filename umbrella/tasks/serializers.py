@@ -1,4 +1,3 @@
-from django.db import transaction
 from rest_framework import serializers
 
 from umbrella.core.serializers import CustomWritableNestedModelSerializer, CustomModelSerializer
@@ -71,17 +70,3 @@ class TaskUpdateSerializer(TaskSerializer):
     class Meta:
         model = Task
         fields = Task.EDITABLE_FIELDS + ["subtasks", "comments"]
-
-    @transaction.atomic
-    def update(self, instance, validated_data):
-        subtasks = validated_data.pop("subtasks", None)
-        updated_task = super().update(instance, validated_data)
-
-        replace_subtasks = subtasks or subtasks == []
-        if replace_subtasks:
-            old_subtasks = Subtask.objects.filter(task=instance)
-            old_subtasks.delete()
-            for item_data in subtasks:
-                updated_task.create_subtask(**item_data)
-
-        return updated_task
