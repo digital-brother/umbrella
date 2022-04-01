@@ -1,5 +1,6 @@
 import traceback
 
+from drf_writable_nested import NestedCreateMixin, NestedUpdateMixin
 from rest_framework import serializers
 from rest_framework.serializers import raise_errors_on_nested_writes
 from rest_framework.utils import model_meta
@@ -111,3 +112,7 @@ class CustomModelSerializer(serializers.ModelSerializer):
             field.set(value)
 
         return instance
+
+
+class CustomWritableNestedModelSerializer(NestedCreateMixin, NestedUpdateMixin, CustomModelSerializer):
+    pass
