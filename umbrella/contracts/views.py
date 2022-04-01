@@ -76,7 +76,7 @@ class GroupFilterBackend(filters.BaseFilterBackend):
         return queryset.filter(groups__in=user_groups)
 
 
-class UploadsView(ListAPIView):
+class LeaseListView(ListAPIView):
     queryset = Lease.objects.all()
     serializer_class = UploadsSerializer
     filter_backends = [GroupFilterBackend]
