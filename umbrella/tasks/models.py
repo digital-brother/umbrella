@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.db import models, transaction
+from model_utils.models import UUIDModel
 
 from umbrella.contracts.models import Lease
 from umbrella.tasks.choices import (
@@ -17,19 +18,7 @@ from umbrella.tasks.choices import (
 User = get_user_model()
 
 
-class TaskManager(models.Manager):
-    @transaction.atomic
-    def create_task(self, **data):
-        assignees = data.pop("assignees", [])
-        task = self.model(**data)
-        task.full_clean()
-        task.save()
-        task.assign(assignees)
-
-        return task
-
-
-class Task(models.Model):
+class Task(UUIDModel):
     EDITABLE_FIELDS = [
         "title",
         "assignees",
@@ -54,6 +43,9 @@ class Task(models.Model):
         default=ProgressChoices.NOT_STARTED,
     )
     notes = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=32, choices=StatusChoices.choices, default=StatusChoices.OVERDUE
+    )
 
     contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
     # TODO: Add Clause Types and convert current field to ChoiceField
@@ -73,13 +65,35 @@ class Task(models.Model):
     )
     reminder_until = models.DateField(null=True, blank=True)
 
-    objects = TaskManager()
-
     class Meta:
         ordering = ["-created_at"]
 
-    @property
-    def status(self):
+    def save(self, *args, **kwargs):
+        current_status = self.get_status()
+        self.status = current_status
+        super().save(*args, **kwargs)
+
+    @transaction.atomic()
+    def create_task(**kwargs):
+        assignees = kwargs.pop("assignees", [])
+        task = Task(**kwargs)
+        task.full_clean()
+        task.save()
+        task.assign(assignees)
+
+        return task
+
+    def update(self, **kwargs):
+        for name, value in kwargs.items():
+            if name not in Task.EDITABLE_FIELDS:
+                raise ValidationError(f"Field {name} is not allowed for update")
+            setattr(self, name, value)
+
+        self.full_clean()
+        self.save()
+        return self
+
+    def get_status(self):
         if not self.due_date:
             return StatusChoices.OVERDUE
         elif not self.due_date and self.progress == ProgressChoices.COMPLETED:
@@ -114,24 +128,14 @@ class Task(models.Model):
     def assign(self, assignees):
         self.assignees.set(assignees)
 
-    def update(self, **kwargs):
-        for name, value in kwargs.items():
-            if name not in Task.EDITABLE_FIELDS:
-                raise ValidationError(f"Field {name} is not allowed for update")
-            setattr(self, name, value)
 
-        self.full_clean()
-        self.save()
-        return self
-
-
-class Subtask(models.Model):
+class Subtask(UUIDModel):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="subtasks")
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
 
 
-class Comment(models.Model):
+class Comment(UUIDModel):
     message = models.TextField()
     created_at = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
