@@ -22,7 +22,7 @@ class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
         return attrs
 
 
-class UploadsSerializer(serializers.ModelSerializer):
+class LeaseSerializer(CustomModelSerializer):
     class Meta:
         model = Lease
-        fields = ['file_name', 'created_by', 'created_on', 'file_size', 'status']
+        fields = ['uuid', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
