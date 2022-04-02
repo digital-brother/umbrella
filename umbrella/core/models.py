@@ -1,16 +1,8 @@
-import uuid as uuid
-
 from django.core.exceptions import ValidationError
 from django.db import models
-from model_utils.models import UUIDModel
 
 
-class CustomModel(UUIDModel):
-    uuid = models.UUIDField(
-        unique=True,
-        default=uuid.uuid4,
-        editable=False)
-
+class CustomModel(models.Model):
     class Meta:
         abstract = True
 

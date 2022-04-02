@@ -9,7 +9,7 @@ class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
 
     class Meta:
         model = Lease
-        fields = ('file_name', 'file_size', 'file_hash', 'created_by')
+        fields = ('id', 'file_name', 'file_size', 'file_hash', 'created_by')
 
     def validate(self, attrs):
         """
@@ -25,4 +25,4 @@ class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
 class LeaseSerializer(CustomModelSerializer):
     class Meta:
         model = Lease
-        fields = ['uuid', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
+        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']

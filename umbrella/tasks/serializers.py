@@ -8,6 +8,7 @@ class SubtaskSerializer(CustomModelSerializer):
     class Meta:
         model = Subtask
         fields = [
+            "id",
             "title",
             "is_done",
         ]
@@ -20,6 +21,7 @@ class TaskCommentSerializer(CustomModelSerializer):
     class Meta:
         model = Comment
         fields = [
+            "id",
             "created_by",
             "message",
             "created_at",
