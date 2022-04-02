@@ -7,12 +7,13 @@ from django.contrib.auth.models import Group
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
+from umbrella.core.models import CustomModel
+
 User = get_user_model()
 
 
 # TODO: Rename to Contract
-class Lease(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class Lease(CustomModel):
     file_name = models.CharField(max_length=512)
     pdf = models.BinaryField(blank=True, null=True)
     txt = models.TextField(blank=True, null=True)
@@ -49,10 +50,7 @@ class Lease(models.Model):
         (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
         """
         data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
-        lease = cls(file_name=file_name, **data)
-        lease.full_clean()
-
-        lease.save()
+        lease = super().create(file_name=file_name, **data)
         return lease
 
     def clean(self):

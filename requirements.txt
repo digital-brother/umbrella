@@ -8,6 +8,7 @@ django-cors-headers==3.11.0
 
 # Utils
 django-environ==0.8.1
+uuid==1.30
 
 # For the persistence stores
 psycopg2-binary==2.9.3
@@ -36,7 +37,7 @@ factory-boy==3.2.1
 pytest==7.0.1
 pytest-sugar==0.9.4
 pytest-django==4.5.2
-pytest-factoryboy-2.1.0
+pytest-factoryboy==2.1.0
 coverage==6.2
 
 # Static and Media Storage
