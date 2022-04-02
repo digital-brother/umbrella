@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from umbrella.users.models import User
 
@@ -22,13 +22,10 @@ class Command(BaseCommand):
         if admin_exists:
             error_msg += f"User '{USERNAME}' already exists. "
         if error_msg:
-            raise CommandError(error_msg)
+            print(error_msg)
+            return
 
         admin_user = User.objects.create_superuser(username=USERNAME, email=EMAIL, password=PASSWORD)
-        print(f"Created user '{USERNAME}' with email '{EMAIL}'.")
-
         group = Group.objects.create(name=GROUP)
-        print(f"Created group '{GROUP}'.")
-
         admin_user.groups.set([group])
-        print(f"Added user '{USERNAME}' to group '{GROUP}'.")
+        print('Admin created successfully.')

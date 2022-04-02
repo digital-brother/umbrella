@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 from umbrella.contracts.models import Lease
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer
-from umbrella.contracts.serializers import UploadsSerializer
+from umbrella.contracts.serializers import LeaseSerializer
 
 
 def create_presigned_post(bucket_name, object_name,
@@ -76,7 +76,7 @@ class GroupFilterBackend(filters.BaseFilterBackend):
         return queryset.filter(groups__in=user_groups)
 
 
-class UploadsView(ListAPIView):
+class LeaseListView(ListAPIView):
     queryset = Lease.objects.all()
-    serializer_class = UploadsSerializer
+    serializer_class = LeaseSerializer
     filter_backends = [GroupFilterBackend]

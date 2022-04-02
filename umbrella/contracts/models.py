@@ -7,26 +7,13 @@ from django.contrib.auth.models import Group
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
+from umbrella.core.models import CustomModel
+
 User = get_user_model()
 
 
-class LeaseManager(models.Manager):
-    def create_lease(self, file_name, **data):
-        """
-        Typical Django business logic placement
-        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
-        """
-        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
-        lease = self.model(file_name=file_name, **data)
-        lease.full_clean()
-
-        lease.save()
-        return lease
-
-
 # TODO: Rename to Contract
-class Lease(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class Lease(CustomModel):
     file_name = models.CharField(max_length=512)
     pdf = models.BinaryField(blank=True, null=True)
     txt = models.TextField(blank=True, null=True)
@@ -50,13 +37,21 @@ class Lease(models.Model):
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
     groups = models.ManyToManyField(Group, blank=True, related_name='leases')
 
-    objects = LeaseManager()
-
     class Meta:
         db_table = 'lease'
 
     def __str__(self):
         return self.file_name
+
+    @classmethod
+    def create(cls, file_name, **data):
+        """
+        Typical Django business logic placement
+        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
+        """
+        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
+        lease = super().create(file_name=file_name, **data)
+        return lease
 
     def clean(self):
         errors = {}

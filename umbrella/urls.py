@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
     path('api/v1/contracts/', include('umbrella.contracts.urls')),
+    path('api/v1/', include('umbrella.tasks.urls')),
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
