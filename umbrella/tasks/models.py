@@ -67,6 +67,9 @@ class Task(CustomModel):
     class Meta:
         ordering = ["-created_at"]
 
+    def __str__(self):
+        return self.title
+
     def save(self, *args, **kwargs):
         self.status = self.get_status()
         super().save(*args, **kwargs)
@@ -102,9 +105,15 @@ class Subtask(CustomModel):
     title = models.CharField(max_length=128)
     is_done = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.title
+
 
 class Comment(CustomModel):
     message = models.TextField()
     created_at = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")
+
+    def __str__(self):
+        return self.message
