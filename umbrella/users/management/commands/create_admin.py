@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
+from rest_framework.authtoken.models import Token
 
 from umbrella.users.models import User
 
@@ -7,6 +8,7 @@ USERNAME = 'admin'
 EMAIL = 'admin@gmail.com'
 PASSWORD = 'admin'
 GROUP = 'no_group'
+TOKEN = '2e8c259163886711152ce41256fbedc1fa125569'
 
 
 class Command(BaseCommand):
@@ -28,4 +30,5 @@ class Command(BaseCommand):
         admin_user = User.objects.create_superuser(username=USERNAME, email=EMAIL, password=PASSWORD)
         group = Group.objects.create(name=GROUP)
         admin_user.groups.set([group])
+        Token.objects.filter(user=admin_user).update(key=TOKEN)
         print('Admin created successfully.')
