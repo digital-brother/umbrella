@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -14,12 +13,9 @@ class CustomModel(models.Model):
         obj.save()
         return obj
 
-    def update(self, **kwargs):
-        if hasattr(self, 'EDITABLE_FIELDS'):
-            for name, value in kwargs.items():
-                if name not in self.EDITABLE_FIELDS:
-                    raise ValidationError(f"Field {name} is not allowed for update")
-                setattr(self, name, value)
+    def update(self, **data):
+        for name, value in data.items():
+            setattr(self, name, value)
 
         self.full_clean()
         self.save()

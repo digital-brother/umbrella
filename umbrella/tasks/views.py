@@ -11,22 +11,14 @@ class TaskFilter(filters.FilterSet):
     assignees__id = filters.CharFilter(lookup_expr="icontains")
 
     ordering = filters.OrderingFilter(
-        # tuple-mapping retains order
-        fields=(
-            ('title', 'title'),
-            ('contract_clause_type', 'clause'),
-            ('due_date', 'due_date'),
-            ('contract__file_name', 'contract'),
-            ('progress', 'progress'),
-            ('status', 'status'),
-        )
+        fields=['title', 'contract_clause_type', 'due_date', 'contract__file_name', 'progress', 'status']
     )
 
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     permission_classes = [IsAuthenticated]
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = [filters.DjangoFilterBackend]
     filterset_class = TaskFilter
 
     def get_serializer_class(self):
