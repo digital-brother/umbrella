@@ -1,7 +1,7 @@
-from django.db import models
+from model_utils.models import UUIDModel
 
 
-class CustomModel(models.Model):
+class CustomModel(UUIDModel):
     class Meta:
         abstract = True
 

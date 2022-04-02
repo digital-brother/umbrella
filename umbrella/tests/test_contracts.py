@@ -14,7 +14,8 @@ def test_lease_list(client, lease):
     response = client.get(url, format='json')
     assert response.status_code == 200
     assert response.data['count']
-    assert response.data['results'][0]['id'] == lease.id
+    response_lease_data = response.data['results'][0]
+    assert response_lease_data['id'] == str(lease.id)
 
 
 class LeaseFactory(DjangoModelFactory):
