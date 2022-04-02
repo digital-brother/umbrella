@@ -84,7 +84,7 @@ class CustomModelSerializer(serializers.ModelSerializer):
         # have an instance pk for the relationships to be associated with.
         m2m_fields = []
 
-        # The only updated place in ModelSerializer.create
+        # The only updated place in ModelSerializer.update
         # =============================================================
         # for attr, value in validated_data.items():
         #     if attr in info.relations and info.relations[attr].to_many:
