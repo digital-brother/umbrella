@@ -1,0 +1,2 @@
+class UmbrellaException(Exception):
+    pass
