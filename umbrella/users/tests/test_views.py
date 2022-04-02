@@ -5,8 +5,8 @@ from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from umbrella.users.models import User
 from .factories import UserFactory
-from ..models import User
 
 fake = Faker()
 

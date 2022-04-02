@@ -2,8 +2,8 @@ from django.contrib.auth.hashers import check_password
 from django.forms.models import model_to_dict
 from django.test import TestCase
 
+from umbrella.users.serializers import CreateUserSerializer
 from .factories import UserFactory
-from ..serializers import CreateUserSerializer
 
 
 class TestCreateUserSerializer(TestCase):

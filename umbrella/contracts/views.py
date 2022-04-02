@@ -45,7 +45,7 @@ def create_presigned_post(bucket_name, object_name,
     return response
 
 
-class GetAddFilePresignedUrlView(CreateAPIView):
+class LeaseCreateView(CreateAPIView):
     serializer_class = GetAddFilePresignedUrlSerializer
 
     def post(self, request, *args, **kwargs):
