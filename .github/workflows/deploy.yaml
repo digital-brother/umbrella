@@ -9,9 +9,9 @@ jobs:
   test:
     uses: ./.github/workflows/test.yaml
 
-  deploy-job:
-    needs: test
+  deploy:
     name: Deploy
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - run: echo $GITHUB_REF_NAME
