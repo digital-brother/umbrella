@@ -16,7 +16,7 @@ def decode_token(encoded_access_token):
         access_token_payload = jwt.decode(encoded_access_token, options={"verify_signature": False})
         return access_token_payload
     except jwt.PyJWTError:
-        msg = f"Invalid JWT token"
+        msg = "Invalid JWT token"
         raise exceptions.AuthenticationFailed(msg)
 
 

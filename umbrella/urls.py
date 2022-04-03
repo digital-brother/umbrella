@@ -1,12 +1,12 @@
 from django.conf import settings
-from django.urls import path, re_path, include, reverse_lazy
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import path, re_path, include, reverse_lazy
 from django.views.generic.base import RedirectView
-from rest_framework.routers import DefaultRouter
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken import views
-from rest_framework.schemas import get_schema_view
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from rest_framework.routers import DefaultRouter
+
 from .users.views import UserViewSet, UserCreateViewSet
 
 router = DefaultRouter()
