@@ -1,28 +1,11 @@
-name: SSH Deploy
+name: Deploy
 
 on:
   push:
     branches: [ production, staging ]
 
 jobs:
+  test:
+    uses: ./github/workflows/test_workflow.yaml
   deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo $GITHUB_REF_NAME
-      - name: Deploy production to AWS EC2 via ssh
-        if: ${{ github.ref_name == 'production' }}
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PRODUCTION_HOST }}
-          username: ${{ secrets.PRODUCTION_USERNAME }}
-          key: ${{ secrets.PRODUCTION_PRIVATE_KEY }}
-          script: umbrella/deploy.sh ${{ github.ref_name }}
-      - name: Deploy staging to AWS EC2 via ssh
-        if: ${{ github.ref_name == 'staging' }}
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USERNAME }}
-          key: ${{ secrets.STAGING_PRIVATE_KEY }}
-          script: umbrella/deploy.sh ${{ github.ref_name }}
+    uses: ./github/workflows/deploy_workflow.yaml
