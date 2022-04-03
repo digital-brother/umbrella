@@ -9,7 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Run pytest using docker-compose
+    - name: Build compose containers
       run: |
         cp .envs/.env.local.example .envs/.env.local
+        docker-compose -f local.yml build
+    - name: Run pytest
         docker-compose -f local.yml run web pytest
+    - name: Run flake8
+        docker-compose -f local.yml run flake8
