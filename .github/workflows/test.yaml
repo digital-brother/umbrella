@@ -10,4 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run pytest using docker-compose
-      run: docker-compose -f local.yml run web pytest
+      run: |
+        cp .envs/.env.local.example .envs/.env.local
+        docker-compose -f local.yml run web pytest
