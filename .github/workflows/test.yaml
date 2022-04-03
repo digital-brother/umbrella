@@ -12,8 +12,8 @@ jobs:
     - name: Build compose containers
       run: |
         cp .envs/.env.local.example .envs/.env.local
-        docker-compose -f local.yml build
+        docker-compose -f local.yml build web postgres
     - name: Run pytest
       run: docker-compose -f local.yml run web pytest
     - name: Run flake8
-      run: docker-compose -f local.yml run flake8
+      run: docker-compose -f local.yml run web flake8
