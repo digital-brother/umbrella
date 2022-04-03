@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    uses: ./github/workflows/test_workflow
+    uses: ./github/workflows/test_workflow@develop
   deploy:
-    uses: ./github/workflows/deploy_workflow
+    uses: ./github/workflows/deploy_workflow@develop
     needs: test
