@@ -1,9 +1,9 @@
-import uuid
-
 from django.core.management.base import BaseCommand, CommandError
+from rest_framework.exceptions import ValidationError
+from rest_framework.fields import UUIDField
 
 from umbrella.contracts.utils import download_s3_folder
-from umbrella.core.exceptions import UmbrellaException
+from umbrella.core.exceptions import UmbrellaError
 
 
 class Command(BaseCommand):
@@ -14,16 +14,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         lease_uuid = options['lease_uuid']
-        self.validate_uuid(lease_uuid)
+        cleaned_lease_uuid = self.validate_uuid(lease_uuid)
+        s3_folder = str(cleaned_lease_uuid).upper()
 
         try:
-            download_s3_folder(lease_uuid)
-        except UmbrellaException as exc:
-            msg = exc.args[0]
-            raise CommandError(msg) from exc
+            download_s3_folder(s3_folder)
+        except UmbrellaError as err:
+            raise CommandError(err.detail)
 
     def validate_uuid(self, value):
         try:
-            uuid.UUID(value)
-        except ValueError:
+            cleaned_value = UUIDField().run_validation(value)
+        except ValidationError:
             raise CommandError(f"Invalid UUID '{value}'.")
+        return cleaned_value

@@ -4,14 +4,16 @@ import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
 from rest_framework import filters
-from rest_framework.exceptions import APIException
-from rest_framework.generics import CreateAPIView
+from rest_framework.exceptions import APIException, ValidationError
+from rest_framework.fields import UUIDField
+from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Lease
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer
 from umbrella.contracts.serializers import LeaseSerializer
+from umbrella.contracts.utils import download_s3_folder
 
 
 def create_presigned_post(bucket_name, object_name,
@@ -80,3 +82,18 @@ class LeaseListView(ListAPIView):
     queryset = Lease.objects.all()
     serializer_class = LeaseSerializer
     filter_backends = [GroupFilterBackend]
+
+
+class AWSLeaseProcessedWebhookView(GenericAPIView):
+    def post(self, request):
+        field_name = 'contract_uuid'
+        lease_uuid = request.data.get(field_name)
+
+        try:
+            cleaned_lease_uuid = UUIDField().run_validation(lease_uuid)
+        except ValidationError as err:
+            raise ValidationError({field_name: err.detail})
+
+        s3_folder = str(cleaned_lease_uuid).upper()
+        downloaded_files = download_s3_folder(s3_folder)
+        return Response(downloaded_files)

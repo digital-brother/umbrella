@@ -4,7 +4,7 @@ from pathlib import Path
 import boto3
 
 from umbrella.config.common import env
-from umbrella.core.exceptions import UmbrellaException
+from umbrella.core.exceptions import UmbrellaError
 
 LOCAL_ROOT = Path(env('AWS_DOWNLOADS_LOCAL_ROOT'))
 BUCKET_NAME = env('AWS_ANALYTICS_BUCKET_NAME')
@@ -16,6 +16,7 @@ def download_s3_file(aws_file):
     BUCKET.download_file(aws_file, local_file)
     # TODO: Switch from print to logging
     print(f"File '{local_file}' downloaded successfully.")
+    return local_file
 
 
 def download_s3_folder(aws_dir):
@@ -26,9 +27,12 @@ def download_s3_folder(aws_dir):
 
     aws_files = BUCKET.objects.filter(Prefix=aws_dir).all()
     if not list(aws_files):
-        raise UmbrellaException(f"No data for lease '{aws_dir}'.")
+        raise UmbrellaError(f"No data for lease '{aws_dir}'.")
 
     print(f"Downloading dir '{aws_dir}' from AWS...")
+    downloaded_files = []
     for aws_file in aws_files:
-        download_s3_file(aws_file.key)
+        downloaded_file = download_s3_file(aws_file.key)
+        downloaded_files.append(downloaded_file)
     print(f"Dir '{aws_dir}' downloaded successfully.")
+    return downloaded_files
