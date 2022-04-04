@@ -25,6 +25,6 @@ class Command(BaseCommand):
     def validate_uuid(self, value):
         try:
             cleaned_value = UUIDField().run_validation(value)
+            return cleaned_value
         except ValidationError:
             raise CommandError(f"Invalid UUID '{value}'.")
-        return cleaned_value
