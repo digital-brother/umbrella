@@ -18,7 +18,7 @@ def download_s3_file(aws_file):
     print(f"File '{local_file}' downloaded successfully.")
 
 
-def dowbload_s3_folder(aws_dir):
+def download_s3_folder(aws_dir):
     local_dir = LOCAL_ROOT / aws_dir
     shutil.rmtree(local_dir, ignore_errors=True)
     local_dir.mkdir(parents=True, exist_ok=True)

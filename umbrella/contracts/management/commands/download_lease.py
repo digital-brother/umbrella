@@ -2,7 +2,7 @@ import uuid
 
 from django.core.management.base import BaseCommand, CommandError
 
-from umbrella.contracts.utils import dowbload_s3_folder
+from umbrella.contracts.utils import download_s3_folder
 from umbrella.core.exceptions import UmbrellaException
 
 
@@ -17,7 +17,7 @@ class Command(BaseCommand):
         self.validate_uuid(lease_uuid)
 
         try:
-            dowbload_s3_folder(lease_uuid)
+            download_s3_folder(lease_uuid)
         except UmbrellaException as exc:
             msg = exc.args[0]
             raise CommandError(msg) from exc
