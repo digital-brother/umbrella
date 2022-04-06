@@ -7,7 +7,8 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 5432:5432
-  web:
+
+  web: &web
     restart: always
     env_file:
       - .envs/.env.local
@@ -25,6 +26,8 @@ services:
       - 8000:8000
     depends_on:
       - postgres
+      -
+
   keycloak:
     image: jboss/keycloak:16.1.1
     environment:
@@ -41,8 +44,26 @@ services:
       - 8080:8080
     depends_on:
       - keycloak_postgres
+
   keycloak_postgres:
     image: postgres:14.1
     environment:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
+
+  celeryworker:
+    <<: *web
+    depends_on:
+      - redis
+      - postgres
+    ports: [ ]
+    command: /start-celeryworker
+
+  flower:
+    <<: *web
+    ports:
+      - "5555:5555"
+    command: /start-flower
+
+  redis:
+    image: redis:6
