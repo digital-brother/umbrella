@@ -6,6 +6,8 @@ from celery import Celery
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 os.environ.setdefault("DJANGO_CONFIGURATION", "Local")
 
+import configurations
+configurations.setup()
 
 app = Celery('umbrella')
 

@@ -26,7 +26,6 @@ services:
       - 8000:8000
     depends_on:
       - postgres
-      -
 
   keycloak:
     image: jboss/keycloak:16.1.1
@@ -63,7 +62,7 @@ services:
     <<: *web
     ports:
       - "5555:5555"
-    command: celery 
+    command: celery
       -A config.celery_app \
       -b "${CELERY_BROKER_URL}" \
       flower \
@@ -71,3 +70,5 @@ services:
 
   redis:
     image: redis:6
+    ports:
+      - 6379:6379
