@@ -9,7 +9,9 @@ class Local(Common):
     DEBUG = True
 
     # Testing
-    INSTALLED_APPS = Common.INSTALLED_APPS
+    INSTALLED_APPS = Common.INSTALLED_APPS + ('debug_toolbar', )
+    MIDDLEWARE = Common.MIDDLEWARE + ("debug_toolbar.middleware.DebugToolbarMiddleware", )
+    INTERNAL_IPS = ["127.0.0.1"]
 
     # Mail
     EMAIL_HOST = 'localhost'
