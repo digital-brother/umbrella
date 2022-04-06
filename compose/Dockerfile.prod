@@ -11,8 +11,8 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 # install dependencies
-COPY ./requirements.txt requirements.txt
+COPY ../requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # copy project
-COPY . $APP_HOME
+COPY .. $APP_HOME

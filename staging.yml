@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: ./
-      dockerfile: Dockerfile.prod
+      dockerfile: compose/Dockerfile.prod
     command: bash -c "
       python wait_for_postgres.py &&
       ./manage.py migrate --noinput &&
