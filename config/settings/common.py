@@ -57,9 +57,9 @@ class Common(Configuration):
     )
 
     ALLOWED_HOSTS = ["*"]
-    ROOT_URLCONF = 'umbrella.urls'
+    ROOT_URLCONF = 'config.urls'
     SECRET_KEY = env("SECRET_KEY", default=None)
-    WSGI_APPLICATION = 'umbrella.wsgi.application'
+    WSGI_APPLICATION = 'config.wsgi.application'
 
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -243,3 +243,27 @@ class Common(Configuration):
 
     AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
     ALLOWED_FILE_UPLOAD_EXTENSIONS = ('.pdf', '.docx', '.doc', '.txt', '.jpeg')
+
+    # Celery
+    # ------------------------------------------------------------------------------
+    if USE_TZ:
+        # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
+        CELERY_TIMEZONE = TIME_ZONE
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
+    CELERY_BROKER_URL = "redis://redis:6379"
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
+    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
+    CELERY_ACCEPT_CONTENT = ["json"]
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-task_serializer
+    CELERY_TASK_SERIALIZER = "json"
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
+    CELERY_RESULT_SERIALIZER = "json"
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
+    # TODO: set to whatever value is adequate in your circumstances
+    CELERY_TASK_TIME_LIMIT = 5 * 60
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
+    # TODO: set to whatever value is adequate in your circumstances
+    CELERY_TASK_SOFT_TIME_LIMIT = 60
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
+    CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

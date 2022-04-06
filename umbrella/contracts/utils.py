@@ -3,7 +3,7 @@ from pathlib import Path
 
 import boto3
 
-from umbrella.config.common import env
+from config.settings.common import env
 from umbrella.core.exceptions import UmbrellaError
 
 LOCAL_ROOT = Path(env('AWS_DOWNLOADS_LOCAL_ROOT'))

@@ -57,13 +57,17 @@ services:
       - redis
       - postgres
     ports: [ ]
-    command: /start-celeryworker
+    command: celery -A config.celery_app worker -l INFO
 
   flower:
     <<: *web
     ports:
       - "5555:5555"
-    command: /start-flower
+    command: celery 
+      -A config.celery_app \
+      -b "${CELERY_BROKER_URL}" \
+      flower \
+      --basic_auth="${CELERY_FLOWER_USER}:${CELERY_FLOWER_PASSWORD}"
 
   redis:
     image: redis:6
