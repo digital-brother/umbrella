@@ -83,3 +83,14 @@ class Lease(CustomModel):
     def status(self):
         # TODO: Add status calculation
         return 'Not implemented'
+
+
+class Node(CustomModel):
+    CLAUSES_LIST = [
+        "term"
+    ]
+
+    type = models.CharField(max_length=128)
+    clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
+    lease = models.ForeignKey(Lease, on_delete=models.CASCADE, blank=True, null=True)
+    content = models.JSONField(null=True, blank=True)
