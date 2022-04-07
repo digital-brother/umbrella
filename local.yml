@@ -58,6 +58,12 @@ services:
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO
 
+  flower:
+    <<: *web
+    ports:
+      - "5555:5555"
+    command: ./compose/start-flower
+
   redis:
     image: redis:6
     ports:
