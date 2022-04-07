@@ -6,7 +6,7 @@ COPY ./requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Adds our application code to the image
-COPY compose code
+COPY . code
 WORKDIR code
 
 EXPOSE 8000
