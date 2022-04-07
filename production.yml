@@ -43,25 +43,6 @@ services:
     depends_on:
       - nginx-proxy
 
-  celeryworker:
-    <<: *web
-    depends_on:
-      - redis
-    ports: [ ]
-    command: celery -A config.celery_app worker -l INFO
-
-  flower:
-    <<: *web
-    ports:
-      - "5555:5555"
-    command: ./compose/start-flower
-
-  redis:
-    image: redis:6
-    ports:
-      - 6379:6379
-
-
 volumes:
   postgres_data:
   certs:
