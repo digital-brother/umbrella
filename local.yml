@@ -12,9 +12,7 @@ services:
     restart: always
     env_file:
       - .envs/.env.local
-    build:
-      context: ./
-      dockerfile: compose/Dockerfile.local
+    build: ./
     command: >
       bash -c "python wait_for_postgres.py &&
                ./manage.py migrate &&
@@ -57,6 +55,12 @@ services:
       - postgres
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO
+
+  flower:
+    <<: *web
+    ports:
+      - "5555:5555"
+    command: ./compose/start-flower
 
   redis:
     image: redis:6
