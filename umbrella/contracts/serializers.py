@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from umbrella.contracts.models import Lease
+from umbrella.contracts.models import Lease, Node
 from umbrella.core.serializers import CustomModelSerializer
 
 
@@ -26,3 +26,26 @@ class LeaseSerializer(CustomModelSerializer):
     class Meta:
         model = Lease
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
+
+
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Node
+        fields = ('type', 'content')
+
+
+class NodeSerializer(CustomModelSerializer):
+    clause = serializers.PrimaryKeyRelatedField(read_only=True)
+    subcategories = SubCategorySerializer()
+
+    class Meta:
+        model = Node
+        fields = ["id", "type", "clause", "lease", "content", "subcategories"]
+
+# class CategorySerializer(serializers.ModelSerializer):
+#     parentCategory = serializers.PrimaryKeyRelatedField()
+#     subcategories = serializers.SubCategorySerializer()
+#
+#     class Meta:
+#         model = Category
+#         fields = ('parentCategory', 'name', 'description', 'subcategories')

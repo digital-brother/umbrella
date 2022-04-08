@@ -10,8 +10,8 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from umbrella.contracts.models import Lease
-from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer
+from umbrella.contracts.models import Lease, Node
+from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, NodeSerializer
 from umbrella.contracts.serializers import LeaseSerializer
 from umbrella.contracts.utils import download_s3_folder
 
@@ -97,3 +97,8 @@ class AWSLeaseProcessedWebhookView(GenericAPIView):
         s3_folder = str(cleaned_lease_uuid).upper()
         downloaded_files = download_s3_folder(s3_folder)
         return Response(downloaded_files)
+
+
+class NodeView(ListAPIView):
+    queryset = Node.objects.all()
+    serializer_class = NodeSerializer
