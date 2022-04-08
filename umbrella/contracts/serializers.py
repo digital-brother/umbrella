@@ -28,24 +28,15 @@ class LeaseSerializer(CustomModelSerializer):
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
 
 
-class SubCategorySerializer(serializers.ModelSerializer):
+class KDPSerializer(serializers.ModelSerializer):
     class Meta:
         model = Node
-        fields = ('type', 'content')
+        fields = ("id", "type", "lease", "content")
 
 
 class NodeSerializer(CustomModelSerializer):
-    clause = serializers.PrimaryKeyRelatedField(read_only=True)
-    subcategories = SubCategorySerializer()
+    clause = KDPSerializer()
 
     class Meta:
         model = Node
-        fields = ["id", "type", "clause", "lease", "content", "subcategories"]
-
-# class CategorySerializer(serializers.ModelSerializer):
-#     parentCategory = serializers.PrimaryKeyRelatedField()
-#     subcategories = serializers.SubCategorySerializer()
-#
-#     class Meta:
-#         model = Category
-#         fields = ('parentCategory', 'name', 'description', 'subcategories')
+        fields = ["id", "type", "clause", "content"]

@@ -100,5 +100,5 @@ class AWSLeaseProcessedWebhookView(GenericAPIView):
 
 
 class NodeView(ListAPIView):
-    queryset = Node.objects.all()
+    queryset = Node.objects.filter(clause__isnull=False)
     serializer_class = NodeSerializer

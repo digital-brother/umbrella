@@ -42,12 +42,12 @@ def download_s3_folder(aws_dir):
 
 def parse_kdp_item(kdp_name, parent_kdp_name, list_obj, lease):
     model_data = {}
-    if kdp_name in Node.PARENT_KDPS_NAMES_LIST:
+    if kdp_name in Node.CLAUSES_LIST:
         model_data["lease"] = lease
     else:
         para_id = list_obj["paraId"]
-        parent_kdp = Node.objects.filter(kdp_type=parent_kdp_name, lease=lease, content__paraId=para_id).first()
-        model_data["clause"] = parent_kdp
+        clause = Node.objects.filter(type=parent_kdp_name, lease=lease, content__paraId=para_id).first()
+        model_data["clause"] = clause
     model_data["type"] = kdp_name
     model_data["content"] = list_obj
     Node.create(**model_data)
