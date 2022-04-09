@@ -17,7 +17,7 @@ from umbrella.contracts.utils import download_s3_folder
 
 
 def create_presigned_post(bucket_name, object_name,
-                          fields=None, conditions=None, expiration=3600):
+        fields=None, conditions=None, expiration=3600):
     """Generate a presigned URL S3 POST request to upload a file
 
     :param bucket_name: string
@@ -102,3 +102,18 @@ class AWSLeaseProcessedWebhookView(GenericAPIView):
 class NodeView(ListAPIView):
     queryset = Node.objects.filter(clause__isnull=False)
     serializer_class = KDPSerializer
+
+
+class TermClauseView(ListAPIView):
+    serializer_class = KDPSerializer
+
+    def get_queryset(self):
+        clause_type_kdp_types_mapping = {
+            'term': ['start', 'end', 'duration', 'effective_date']
+        }
+        clause_type = self.kwargs['clause_type']
+        kdp_types = clause_type_kdp_types_mapping[clause_type]
+
+        contract_uuid = self.kwargs['contract_uuid']
+        kdps = Node.objects.filter(clause__lease=contract_uuid, type__in=kdp_types)
+        return kdps
