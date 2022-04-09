@@ -42,7 +42,7 @@ def download_s3_folder(aws_dir):
 
 def parse_kdp_item(kdp_name, parent_kdp_name, list_obj, lease):
     model_data = {}
-    if kdp_name in Node.CLAUSES_LIST:
+    if kdp_name in Node.CLAUSES_TYPES:
         model_data["lease"] = lease
     else:
         para_id = list_obj["paraId"]

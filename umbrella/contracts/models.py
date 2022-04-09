@@ -86,7 +86,7 @@ class Lease(CustomModel):
 
 
 class Node(CustomModel):
-    CLAUSES_LIST = [
+    CLAUSES_TYPES = [
         "term"
     ]
 
