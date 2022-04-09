@@ -58,8 +58,14 @@ def parse_node(node_type, clause_type, node_content, lease):
 
 
 def parse_node_list(json_data, lease):
-    json_keys = json_data.keys()
-    clause_type = json_keys[0] if json_keys else None
+    json_keys = set(json_data)
+    available_clause_types = set(CLAUSE_TYPE_KDP_TYPES_MAPPING)
+    common_clauses = json_keys & available_clause_types
+    if len(common_clauses) != 1:
+        msg = f"File should contain 1 clause, but contains {len(common_clauses)}: {common_clauses}"
+        raise UmbrellaError(msg)
+    clause_type = list(common_clauses)[0]
+
     for node_type, nodes_list in json_data.items():
         for node in nodes_list:
             parse_node(node_type, clause_type, node, lease)
