@@ -41,17 +41,16 @@ def download_s3_folder(aws_dir):
 
 
 def parse_kdp_item(kdp_name, parent_kdp_name, list_obj, lease):
-    model_data = {}
-    para_id = list_obj["paraId"]
-    model_data["type"] = kdp_name
-    model_data["content"] = list_obj
-    node = Node.create(**model_data)
+    node = Node.create(
+        type=kdp_name,
+        content=list_obj,
+    )
 
     clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
     if kdp_name in clause_types:
         node.lease = lease
 
-    para_id = node_data["paraId"]
+    para_id = list_obj["paraId"]
     clause = Node.objects.filter(type=parent_kdp_name, lease=lease, content__paraId=para_id).first()
     node.clause = clause
 
