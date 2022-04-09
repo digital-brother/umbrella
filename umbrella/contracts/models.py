@@ -86,11 +86,15 @@ class Lease(CustomModel):
 
 
 class Node(CustomModel):
+    """Stores both Clause and KDP objects"""
     CLAUSES_TYPES = [
         "term"
     ]
 
     type = models.CharField(max_length=128)
+    # Used for KDP node type, otherwise null
     clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
+    # Used for Clause node type, otherwise null
     lease = models.ForeignKey(Lease, on_delete=models.CASCADE, blank=True, null=True)
+
     content = models.JSONField(null=True, blank=True)
