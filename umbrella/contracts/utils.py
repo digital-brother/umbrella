@@ -50,10 +50,10 @@ def parse_node(node_type, clause_type, node_json, lease):
     clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
     if node_type in clause_types:
         node.lease = lease
-
-    para_id = node_json["paraId"]
-    clause = Node.objects.filter(type=clause_type, lease=lease, content__paraId=para_id).first()
-    node.clause = clause
+    else:
+        para_id = node_json["paraId"]
+        clause = Node.objects.filter(type=clause_type, lease=lease, content__paraId=para_id).first()
+        node.clause = clause
 
     node.save()
     return node
