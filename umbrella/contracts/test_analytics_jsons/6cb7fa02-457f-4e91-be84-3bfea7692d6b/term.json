@@ -1,0 +1,42 @@
+{
+  "term": [
+    {
+      "table": [
+        {
+          "row": -1,
+          "column": -1
+        }
+      ],
+      "paraId": 24,
+      "pattern": "This Agreement shall be effective as of May 22, 2002",
+      "patterntype": "R0"
+    },
+    {
+      "table": [
+        {
+          "row": -1,
+          "column": -1
+        }
+      ],
+      "paraId": 226,
+      "pattern": "THIS BUSINESS LOAN AGREEMENT ANDBORROWER AGREES TO ITS TERMS. THIS BUSINESS LOAN AGREEMENT IS DATED MAY 22, 2002",
+      "patterntype": "RN5"
+    }
+  ],
+  "start": [
+    {
+      "date": "2002-05-22",
+      "normalized_date": "2002-05-22",
+      "paraId": 24,
+      "table": [
+        {
+          "column": -1,
+          "row": -1
+        }
+      ]
+    }
+  ],
+  "end": [],
+  "duration": [],
+  "effective_date": []
+}
