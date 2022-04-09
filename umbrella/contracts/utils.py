@@ -58,6 +58,29 @@ def parse_node(node_type, clause_type, node_content, lease):
 
 
 def parse_node_list(json_data, lease):
+    clause_type = get_clause_type_from_json_data(json_data)
+    for node_type, nodes_list in json_data.items():
+        for node in nodes_list:
+            parse_node(node_type, clause_type, node, lease)
+
+
+def parse_json(file_path):
+    lease = get_lease_from_file_path(file_path)
+    with Path(file_path).open(mode="rb") as f:
+        json_data = json.load(f)
+        parse_node_list(json_data, lease)
+
+
+def get_lease_from_file_path(file_path):
+    upper_uuid = file_path.split("/")[-2]
+    lease_uuid = upper_uuid.lower()
+    lease = Lease.objects.filter(id=lease_uuid).first()
+    if not lease:
+        raise UmbrellaError(f"No Contracts with id: {lease_uuid}")
+    return lease
+
+
+def get_clause_type_from_json_data(json_data):
     json_keys = set(json_data)
     available_clause_types = set(CLAUSE_TYPE_KDP_TYPES_MAPPING)
     common_clauses = json_keys & available_clause_types
@@ -65,20 +88,4 @@ def parse_node_list(json_data, lease):
         msg = f"File should contain 1 clause, but contains {len(common_clauses)}: {common_clauses}"
         raise UmbrellaError(msg)
     clause_type = list(common_clauses)[0]
-
-    for node_type, nodes_list in json_data.items():
-        for node in nodes_list:
-            parse_node(node_type, clause_type, node, lease)
-
-
-def parse_json(file_path):
-    path = Path(file_path)
-    upper_uuid = file_path.split("/")[-2]
-    lease_uuid = upper_uuid.lower()
-    lease = Lease.objects.filter(id=lease_uuid).first()
-    if not lease:
-        raise UmbrellaError(f"No Contracts with id: {lease_uuid}")
-
-    with path.open(mode="rb") as f:
-        json_data = json.load(f)
-        parse_node_list(json_data, lease)
+    return clause_type
