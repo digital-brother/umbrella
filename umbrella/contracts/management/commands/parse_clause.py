@@ -18,4 +18,3 @@ class Command(BaseCommand):
             raise CommandError("Invalid file path.")
 
         parse_json(str(file_path))
-        print(f"File {file_path} parsed successfully")

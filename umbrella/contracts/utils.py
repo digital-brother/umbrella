@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 
 import boto3
+from django.forms import model_to_dict
 
 from config.settings.common import env
 from umbrella.contracts.models import Lease, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
@@ -40,35 +41,41 @@ def download_s3_folder(aws_dir):
     return downloaded_files
 
 
-def parse_node(node_type, clause_type, node_content, lease):
+def parse_node(node_type, clause_type, node_json, lease):
     node = Node.create(
         type=node_type,
-        content=node_content,
+        content=node_json,
     )
 
     clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
     if node_type in clause_types:
         node.lease = lease
 
-    para_id = node_content["paraId"]
+    para_id = node_json["paraId"]
     clause = Node.objects.filter(type=clause_type, lease=lease, content__paraId=para_id).first()
     node.clause = clause
 
     node.save()
+    return node
 
 
 def parse_node_list(json_data, lease):
     clause_type = get_clause_type_from_json_data(json_data)
+    print(f"Detected clause {clause_type}.")
     for node_type, nodes_list in json_data.items():
-        for node in nodes_list:
-            parse_node(node_type, clause_type, node, lease)
+        print(f"Parsing node list {node_type}.")
+        for node_json in nodes_list:
+            node = parse_node(node_type, clause_type, node_json, lease)
+            print(f"Parsed node {model_to_dict(node)}")
 
 
 def parse_json(file_path):
     lease = get_lease_from_file_path(file_path)
+    print(f"Parsing file {file_path } for contract {lease.id}.")
     with Path(file_path).open(mode="rb") as f:
         json_data = json.load(f)
         parse_node_list(json_data, lease)
+    print(f"Parsed file {file_path } for contract {lease.id}.")
 
 
 def get_lease_from_file_path(file_path):
