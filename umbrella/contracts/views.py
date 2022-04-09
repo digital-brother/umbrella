@@ -10,7 +10,7 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from umbrella.contracts.models import Lease, Node
+from umbrella.contracts.models import Lease, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.serializers import LeaseSerializer
 from umbrella.contracts.utils import download_s3_folder
@@ -109,11 +109,8 @@ class KDPClauseView(ListAPIView):
     serializer_class = KDPSerializer
 
     def get_queryset(self):
-        clause_type_kdp_types_mapping = {
-            'term': ['start', 'end', 'duration', 'effective_date']
-        }
         clause_type = self.kwargs['clause_type']
-        kdp_types = clause_type_kdp_types_mapping[clause_type]
+        kdp_types = CLAUSE_TYPE_KDP_TYPES_MAPPING[clause_type]
 
         contract_uuid = self.kwargs['contract_uuid']
         kdps = Node.objects.filter(clause__lease=contract_uuid, type__in=kdp_types)

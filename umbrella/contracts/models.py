@@ -85,6 +85,11 @@ class Lease(CustomModel):
         return 'Not implemented'
 
 
+CLAUSE_TYPE_KDP_TYPES_MAPPING = {
+    'term': ['start', 'end', 'duration', 'effective_date']
+}
+
+
 class Node(CustomModel):
     """Stores both Clause and KDP objects"""
     CLAUSES_TYPES = [
