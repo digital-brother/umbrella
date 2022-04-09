@@ -58,10 +58,9 @@ def parse_node(node_type, clause_type, node_content, lease):
 
 
 def parse_node_list(json_data, lease):
-    clause_type = ""
+    json_keys = json_data.keys()
+    clause_type = json_keys[0] if json_keys else None
     for node_type, nodes_list in json_data.items():
-        if not clause_type:
-            clause_type = node_type
         for node in nodes_list:
             parse_node(node_type, clause_type, node, lease)
 
