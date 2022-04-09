@@ -11,7 +11,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Lease, Node
-from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, NodeSerializer
+from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.serializers import LeaseSerializer
 from umbrella.contracts.utils import download_s3_folder
 
@@ -101,4 +101,4 @@ class AWSLeaseProcessedWebhookView(GenericAPIView):
 
 class NodeView(ListAPIView):
     queryset = Node.objects.filter(clause__isnull=False)
-    serializer_class = NodeSerializer
+    serializer_class = KDPSerializer

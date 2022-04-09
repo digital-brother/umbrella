@@ -28,14 +28,14 @@ class LeaseSerializer(CustomModelSerializer):
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
 
 
-class KDPSerializer(serializers.ModelSerializer):
+class ClauseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Node
         fields = ("id", "type", "lease", "content")
 
 
-class NodeSerializer(CustomModelSerializer):
-    clause = KDPSerializer()
+class KDPSerializer(CustomModelSerializer):
+    clause = ClauseSerializer()
 
     class Meta:
         model = Node
