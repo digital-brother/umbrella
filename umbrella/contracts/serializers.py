@@ -39,4 +39,4 @@ class KDPSerializer(CustomModelSerializer):
 
     class Meta:
         model = Node
-        fields = ["id", "type", "clause", "content"]
+        fields = ["id", "type", "content", "clause"]
