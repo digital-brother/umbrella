@@ -57,13 +57,13 @@ def parse_node(node_type, clause_type, node_content, lease):
     node.save()
 
 
-def parse_kdp_item_list(json_data, lease):
-    parent_kdp_name = ""
-    for kdp_name, kdp_items in json_data.items():
-        if not parent_kdp_name:
-            parent_kdp_name = kdp_name
-        for list_obj in kdp_items:
-            parse_node(kdp_name, parent_kdp_name, list_obj, lease)
+def parse_node_list(json_data, lease):
+    clause_type = ""
+    for node_type, nodes_list in json_data.items():
+        if not clause_type:
+            clause_type = node_type
+        for node in nodes_list:
+            parse_node(node_type, clause_type, node, lease)
 
 
 def parse_json(file_path):
@@ -76,4 +76,4 @@ def parse_json(file_path):
 
     with path.open(mode="rb") as f:
         json_data = json.load(f)
-        parse_kdp_item_list(json_data, lease)
+        parse_node_list(json_data, lease)
