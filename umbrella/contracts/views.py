@@ -16,8 +16,7 @@ from umbrella.contracts.serializers import LeaseSerializer
 from umbrella.contracts.utils import download_s3_folder
 
 
-def create_presigned_post(bucket_name, object_name,
-        fields=None, conditions=None, expiration=3600):
+def create_presigned_post(bucket_name, object_name, fields=None, conditions=None, expiration=3600):
     """Generate a presigned URL S3 POST request to upload a file
 
     :param bucket_name: string
