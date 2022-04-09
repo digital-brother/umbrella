@@ -70,6 +70,7 @@ def parse_node_list(json_data, lease):
 
 
 def parse_json(file_path):
+    # TODO: return count of objects created
     lease = get_lease_from_file_path(file_path)
     print(f"Parsing file {file_path } for contract {lease.id}.")
     with Path(file_path).open(mode="rb") as f:
