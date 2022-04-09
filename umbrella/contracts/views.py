@@ -104,7 +104,8 @@ class NodeView(ListAPIView):
     serializer_class = KDPSerializer
 
 
-class TermClauseView(ListAPIView):
+class KDPClauseView(ListAPIView):
+    """Iterate by KDPs, show Clause for each"""
     serializer_class = KDPSerializer
 
     def get_queryset(self):
