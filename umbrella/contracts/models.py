@@ -92,10 +92,6 @@ CLAUSE_TYPE_KDP_TYPES_MAPPING = {
 
 class Node(CustomModel):
     """Stores both Clause and KDP objects"""
-    CLAUSES_TYPES = [
-        "term"
-    ]
-
     type = models.CharField(max_length=128)
     # Used for KDP node type, otherwise null
     clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)

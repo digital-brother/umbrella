@@ -5,7 +5,7 @@ from pathlib import Path
 import boto3
 
 from config.settings.common import env
-from umbrella.contracts.models import Lease, Node
+from umbrella.contracts.models import Lease, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
 from umbrella.core.exceptions import UmbrellaError
 
 LOCAL_ROOT = Path(env('AWS_DOWNLOADS_LOCAL_ROOT'))
@@ -42,12 +42,15 @@ def download_s3_folder(aws_dir):
 
 def parse_kdp_item(kdp_name, parent_kdp_name, list_obj, lease):
     model_data = {}
-    if kdp_name in Node.CLAUSES_TYPES:
+
+    clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
+    if kdp_name in clause_types:
         model_data["lease"] = lease
     else:
         para_id = list_obj["paraId"]
         clause = Node.objects.filter(type=parent_kdp_name, lease=lease, content__paraId=para_id).first()
         model_data["clause"] = clause
+
     model_data["type"] = kdp_name
     model_data["content"] = list_obj
     Node.create(**model_data)
