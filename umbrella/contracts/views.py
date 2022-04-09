@@ -99,11 +99,6 @@ class AWSLeaseProcessedWebhookView(GenericAPIView):
         return Response(downloaded_files)
 
 
-class NodeView(ListAPIView):
-    queryset = Node.objects.filter(clause__isnull=False)
-    serializer_class = KDPSerializer
-
-
 class KDPClauseView(ListAPIView):
     """Iterate by KDPs, show Clause for each"""
     serializer_class = KDPSerializer
