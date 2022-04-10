@@ -1,20 +1,14 @@
-from pathlib import Path
-
-from django.core.management import CommandError
 from django.core.management.base import BaseCommand
 
-from umbrella.contracts.utils import parse_clause
+from umbrella.contracts.utils import parse_contract
 
 
 class Command(BaseCommand):
     help = 'Parse clause json'
 
     def add_arguments(self, parser):
-        parser.add_argument('file_path', type=str)
+        parser.add_argument('contract_uuid', type=str)
 
     def handle(self, *args, **options):
-        file_path = Path(options['file_path'])
-        if not file_path.is_file():
-            raise CommandError("Invalid file path.")
-
-        parse_clause(str(file_path))
+        contract_uuid = options['contract_uuid']
+        parse_contract(str(contract_uuid))

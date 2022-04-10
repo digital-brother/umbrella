@@ -4,13 +4,13 @@ import shutil
 from pathlib import Path
 
 import boto3
+from django.conf import settings
 from django.forms import model_to_dict
 
 from config.settings.common import env
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
 from umbrella.core.exceptions import UmbrellaError
 
-LOCAL_ROOT = Path(env('AWS_DOWNLOADS_LOCAL_ROOT'))
 BUCKET_NAME = env('AWS_ANALYTICS_BUCKET_NAME')
 BUCKET = boto3.resource('s3').Bucket(BUCKET_NAME)
 
@@ -18,7 +18,7 @@ logger = logging.getLogger('load_aws_analytics_jsons_to_db')
 
 
 def download_s3_file(aws_file):
-    local_file = str(LOCAL_ROOT / aws_file)
+    local_file = str(settings.AWS_DOWNLOADS_LOCAL_ROOT / aws_file)
     BUCKET.download_file(aws_file, local_file)
     logger.info(f"Downloaded '{local_file}'.")
     return local_file
@@ -26,7 +26,7 @@ def download_s3_file(aws_file):
 
 # Download analytics json files
 def download_s3_folder(aws_dir):
-    local_dir = LOCAL_ROOT / aws_dir
+    local_dir = settings.AWS_DOWNLOADS_LOCAL_ROOT / aws_dir
     shutil.rmtree(local_dir, ignore_errors=True)
     local_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Cleaned dir '{local_dir}'.")

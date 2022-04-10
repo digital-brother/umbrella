@@ -254,6 +254,7 @@ class Common(Configuration):
 
     AWS_CONTRACT_BUCKET_NAME = env('AWS_CONTRACT_BUCKET_NAME', default=None)
     ALLOWED_FILE_UPLOAD_EXTENSIONS = ('.pdf', '.docx', '.doc', '.txt', '.jpeg')
+    AWS_DOWNLOADS_LOCAL_ROOT = Path(env('AWS_DOWNLOADS_LOCAL_ROOT'))
 
     # Celery
     # ------------------------------------------------------------------------------
