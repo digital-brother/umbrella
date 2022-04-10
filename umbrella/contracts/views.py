@@ -94,8 +94,8 @@ class AWSContractProcessedWebhookView(GenericAPIView):
         if not contract:
             raise ValidationError({'contract': f"No contract with uuid {contract_uuid}"})
 
-        downloaded_files = load_aws_analytics_jsons_to_db(contract_uuid)
-        return Response({'downloaded_files': downloaded_files})
+        load_aws_analytics_jsons_to_db(contract_uuid)
+        return Response(f"Downloaded contract {contract_uuid}")
 
 
 class KDPClauseView(ListAPIView):
