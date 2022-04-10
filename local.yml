@@ -5,7 +5,11 @@ services:
     image: postgres:14.1
     container_name: umbrella_local_postgres
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_MULTIPLE_DATABASES: keycloak
+    env_file:
+      - ./.envs/.env.local
+    volumes:
+      - ./compose/create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
     ports:
       - 5432:5432
 
@@ -33,7 +37,7 @@ services:
     container_name: umbrella_local_keycloak
     environment:
       DB_VENDOR: postgres
-      DB_ADDR: keycloak_postgres
+      DB_ADDR: postgres
       DB_USER: keycloak
       DB_PASSWORD: keycloak
       KEYCLOAK_USER: admin
@@ -44,14 +48,7 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - keycloak_postgres
-
-  keycloak_postgres:
-    image: postgres:14.1
-    container_name: umbrella_local_keycloak_postgres
-    environment:
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
+      - postgres
 
   celeryworker:
     <<: *web

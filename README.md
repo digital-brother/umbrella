@@ -33,4 +33,5 @@ docker-compose run --rm web [command]
 
 # Useful links
 
-[Add Keycloak groups claim to JWT](ttps://stackoverflow.com/questions/56362197/keycloak-oidc-retrieve-user-groups-attributes)
+- [Add Keycloak groups claim to JWT](ttps://stackoverflow.com/questions/56362197/keycloak-oidc-retrieve-user-groups-attributes)
+- [Using multiple databases with the official PostgreSQL Docker image](https://github.com/mrts/docker-postgresql-multiple-databases)
