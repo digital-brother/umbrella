@@ -3,7 +3,7 @@ from pathlib import Path
 from django.core.management import CommandError
 from django.core.management.base import BaseCommand
 
-from umbrella.contracts.utils import parse_clause_json
+from umbrella.contracts.utils import parse_clause
 
 
 class Command(BaseCommand):
@@ -17,4 +17,4 @@ class Command(BaseCommand):
         if not file_path.is_file():
             raise CommandError("Invalid file path.")
 
-        parse_clause_json(str(file_path))
+        parse_clause(str(file_path))
