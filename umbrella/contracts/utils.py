@@ -45,28 +45,39 @@ def download_s3_file(aws_file):
 
 def parse_contract(contract_dir):
     clause_files = contract_dir.glob('*.json')
+
+    contract_nodes = {}
     for clause_file in clause_files:
-        parse_clause_file(clause_file)
+        clause_nodes = parse_clause_file(clause_file)
+        contract_nodes[clause_file.name] = clause_nodes
+    return contract_nodes
 
 
 def parse_clause_file(clause_file):
-    # TODO: return count of objects created
     contract = _get_contract_from_clause_file_path(clause_file)
     logger.info(f"Parsing '{clause_file}'.")
     with clause_file.open(mode="rb") as f:
         json_data = json.load(f)
-        parse_node_list(json_data, contract)
+        clause_type = _get_clause_type_from_json_data(json_data)
+
+        clause_nodes = {}
+        for node_type, nodes_list in json_data.items():
+            clause_nodes[node_type] = parse_node_list(node_type, nodes_list, contract, clause_type)
+
+    return clause_nodes
 
 
-def parse_node_list(json_data, contract):
-    clause_type = _get_clause_type_from_json_data(json_data)
-    for node_type, nodes_list in json_data.items():
-        for node_json in nodes_list:
-            node = parse_node(node_type, clause_type, node_json, contract)
-            logger.info(f"Parsed node {model_to_dict(node)}")
+def parse_node_list(node_type, nodes_list, contract, clause_type):
+    node_list = []
+    for node_json in nodes_list:
+        node = parse_node(node_type, node_json, clause_type, contract)
+        node_list.append(node)
+        logger.info(f"Parsed node {model_to_dict(node)}")
+
+    return node_list
 
 
-def parse_node(node_type, clause_type, node_json, contract):
+def parse_node(node_type, node_json, clause_type, contract):
     node = Node.create(
         type=node_type,
         content=node_json,
@@ -75,7 +86,7 @@ def parse_node(node_type, clause_type, node_json, contract):
     clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
     if node_type in clause_types:
         node.contract = contract
-    else:
+    else:  # Node type is kdp
         para_id = node_json["paraId"]
         clause = Node.objects.filter(type=clause_type, contract=contract, content__paraId=para_id).first()
         node.clause = clause
