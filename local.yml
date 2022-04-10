@@ -3,6 +3,7 @@ version: '3'
 services:
   postgres:
     image: postgres:14.1
+    container_name: umbrella_local_postgres
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
@@ -13,6 +14,8 @@ services:
     env_file:
       - .envs/.env.local
     build: ./
+    image: umbrella_local_web
+    container_name: umbrella_local_web
     command: >
       bash -c "python wait_for_postgres.py &&
                ./manage.py migrate &&
@@ -27,6 +30,7 @@ services:
 
   keycloak:
     image: jboss/keycloak:16.1.1
+    container_name: umbrella_local_keycloak
     environment:
       DB_VENDOR: postgres
       DB_ADDR: keycloak_postgres
@@ -44,12 +48,15 @@ services:
 
   keycloak_postgres:
     image: postgres:14.1
+    container_name: umbrella_local_keycloak_postgres
     environment:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
 
   celeryworker:
     <<: *web
+    image: umbrella_local_celeryworker
+    container_name: umbrella_local_celeryworker
     depends_on:
       - redis
       - postgres
@@ -58,11 +65,14 @@ services:
 
   flower:
     <<: *web
+    image: umbrella_local_flower
+    container_name: umbrella_local_flower
     ports:
       - "5555:5555"
     command: ./compose/start-flower
 
   redis:
     image: redis:6
+    container_name: umbrella_local_redis
     ports:
       - 6379:6379

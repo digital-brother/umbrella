@@ -3,6 +3,8 @@ version: '3.8'
 services:
   web:
     build: ./
+    image: umbrella_staging_web
+    container_name: umbrella_staging_web
     command: bash -c "
       python wait_for_postgres.py &&
       ./manage.py migrate --noinput &&
@@ -16,9 +18,11 @@ services:
     env_file:
       - .envs/.env.staging
       - .envs/.env.staging.db
+
   nginx-proxy:
-    container_name: nginx-proxy
     build: compose/nginx
+    image: umbrella_staging_nginx_proxy
+    container_name: umbrella_staging_nginx_proxy
     restart: always
     ports:
       - 443:443
@@ -30,8 +34,10 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
       - web
+
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: umbrella_staging_nginx_proxy_companion
     env_file:
       - .envs/.env.staging.proxy-companion
     volumes:
