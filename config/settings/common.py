@@ -150,8 +150,8 @@ class Common(Configuration):
                 '()': 'django.utils.log.ServerFormatter',
                 'format': '[%(server_time)s] %(message)s',
             },
-            'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            "verbose": {
+                "format": "%(levelname)s %(asctime)s %(module)s %(message)s"
             },
             'simple': {
                 'format': '%(levelname)s %(message)s'
@@ -176,7 +176,14 @@ class Common(Configuration):
             'mail_admins': {
                 'level': 'ERROR',
                 'class': 'django.utils.log.AdminEmailHandler'
-            }
+            },
+            'file': {
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'maxBytes': 15 * 1024 * 1024,
+                'filename': str(ROOT_DIR / "django.log"),
+                'formatter': 'verbose',
+            },
         },
         'loggers': {
             'django': {
@@ -195,6 +202,10 @@ class Common(Configuration):
             },
             'django.db.backends': {
                 'handlers': ['console'],
+                'level': 'INFO'
+            },
+            'load_aws_analytics_jsons_to_db': {
+                'handlers': ['file'],
                 'level': 'INFO'
             },
         }
