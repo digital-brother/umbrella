@@ -12,7 +12,6 @@ from umbrella.core.models import CustomModel
 User = get_user_model()
 
 
-# TODO: Rename to Contract
 class Contract(CustomModel):
     file_name = models.CharField(max_length=512)
     pdf = models.BinaryField(blank=True, null=True)
