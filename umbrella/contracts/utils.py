@@ -17,13 +17,6 @@ BUCKET = boto3.resource('s3').Bucket(BUCKET_NAME)
 logger = logging.getLogger('load_aws_analytics_jsons_to_db')
 
 
-def download_s3_file(aws_file):
-    local_file = str(settings.AWS_DOWNLOADS_LOCAL_ROOT / aws_file)
-    BUCKET.download_file(aws_file, local_file)
-    logger.info(f"Downloaded '{local_file}'.")
-    return local_file
-
-
 # Download analytics json files
 def download_s3_folder(aws_dir):
     local_dir = settings.AWS_DOWNLOADS_LOCAL_ROOT / aws_dir
@@ -44,6 +37,38 @@ def download_s3_folder(aws_dir):
     return downloaded_files
 
 
+def download_s3_file(aws_file):
+    local_file = str(settings.AWS_DOWNLOADS_LOCAL_ROOT / aws_file)
+    BUCKET.download_file(aws_file, local_file)
+    logger.info(f"Downloaded '{local_file}'.")
+    return local_file
+
+
+def parse_contract(contract_uuid):
+    contract_dir_path = Contract.get_aws_downloads_dir(contract_uuid)
+    contract_dir = Path(contract_dir_path)
+    clause_files = contract_dir.glob('*.json')
+    for clause_file in clause_files:
+        parse_clause_file(clause_file)
+
+
+def parse_clause_file(clause_file):
+    # TODO: return count of objects created
+    contract = _get_contract_from_clause_file_path(clause_file)
+    logger.info(f"Parsing '{clause_file}'.")
+    with clause_file.open(mode="rb") as f:
+        json_data = json.load(f)
+        parse_node_list(json_data, contract)
+
+
+def parse_node_list(json_data, contract):
+    clause_type = _get_clause_type_from_json_data(json_data)
+    for node_type, nodes_list in json_data.items():
+        for node_json in nodes_list:
+            node = parse_node(node_type, clause_type, node_json, contract)
+            logger.info(f"Parsed node {model_to_dict(node)}")
+
+
 def parse_node(node_type, clause_type, node_json, contract):
     node = Node.create(
         type=node_type,
@@ -60,31 +85,6 @@ def parse_node(node_type, clause_type, node_json, contract):
 
     node.save()
     return node
-
-
-def parse_node_list(json_data, contract):
-    clause_type = _get_clause_type_from_json_data(json_data)
-    for node_type, nodes_list in json_data.items():
-        for node_json in nodes_list:
-            node = parse_node(node_type, clause_type, node_json, contract)
-            logger.info(f"Parsed node {model_to_dict(node)}")
-
-
-def parse_clause(clause_file):
-    # TODO: return count of objects created
-    contract = _get_contract_from_clause_file_path(clause_file)
-    logger.info(f"Parsing '{clause_file}'.")
-    with clause_file.open(mode="rb") as f:
-        json_data = json.load(f)
-        parse_node_list(json_data, contract)
-
-
-def parse_contract(contract_uuid):
-    contract_dir_path = Contract.get_aws_downloads_dir(contract_uuid)
-    contract_dir = Path(contract_dir_path)
-    clause_files = contract_dir.glob('*.json')
-    for clause_file in clause_files:
-        parse_clause(clause_file)
 
 
 def _get_contract_from_clause_file_path(clause_file):
