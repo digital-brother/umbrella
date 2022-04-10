@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
 from umbrella.contracts.serializers import ContractSerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
-from umbrella.contracts.utils import download_s3_folder
+from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
 
 def create_presigned_post(bucket_name, object_name, fields=None, conditions=None, expiration=3600):
@@ -93,9 +93,8 @@ class AWSContractProcessedWebhookView(GenericAPIView):
         except ValidationError as err:
             raise ValidationError({field_name: err.detail})
 
-        s3_folder = str(cleaned_contract_uuid).upper()
-        downloaded_files = download_s3_folder(s3_folder)
-        return Response(downloaded_files)
+        downloaded_files = load_aws_analytics_jsons_to_db(cleaned_contract_uuid)
+        return Response({'downloaded_files': downloaded_files})
 
 
 class KDPClauseView(ListAPIView):
