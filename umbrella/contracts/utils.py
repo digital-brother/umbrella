@@ -63,14 +63,22 @@ def parse_node(node_type, clause_type, node_json, contract):
 
 
 def parse_node_list(json_data, contract):
-    clause_type = get_clause_type_from_json_data(json_data)
+    clause_type = _get_clause_type_from_json_data(json_data)
     for node_type, nodes_list in json_data.items():
         for node_json in nodes_list:
             node = parse_node(node_type, clause_type, node_json, contract)
             logger.info(f"Parsed node {model_to_dict(node)}")
 
 
-# Parse analytics json files
+def parse_clause(clause_file):
+    # TODO: return count of objects created
+    contract = _get_contract_from_clause_file_path(clause_file)
+    logger.info(f"Parsing '{clause_file}'.")
+    with clause_file.open(mode="rb") as f:
+        json_data = json.load(f)
+        parse_node_list(json_data, contract)
+
+
 def parse_contract(contract_uuid):
     contract_dir_path = Contract.get_aws_downloads_dir(contract_uuid)
     contract_dir = Path(contract_dir_path)
@@ -79,16 +87,7 @@ def parse_contract(contract_uuid):
         parse_clause(clause_file)
 
 
-def parse_clause(clause_file):
-    # TODO: return count of objects created
-    contract = get_contract_from_clause_file_path(clause_file)
-    logger.info(f"Parsing '{clause_file}'.")
-    with clause_file.open(mode="rb") as f:
-        json_data = json.load(f)
-        parse_node_list(json_data, contract)
-
-
-def get_contract_from_clause_file_path(clause_file):
+def _get_contract_from_clause_file_path(clause_file):
     upper_uuid = clause_file.parent.name
     contract_uuid = upper_uuid.lower()
     contract = Contract.objects.filter(id=contract_uuid).first()
@@ -97,7 +96,7 @@ def get_contract_from_clause_file_path(clause_file):
     return contract
 
 
-def get_clause_type_from_json_data(json_data):
+def _get_clause_type_from_json_data(json_data):
     json_keys = set(json_data)
     available_clause_types = set(CLAUSE_TYPE_KDP_TYPES_MAPPING)
     common_clauses = json_keys & available_clause_types
