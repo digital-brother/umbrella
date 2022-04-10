@@ -17,7 +17,7 @@ You should do auth requests to Keycloak using 'http://keycloak:8080' host.
 Otherwise JWT token check will fail in Docker container. 
 That is because web container sees keycloak container under 'keycloak' name.
 
-- Add .envs/.env.local file, copy content from .envs/.env.local.example to it
+- Add .envs/.local file, copy content from .envs/.local.example to it
 
 
 - Start the dev server for local development:

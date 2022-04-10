@@ -16,8 +16,8 @@ services:
     expose:
       - 8000
     env_file:
-      - .envs/.env.staging
-      - .envs/.env.staging.db
+      - .envs/.staging
+      - .envs/.staging.db
 
   nginx-proxy:
     build: compose/nginx
@@ -39,7 +39,7 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: umbrella_staging_nginx_proxy_companion
     env_file:
-      - .envs/.env.staging.proxy-companion
+      - .envs/.staging.proxy-companion
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
