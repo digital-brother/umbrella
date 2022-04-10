@@ -71,16 +71,17 @@ def parse_node_list(node_type, nodes_list, contract, clause_type):
     clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
     is_clause = node_type in clause_types
     handler = parse_clause if is_clause else parse_kdp
+
     node_list = []
     for node_json in nodes_list:
-        node = handler(node_type, node_json, clause_type, contract)
+        node = handler(node_type, node_json, contract, clause_type)
         node_list.append(node)
         logger.info(f"Parsed node {model_to_dict(node)}")
 
     return node_list
 
 
-def parse_clause(node_type, node_json, contract):
+def parse_clause(node_type, node_json, contract, _):
     return Node.create(
         type=node_type,
         content=node_json,
@@ -88,11 +89,11 @@ def parse_clause(node_type, node_json, contract):
     )
 
 
-def parse_kdp(node_type, node_json, contract, clause_type, _):
+def parse_kdp(node_type, node_json, contract, clause_type):
     para_id = node_json["paraId"]
     clause = Node.objects.filter(type=clause_type, contract=contract, content__paraId=para_id).first()
     if not clause:
-        raise UmbrellaError("No clause defined for KDP")
+        raise UmbrellaError(f"No '{clause_type}' clause found for '{node_type}' KDP with paraId '{para_id}'.")
 
     return Node.create(
         type=node_type,
