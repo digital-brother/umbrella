@@ -71,17 +71,25 @@ def parse_node_list(json_data, contract):
 
 
 # Parse analytics json files
-def parse_clause_json(file_path):
+def parse_contract(contract_uuid):
+    contract_dir_path = Contract.get_aws_downloads_dir(contract_uuid)
+    contract_dir = Path(contract_dir_path)
+    clause_files = contract_dir.glob('*.json')
+    for clause_file in clause_files:
+        parse_clause(clause_file)
+
+
+def parse_clause(clause_file):
     # TODO: return count of objects created
-    contract = get_contract_from_file_path(file_path)
-    logger.info(f"Parsing '{file_path}'.")
-    with Path(file_path).open(mode="rb") as f:
+    contract = get_contract_from_clause_file_path(clause_file)
+    logger.info(f"Parsing '{clause_file}'.")
+    with clause_file.open(mode="rb") as f:
         json_data = json.load(f)
         parse_node_list(json_data, contract)
 
 
-def get_contract_from_file_path(file_path):
-    upper_uuid = file_path.split("/")[-2]
+def get_contract_from_clause_file_path(clause_file):
+    upper_uuid = clause_file.parent.name
     contract_uuid = upper_uuid.lower()
     contract = Contract.objects.filter(id=contract_uuid).first()
     if not contract:

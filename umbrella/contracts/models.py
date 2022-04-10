@@ -80,6 +80,10 @@ class Contract(CustomModel):
         # TODO: Add status calculation
         return 'Not implemented'
 
+    @classmethod
+    def get_aws_downloads_dir(cls, contract_uuid):
+        return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
+
 
 CLAUSE_TYPE_KDP_TYPES_MAPPING = {
     'term': ['start', 'end', 'duration', 'effective_date']
