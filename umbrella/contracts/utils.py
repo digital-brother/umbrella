@@ -35,8 +35,10 @@ def download_s3_folder(aws_dir):
     print(f"Downloading dir '{aws_dir}' from AWS...")
     downloaded_files = []
     for aws_file in aws_files:
-        downloaded_file = download_s3_file(aws_file.key)
-        downloaded_files.append(downloaded_file)
+        # To run download only for file, folder is also present in aws_files
+        if aws_file.key.endswith('.json'):
+            downloaded_file = download_s3_file(aws_file.key)
+            downloaded_files.append(downloaded_file)
     print(f"Dir '{aws_dir}' downloaded successfully.")
     return downloaded_files
 
@@ -69,7 +71,7 @@ def parse_node_list(json_data, contract):
             print(f"Parsed node {model_to_dict(node)}")
 
 
-def parse_json(file_path):
+def parse_clause_json(file_path):
     # TODO: return count of objects created
     contract = get_contract_from_file_path(file_path)
     print(f"Parsing file {file_path } for contract {contract.id}.")
