@@ -34,7 +34,7 @@ def download_s3_folder(aws_dir):
         if aws_file.key.endswith('.json'):
             downloaded_file = download_s3_file(aws_file.key)
             downloaded_files.append(downloaded_file)
-    return downloaded_files
+    return local_dir
 
 
 def download_s3_file(aws_file):
