@@ -99,3 +99,29 @@ class Node(CustomModel):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True)
 
     content = models.JSONField(null=True, blank=True)
+
+
+class ClauseManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        return qs.filter(contract__isnull=False)
+
+
+class Clause(Node):
+    objects = ClauseManager()
+
+    class Meta:
+        proxy = True
+
+
+class KDPManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        return qs.filter(clause__isnull=False)
+
+
+class KDP(Node):
+    objects = KDPManager()
+
+    class Meta:
+        proxy = True
