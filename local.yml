@@ -58,7 +58,7 @@ services:
       - redis
       - postgres
     ports: [ ]
-    command: celery -A config.celery_app worker -l INFO
+    command: celery -A config.celery_app worker -l INFO -E
 
   flower:
     <<: *web

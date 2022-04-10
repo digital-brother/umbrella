@@ -94,7 +94,7 @@ class AWSContractProcessedWebhookView(GenericAPIView):
         if not contract:
             raise ValidationError({'contract': f"No contract with uuid {contract_uuid}"})
 
-        load_aws_analytics_jsons_to_db(contract_uuid)
+        load_aws_analytics_jsons_to_db.delay(contract_uuid)
         return Response(f"Downloaded contract {contract_uuid}")
 
 
