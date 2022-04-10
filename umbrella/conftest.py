@@ -4,7 +4,7 @@ from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
-from umbrella.contracts.tests import LeaseFactory
+from umbrella.contracts.tests import ContractFactory
 from umbrella.users.tests.factories import UserFactory
 
 
@@ -30,6 +30,6 @@ class GroupFactory(DjangoModelFactory):
 
 
 @pytest.fixture
-def lease(group):
-    lease = LeaseFactory(groups=[group])
-    return lease
+def contract(group):
+    contract = ContractFactory(groups=[group])
+    return contract

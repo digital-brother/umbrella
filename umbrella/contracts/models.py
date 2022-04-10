@@ -13,7 +13,7 @@ User = get_user_model()
 
 
 # TODO: Rename to Contract
-class Lease(CustomModel):
+class Contract(CustomModel):
     file_name = models.CharField(max_length=512)
     pdf = models.BinaryField(blank=True, null=True)
     txt = models.TextField(blank=True, null=True)
@@ -35,10 +35,7 @@ class Lease(CustomModel):
     textract_done = models.BooleanField(blank=False, null=False, default=False)
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
-    groups = models.ManyToManyField(Group, blank=True, related_name='leases')
-
-    class Meta:
-        db_table = 'lease'
+    groups = models.ManyToManyField(Group, blank=True, related_name='contracts')
 
     def __str__(self):
         return self.file_name
@@ -49,9 +46,9 @@ class Lease(CustomModel):
         Typical Django business logic placement
         (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
         """
-        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
-        lease = super().create(file_name=file_name, **data)
-        return lease
+        data['modified_file_name'] = Contract.generate_modified_file_name(file_name)
+        contract = super().create(file_name=file_name, **data)
+        return contract
 
     def clean(self):
         errors = {}
@@ -66,7 +63,7 @@ class Lease(CustomModel):
             raise ValidationError(errors)
 
         realm = self.created_by.realm or User.NO_REALM
-        is_duplicate = Lease.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
+        is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
         if is_duplicate:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
@@ -96,6 +93,6 @@ class Node(CustomModel):
     # Used for KDP node type, otherwise null
     clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
     # Used for Clause node type, otherwise null
-    lease = models.ForeignKey(Lease, on_delete=models.CASCADE, blank=True, null=True)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True)
 
     content = models.JSONField(null=True, blank=True)

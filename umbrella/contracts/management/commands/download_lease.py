@@ -7,15 +7,15 @@ from umbrella.core.exceptions import UmbrellaError
 
 
 class Command(BaseCommand):
-    help = 'Download lease by uuid'
+    help = 'Download contract by uuid'
 
     def add_arguments(self, parser):
-        parser.add_argument('lease_uuid', type=str)
+        parser.add_argument('contract_uuid', type=str)
 
     def handle(self, *args, **options):
-        lease_uuid = options['lease_uuid']
-        cleaned_lease_uuid = self.validate_uuid(lease_uuid)
-        s3_folder = str(cleaned_lease_uuid).upper()
+        contract_uuid = options['contract_uuid']
+        cleaned_contract_uuid = self.validate_uuid(contract_uuid)
+        s3_folder = str(cleaned_contract_uuid).upper()
 
         try:
             download_s3_folder(s3_folder)

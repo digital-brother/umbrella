@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from django.db import models
 
-from umbrella.contracts.models import Lease
+from umbrella.contracts.models import Contract
 from umbrella.core.models import CustomModel
 from umbrella.tasks.choices import (
     ProgressChoices,
@@ -46,7 +46,7 @@ class Task(CustomModel):
         max_length=32, choices=StatusChoices.choices, default=StatusChoices.OVERDUE
     )
 
-    contract = models.ForeignKey(Lease, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     # TODO: Add Clause Types and convert current field to ChoiceField
     contract_clause_type = models.TextField()
     contract_business_intelligence_type = models.TextField()

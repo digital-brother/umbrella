@@ -10,9 +10,9 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from umbrella.contracts.models import Lease, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.serializers import ContractSerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
-from umbrella.contracts.serializers import LeaseSerializer
 from umbrella.contracts.utils import download_s3_folder
 
 
@@ -46,7 +46,7 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
     return response
 
 
-class LeaseCreateView(CreateAPIView):
+class ContractCreateView(CreateAPIView):
     serializer_class = GetAddFilePresignedUrlSerializer
 
     def post(self, request, *args, **kwargs):
@@ -54,7 +54,7 @@ class LeaseCreateView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         file_name = serializer.validated_data['file_name']
-        modified_file_name = Lease.generate_modified_file_name(file_name)
+        modified_file_name = Contract.generate_modified_file_name(file_name)
         response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, modified_file_name)
         if response is None:
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
@@ -77,23 +77,23 @@ class GroupFilterBackend(filters.BaseFilterBackend):
         return queryset.filter(groups__in=user_groups)
 
 
-class LeaseListView(ListAPIView):
-    queryset = Lease.objects.all()
-    serializer_class = LeaseSerializer
+class ContractListView(ListAPIView):
+    queryset = Contract.objects.all()
+    serializer_class = ContractSerializer
     filter_backends = [GroupFilterBackend]
 
 
-class AWSLeaseProcessedWebhookView(GenericAPIView):
+class AWSContractProcessedWebhookView(GenericAPIView):
     def post(self, request):
         field_name = 'contract_uuid'
-        lease_uuid = request.data.get(field_name)
+        contract_uuid = request.data.get(field_name)
 
         try:
-            cleaned_lease_uuid = UUIDField().run_validation(lease_uuid)
+            cleaned_contract_uuid = UUIDField().run_validation(contract_uuid)
         except ValidationError as err:
             raise ValidationError({field_name: err.detail})
 
-        s3_folder = str(cleaned_lease_uuid).upper()
+        s3_folder = str(cleaned_contract_uuid).upper()
         downloaded_files = download_s3_folder(s3_folder)
         return Response(downloaded_files)
 
@@ -107,5 +107,5 @@ class KDPClauseView(ListAPIView):
         kdp_types = CLAUSE_TYPE_KDP_TYPES_MAPPING[clause_type]
 
         contract_uuid = self.kwargs['contract_uuid']
-        kdps = Node.objects.filter(clause__lease=contract_uuid, type__in=kdp_types)
+        kdps = Node.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
         return kdps

@@ -6,7 +6,7 @@ import boto3
 from django.forms import model_to_dict
 
 from config.settings.common import env
-from umbrella.contracts.models import Lease, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
 from umbrella.core.exceptions import UmbrellaError
 
 LOCAL_ROOT = Path(env('AWS_DOWNLOADS_LOCAL_ROOT'))
@@ -30,7 +30,7 @@ def download_s3_folder(aws_dir):
 
     aws_files = BUCKET.objects.filter(Prefix=aws_dir).all()
     if not list(aws_files):
-        raise UmbrellaError(f"No data for lease '{aws_dir}'.")
+        raise UmbrellaError(f"No data for contract '{aws_dir}'.")
 
     print(f"Downloading dir '{aws_dir}' from AWS...")
     downloaded_files = []
@@ -41,7 +41,7 @@ def download_s3_folder(aws_dir):
     return downloaded_files
 
 
-def parse_node(node_type, clause_type, node_json, lease):
+def parse_node(node_type, clause_type, node_json, contract):
     node = Node.create(
         type=node_type,
         content=node_json,
@@ -49,43 +49,43 @@ def parse_node(node_type, clause_type, node_json, lease):
 
     clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
     if node_type in clause_types:
-        node.lease = lease
+        node.contract = contract
     else:
         para_id = node_json["paraId"]
-        clause = Node.objects.filter(type=clause_type, lease=lease, content__paraId=para_id).first()
+        clause = Node.objects.filter(type=clause_type, contract=contract, content__paraId=para_id).first()
         node.clause = clause
 
     node.save()
     return node
 
 
-def parse_node_list(json_data, lease):
+def parse_node_list(json_data, contract):
     clause_type = get_clause_type_from_json_data(json_data)
     print(f"Detected clause {clause_type}.")
     for node_type, nodes_list in json_data.items():
         print(f"Parsing node list {node_type}.")
         for node_json in nodes_list:
-            node = parse_node(node_type, clause_type, node_json, lease)
+            node = parse_node(node_type, clause_type, node_json, contract)
             print(f"Parsed node {model_to_dict(node)}")
 
 
 def parse_json(file_path):
     # TODO: return count of objects created
-    lease = get_lease_from_file_path(file_path)
-    print(f"Parsing file {file_path } for contract {lease.id}.")
+    contract = get_contract_from_file_path(file_path)
+    print(f"Parsing file {file_path } for contract {contract.id}.")
     with Path(file_path).open(mode="rb") as f:
         json_data = json.load(f)
-        parse_node_list(json_data, lease)
-    print(f"Parsed file {file_path } for contract {lease.id}.")
+        parse_node_list(json_data, contract)
+    print(f"Parsed file {file_path } for contract {contract.id}.")
 
 
-def get_lease_from_file_path(file_path):
+def get_contract_from_file_path(file_path):
     upper_uuid = file_path.split("/")[-2]
-    lease_uuid = upper_uuid.lower()
-    lease = Lease.objects.filter(id=lease_uuid).first()
-    if not lease:
-        raise UmbrellaError(f"No Contracts with id: {lease_uuid}")
-    return lease
+    contract_uuid = upper_uuid.lower()
+    contract = Contract.objects.filter(id=contract_uuid).first()
+    if not contract:
+        raise UmbrellaError(f"No Contracts with id: {contract_uuid}")
+    return contract
 
 
 def get_clause_type_from_json_data(json_data):
