@@ -5,7 +5,6 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from rest_framework import filters
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.fields import UUIDField
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -88,12 +87,11 @@ class AWSContractProcessedWebhookView(GenericAPIView):
         field_name = 'contract_uuid'
         contract_uuid = request.data.get(field_name)
 
-        try:
-            cleaned_contract_uuid = UUIDField().run_validation(contract_uuid)
-        except ValidationError as err:
-            raise ValidationError({field_name: err.detail})
+        contract = Contract.objects.filter(id=contract_uuid)
+        if not contract:
+            raise ValidationError({'contract': f"No contract with uuid {contract_uuid}"})
 
-        downloaded_files = load_aws_analytics_jsons_to_db(cleaned_contract_uuid)
+        downloaded_files = load_aws_analytics_jsons_to_db(contract_uuid)
         return Response({'downloaded_files': downloaded_files})
 
 
