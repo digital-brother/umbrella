@@ -205,7 +205,7 @@ class Common(Configuration):
                 'level': 'INFO'
             },
             'load_aws_analytics_jsons_to_db': {
-                'handlers': ['file'],
+                'handlers': ['file', 'console'],
                 'level': 'INFO'
             },
         }
