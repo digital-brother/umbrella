@@ -59,7 +59,10 @@ class ContractCreateView(CreateAPIView):
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
 
         self.perform_create(serializer)
-        return Response(response)
+        return Response({
+            'presigned_url': response,
+            'contract': serializer.data
+        })
 
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
