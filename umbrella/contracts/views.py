@@ -56,6 +56,7 @@ class ContractCreateView(CreateAPIView):
 
         file_name = serializer.validated_data['file_name']
         modified_file_name = Contract.generate_modified_file_name(file_name)
+
         response = create_presigned_post(settings.AWS_CONTRACT_BUCKET_NAME, modified_file_name)
         if response is None:
             raise APIException({'aws_error': 'Unable to get a presigned url from AWS'})
@@ -65,10 +66,6 @@ class ContractCreateView(CreateAPIView):
             'presigned_url': response,
             'contract': serializer.data
         })
-
-    def perform_create(self, serializer):
-        user_groups = self.request.user.groups.all()
-        serializer.save(groups=user_groups)
 
 
 class GroupFilterBackend(filters.BaseFilterBackend):

@@ -41,14 +41,21 @@ class Contract(CustomModel):
         return self.file_name
 
     @classmethod
-    def create(cls, file_name, **data):
+    def create(cls, file_name, user, **data):
         """
         Typical Django business logic placement
         (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
         """
         data['modified_file_name'] = Contract.generate_modified_file_name(file_name)
+        data['groups'] = Contract.add_user_group(user)
         contract = super().create(file_name=file_name, **data)
         return contract
+
+    @staticmethod
+    def add_user_group(user):
+
+        user_groups = user.groups.all()
+        return user_groups
 
     def clean(self):
         errors = {}

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from umbrella.contracts.models import Contract, Node
 from umbrella.core.serializers import CustomModelSerializer
+from umbrella.users.auth import User
 
 
 class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
@@ -16,9 +17,12 @@ class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
         Validate before call to AWS presigned url
         https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
         """
-        data = {**attrs, **{'modified_file_name': Contract.generate_modified_file_name(attrs['file_name'])}}
+        data = {**attrs, **{'modified_file_name': Contract.generate_modified_file_name(attrs['file_name']),
+                           'groups': Contract.add_user_group(attrs['created_by'])}}
         instance = Contract(**data)
+        print(instance, "instance_data")
         instance.full_clean()
+
         return attrs
 
 
