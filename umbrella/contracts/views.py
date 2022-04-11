@@ -67,6 +67,10 @@ class ContractCreateView(CreateAPIView):
             'contract': serializer.data
         })
 
+    def perform_create(self, serializer):
+        user_groups = self.request.user.groups.all()
+        serializer.save(groups=user_groups)
+
 
 class GroupFilterBackend(filters.BaseFilterBackend):
     """
