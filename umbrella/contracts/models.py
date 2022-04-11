@@ -63,9 +63,10 @@ class Contract(CustomModel):
             raise ValidationError(errors)
 
         realm = self.created_by.realm or User.NO_REALM
-        is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
-        if is_duplicate:
-            errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
+        if not self.pk:
+            is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
+            if is_duplicate:
+                errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
         if errors:
             raise ValidationError(errors)
