@@ -8,11 +8,13 @@ from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
-from umbrella.contracts.serializers import ContractSerializer
+from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
+
 
 
 def create_presigned_post(bucket_name, object_name, fields=None, conditions=None, expiration=3600):
@@ -109,3 +111,10 @@ class KDPClauseView(ListAPIView):
         contract_uuid = self.kwargs['contract_uuid']
         kdps = Node.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
         return kdps
+
+# TODO: Endpoint for testing. Delete when no need
+
+
+class DocumentLibraryListView(ListAPIView):
+    queryset = Contract.objects.all()
+    serializer_class = DocumentLibrarySerializer

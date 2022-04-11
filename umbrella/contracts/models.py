@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import models
+from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 
 from umbrella.core.models import CustomModel
@@ -83,6 +84,22 @@ class Contract(CustomModel):
     @classmethod
     def get_aws_downloads_dir(cls, contract_uuid):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
+
+    @property
+    def data_for_document_library(self):
+        return self.nodes.filter(Q(type='contractingParties')|
+                                 Q(type='contractType')|
+                                 Q(type='start'))
+
+    @staticmethod
+    def contracts_task_statistic():
+        statistics = {
+            'all_contracts': Contract.objects.all().count(),
+            'contracts_with_task': Contract.objects.all().filter(task__isnull=False).count(),
+            'contracts_without_task': Contract.objects.filter(task__contract=None).count()
+        }
+        return statistics
+
 
 
 CLAUSE_TYPE_KDP_TYPES_MAPPING = {

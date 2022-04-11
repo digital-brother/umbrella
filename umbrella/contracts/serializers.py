@@ -40,3 +40,19 @@ class KDPSerializer(CustomModelSerializer):
     class Meta:
         model = Node
         fields = ["id", "type", "content", "clause"]
+
+
+class NodeSerializers(CustomModelSerializer):
+    class Meta:
+        model = Node
+        fields = ['content', 'type']
+
+
+class DocumentLibrarySerializer(serializers.ModelSerializer):
+    data_for_document_library = NodeSerializers(many=True, read_only=True)
+    contracts_task_statistic = serializers.CharField()
+    task_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Contract
+        fields = ['file_name', 'task_set', 'data_for_document_library', 'contracts_task_statistic']
