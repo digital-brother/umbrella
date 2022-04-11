@@ -4,7 +4,7 @@ from umbrella.contracts.models import Contract, Node
 from umbrella.core.serializers import CustomModelSerializer
 
 
-class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
+class ContractCreateSerializer(CustomModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:

@@ -10,8 +10,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.serializers import ContractCreateSerializer, KDPSerializer
 from umbrella.contracts.serializers import ContractSerializer
-from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
 
@@ -46,7 +46,7 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
 
 
 class ContractCreateView(CreateAPIView):
-    serializer_class = GetAddFilePresignedUrlSerializer
+    serializer_class = ContractCreateSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
