@@ -86,7 +86,8 @@ class Contract(CustomModel):
 
 
 CLAUSE_TYPE_KDP_TYPES_MAPPING = {
-    'term': ['start', 'end', 'duration', 'effective_date']
+    'term': ['start', 'end', 'duration', 'effective_date'],
+    'insurance': []
 }
 
 
