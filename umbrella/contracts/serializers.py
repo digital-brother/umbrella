@@ -43,6 +43,7 @@ class KDPSerializer(CustomModelSerializer):
         fields = ["id", "type", "content", "clause"]
 
 
+
 class NodeSerializers(CustomModelSerializer):
     class Meta:
         model = Node
@@ -55,9 +56,22 @@ class TagsSerializers(CustomModelSerializer):
         fields = ['name', 'tag_group']
 
 
+class ChildDocumentSerializer(CustomModelSerializer):
+    tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='task_set')
+    tags = TagsSerializers(many=True, read_only=True, source='tags_set')
+    contracting_start = NodeSerializers(many=True, read_only=True)
+    contracts_type = NodeSerializers(many=True, read_only=True)
+    contracting_parties = NodeSerializers(many=True, read_only=True)
+
+    class Meta:
+        model = Contract
+        fields = ['file_name', 'tasks', 'contracting_parties', 'contracting_start', 'tags',
+                  'contracts_type']
+
+
 class DocumentLibrarySerializer(CustomModelSerializer):
     tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='task_set')
-    get_child_contracts = ContractSerializer(many=True, read_only=True)
+    get_child_contracts = ChildDocumentSerializer(many=True, read_only=True)
     tags = TagsSerializers(many=True, read_only=True, source='tags_set')
     contracting_start = NodeSerializers(many=True, read_only=True)
     contracts_type = NodeSerializers(many=True, read_only=True)
