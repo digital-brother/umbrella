@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from umbrella.contracts.models import Contract, Node
+from umbrella.contracts.models import Contract, Node, Tags
 from umbrella.core.serializers import CustomModelSerializer
 from umbrella.users.auth import User
 
@@ -49,14 +49,22 @@ class NodeSerializers(CustomModelSerializer):
         fields = ['content', 'type']
 
 
+class TagsSerializers(CustomModelSerializer):
+    class Meta:
+        model = Tags
+        fields = ['name', 'tag_group']
+
+
 class DocumentLibrarySerializer(CustomModelSerializer):
-    task_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='task_set')
+    get_child_contracts = ContractSerializer(many=True, read_only=True)
+    tags = TagsSerializers(many=True, read_only=True, source='tags_set')
     contracting_start = NodeSerializers(many=True, read_only=True)
     contracts_type = NodeSerializers(many=True, read_only=True)
     contracting_parties = NodeSerializers(many=True, read_only=True)
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'task_set', 'contracting_parties', 'contracting_start', 'contracts_type']
+        fields = ['file_name', 'get_child_contracts', 'tasks', 'contracting_parties', 'contracting_start', 'tags', 'contracts_type']
 
 

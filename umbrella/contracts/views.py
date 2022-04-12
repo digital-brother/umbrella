@@ -7,11 +7,11 @@ from rest_framework import filters
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
-from umbrella.contracts.paginations import ContractStatisticPagination
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
@@ -117,8 +117,23 @@ class KDPClauseView(ListAPIView):
 # TODO: Endpoint for testing. Delete when no need
 
 
+class ContractStatisticPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page'
+
+    def get_paginated_response(self, data):
+        contracts_statistic = Contract.contracts_task_statistic()
+        return Response({
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'count': self.page.paginator.count,
+            'contract_statistic': contracts_statistic,
+            'results': data,
+        })
+
+
 class DocumentLibraryListView(ListAPIView):
-    queryset = Contract.objects.all()
+    queryset = Contract.objects.all().filter(parent=None)
     pagination_class = ContractStatisticPagination
     serializer_class = DocumentLibrarySerializer
 

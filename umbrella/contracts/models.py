@@ -29,6 +29,7 @@ class Contract(CustomModel):
     analytics_data = models.JSONField(blank=True, null=True)
     file_hash = models.TextField(unique=True)
     file_size = models.BigIntegerField()
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     modified_file_name = models.CharField(max_length=256, unique=True)
     analytics_two = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
@@ -100,6 +101,10 @@ class Contract(CustomModel):
     def contracts_type(self):
         return self.node_set.filter(type='contractType')
 
+    @property
+    def get_child_contracts(self):
+        return Contract.objects.all().filter(parent_id=self.pk)
+
 
     @classmethod
     def contracts_task_statistic(cls):
@@ -109,6 +114,17 @@ class Contract(CustomModel):
             'contracts_without_task': Contract.objects.filter(task__contract=None).count()
         }
         return statistics
+
+
+class Tags(CustomModel):
+    TAG_GROUP_CHOICES = (
+        ('pink', 'Pink'),
+        ('blue', 'Blue'),
+        ('green', 'Green'),
+    )
+    name = models.CharField(max_length=128)
+    tag_group = models.CharField(max_length=128, choices=TAG_GROUP_CHOICES, blank=True, null=True)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
 
 
 
