@@ -3,10 +3,14 @@ from unittest.mock import Mock
 
 import factory
 import pytest
+from django.core.management import call_command
 from django.urls import reverse
 from factory.django import DjangoModelFactory
+from uuid import UUID
 
-from umbrella.contracts.models import Contract
+from pytest_factoryboy import register
+
+from umbrella.contracts.models import Contract, Node
 from umbrella.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
@@ -34,6 +38,14 @@ def test_contract_create(client):
     assert Contract.objects.count() == 1
 
 
+def test_parse_contract(client):
+    ContractFactory(id=UUID("6cb7fa02-457f-4e91-be84-3bfea7692d6b"))
+    assert Node.objects.count() == 0
+    test_contracts_files_dir = "umbrella/contracts/test_analytics_jsons/6cb7fa02-457f-4e91-be84-3bfea7692d6b"
+    call_command('parse_contract', test_contracts_files_dir)
+    assert Contract.objects.count() > 0
+
+
 class ContractFactory(DjangoModelFactory):
     created_by = factory.SubFactory(UserFactory)
     file_size = 1024
@@ -50,3 +62,11 @@ class ContractFactory(DjangoModelFactory):
             # A list of groups were passed in, use them
             for extracted_group in extracted:
                 self.groups.add(extracted_group)
+
+
+class NodeFactory(DjangoModelFactory):
+    type = "term"
+    contract = factory.SubFactory(ContractFactory)
+
+    class Meta:
+        model = Node
