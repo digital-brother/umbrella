@@ -89,13 +89,20 @@ class Contract(CustomModel):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
 
     @property
-    def data_for_document_library(self):
-        return self.nodes.filter(Q(type='contractingParties')|
-                                 Q(type='contractType')|
-                                 Q(type='start'))
+    def contracting_parties(self):
+        return self.node_set.filter(type='contractingParties')
 
-    @staticmethod
-    def contracts_task_statistic():
+    @property
+    def contracting_start(self):
+        return self.node_set.filter(type='start')
+
+    @property
+    def contracts_type(self):
+        return self.node_set.filter(type='contractType')
+
+
+    @classmethod
+    def contracts_task_statistic(cls):
         statistics = {
             'all_contracts': Contract.objects.all().count(),
             'contracts_with_task': Contract.objects.all().filter(task__isnull=False).count(),

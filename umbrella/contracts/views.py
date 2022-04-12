@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.paginations import ContractStatisticPagination
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
@@ -118,4 +119,17 @@ class KDPClauseView(ListAPIView):
 
 class DocumentLibraryListView(ListAPIView):
     queryset = Contract.objects.all()
+    pagination_class = ContractStatisticPagination
     serializer_class = DocumentLibrarySerializer
+
+    # def list(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(self.get_queryset(), many=True)
+    #     serialized_data = serializer.data
+    #     contracts_statistic = Contract.contracts_task_statistic()
+    #     response_data = {
+    #         "contracts_documents": serialized_data,
+    #         "contracts_statistics": contracts_statistic
+    #     }
+    #     return Response(response_data)
+
+

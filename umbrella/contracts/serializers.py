@@ -49,11 +49,14 @@ class NodeSerializers(CustomModelSerializer):
         fields = ['content', 'type']
 
 
-class DocumentLibrarySerializer(serializers.ModelSerializer):
-    data_for_document_library = NodeSerializers(many=True, read_only=True)
-    contracts_task_statistic = serializers.CharField()
+class DocumentLibrarySerializer(CustomModelSerializer):
     task_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    contracting_start = NodeSerializers(many=True, read_only=True)
+    contracts_type = NodeSerializers(many=True, read_only=True)
+    contracting_parties = NodeSerializers(many=True, read_only=True)
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'task_set', 'data_for_document_library', 'contracts_task_statistic']
+        fields = ['file_name', 'task_set', 'contracting_parties', 'contracting_start', 'contracts_type']
+
+
