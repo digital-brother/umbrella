@@ -82,3 +82,10 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         fields = ['file_name', 'get_child_contracts', 'tasks', 'contracting_parties', 'contracting_start', 'tags', 'contracts_type']
 
 
+class UpdateParentSerializer(CustomModelSerializer):
+
+    class Meta:
+        model = Contract
+        fields = ['parent']
+
+

@@ -118,9 +118,9 @@ class Contract(CustomModel):
 
 class Tags(CustomModel):
     TAG_GROUP_CHOICES = (
-        ('pink', 'Pink'),
-        ('blue', 'Blue'),
-        ('green', 'Green'),
+        ('nature', 'Nature'),
+        ('type', 'Type'),
+        ('groups', 'Groups'),
     )
     name = models.CharField(max_length=128)
     tag_group = models.CharField(max_length=128, choices=TAG_GROUP_CHOICES, blank=True, null=True)
