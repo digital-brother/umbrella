@@ -91,15 +91,15 @@ class Contract(CustomModel):
 
     @property
     def contracting_parties(self):
-        return self.node.filter(type='contractingParties')
+        return self.nodes.filter(type='contractingParties')
 
     @property
     def contracting_start(self):
-        return self.node.filter(type='start')
+        return self.nodes.filter(type='start')
 
     @property
     def contracts_type(self):
-        return self.node.filter(type='contractType')
+        return self.nodes.filter(type='contractType')
 
     @property
     def get_child_contracts(self):
@@ -139,7 +139,7 @@ class Node(CustomModel):
     # Used for KDP node type, otherwise null
     clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
     # Used for Clause node type, otherwise null
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True, related_name='node')
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True, related_name='nodes')
 
     content = models.JSONField(null=True, blank=True)
 
