@@ -117,8 +117,6 @@ class KDPClauseView(ListAPIView):
         kdps = Node.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
         return kdps
 
-# TODO: Endpoint for testing. Delete when no need
-
 
 class ContractStatisticPagination(PageNumberPagination):
     page_size = 10
@@ -136,7 +134,7 @@ class ContractStatisticPagination(PageNumberPagination):
 
 
 class DocumentLibraryListView(ListAPIView):
-    queryset = Contract.objects.all().filter(parent=None)
+    queryset = Contract.objects.filter(parent=None)
     pagination_class = ContractStatisticPagination
     serializer_class = DocumentLibrarySerializer
 
