@@ -16,7 +16,7 @@ services:
   web: &web
     restart: always
     env_file:
-      - .envs/.env.local
+      - .envs/.local
     build: ./
     image: umbrella_local_web
     container_name: umbrella_local_web
