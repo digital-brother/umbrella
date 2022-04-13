@@ -16,6 +16,10 @@ from umbrella.users.tests.factories import UserFactory
 pytestmark = pytest.mark.django_db
 
 
+TEST_CONTRACT_FILES_DIR = "umbrella/contracts/test_analytics_jsons/6cb7fa02-457f-4e91-be84-3bfea7692d6b"
+TEST_CONTRACT_UUID = "6cb7fa02-457f-4e91-be84-3bfea7692d6b"
+
+
 def test_contract_list(client, contract):
     url = reverse('contract-list')
     response = client.get(url, format='json')
@@ -39,11 +43,19 @@ def test_contract_create(client):
 
 
 def test_parse_contract(client):
-    ContractFactory(id=UUID("6cb7fa02-457f-4e91-be84-3bfea7692d6b"))
+    ContractFactory(id=UUID(TEST_CONTRACT_UUID))
     assert Node.objects.count() == 0
-    test_contracts_files_dir = "umbrella/contracts/test_analytics_jsons/6cb7fa02-457f-4e91-be84-3bfea7692d6b"
-    call_command('parse_contract', test_contracts_files_dir)
+    call_command('parse_contract', TEST_CONTRACT_FILES_DIR)
     assert Contract.objects.count() > 0
+
+
+def test_kdp_with_clause_list(client, contract, node):
+    kdp_type = "start"
+    NodeFactory(type=kdp_type, clause=node, contract=None)
+    url = reverse('kdp_clause', args=[contract.id, node.type])
+    response = client.get(url, format='json')
+    assert response.data["count"] == 1
+    assert response.data["results"][0]["type"] == kdp_type
 
 
 class ContractFactory(DjangoModelFactory):
