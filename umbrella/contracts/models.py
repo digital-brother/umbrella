@@ -103,7 +103,7 @@ class Contract(CustomModel):
 
     @property
     def get_child_contracts(self):
-        return Contract.objects.all().filter(parent_id=self.pk)
+        return self.parent_contract.filter(parent_id=self.pk)
 
 
     @classmethod
