@@ -65,11 +65,11 @@ class DocumentLibrarySerializer(CustomModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'get_child_contracts', 'tasks', 'contracting_parties', 'contracting_start', 'tags', 'contracts_type']
+        fields = ['file_name', 'child_contracts', 'tasks', 'contracting_parties', 'contracting_start', 'tags', 'contracts_type']
 
     def get_fields(self):
         fields = super(DocumentLibrarySerializer, self).get_fields()
-        fields['get_child_contracts'] = DocumentLibrarySerializer(many=True)
+        fields['child_contracts'] = DocumentLibrarySerializer(many=True)
         return fields
 
 

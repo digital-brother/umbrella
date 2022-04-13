@@ -29,7 +29,7 @@ class Contract(CustomModel):
     analytics_data = models.JSONField(blank=True, null=True)
     file_hash = models.TextField(unique=True)
     file_size = models.BigIntegerField()
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.DO_NOTHING, related_name='parent_contract')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.DO_NOTHING, related_name='children')
     modified_file_name = models.CharField(max_length=256, unique=True)
     analytics_two = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
@@ -102,8 +102,8 @@ class Contract(CustomModel):
         return self.nodes.filter(type='contractType')
 
     @property
-    def get_child_contracts(self):
-        return self.parent_contract.filter(parent_id=self.pk)
+    def child_contracts(self):
+        return self.children.filter(parent_id=self.pk)
 
 
     @classmethod
