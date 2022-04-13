@@ -1,11 +1,14 @@
 import logging
 
 import boto3
+import uuid
+
 from botocore.exceptions import ClientError
 from django.conf import settings
-from rest_framework import filters
+from django.http import Http404
+from rest_framework import filters, status
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -148,10 +151,19 @@ class DocumentLibraryListView(ListAPIView):
     #     return Response(response_data)
 
 
-class UpdateContractTagsParentsView(APIView):
+class UpdateContractParentsView(UpdateAPIView):
     queryset = Contract.objects.all()
     serializer_class = UpdateParentSerializer
+    lookup_field = 'id'
 
+    def partial_update(self, request, *args, **kwargs):
+        print(self.kwargs['id'])
+        instance = self.get_object()
+
+        sz = self.serializer_class(data=self.request.data, instance=instance)
+        sz.is_valid(raise_exception=True)
+        sz.save()
+        return Response(sz.data, status=status.HTTP_200_OK)
 
 
 
