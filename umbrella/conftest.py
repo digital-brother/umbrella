@@ -4,7 +4,7 @@ from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
-from umbrella.contracts.tests import ContractFactory, NodeFactory
+from umbrella.contracts.tests.factories import ContractFactory, NodeFactory
 from umbrella.users.tests.factories import UserFactory
 
 

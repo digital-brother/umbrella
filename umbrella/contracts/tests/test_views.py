@@ -1,18 +1,14 @@
 from unittest import mock
 from unittest.mock import Mock
 
-import factory
 import pytest
-from django.core.management import call_command
 from django.urls import reverse
-from factory.django import DjangoModelFactory
-from uuid import UUID
+from faker import Faker
 
-from pytest_factoryboy import register
+from umbrella.contracts.models import Contract
+from umbrella.contracts.tests.factories import NodeFactory
 
-from umbrella.contracts.models import Contract, Node
-from umbrella.users.tests.factories import UserFactory
-
+fake = Faker()
 pytestmark = pytest.mark.django_db
 
 
@@ -42,13 +38,6 @@ def test_contract_create(client):
     assert Contract.objects.count() == 1
 
 
-def test_parse_contract(client):
-    ContractFactory(id=UUID(TEST_CONTRACT_UUID))
-    assert Node.objects.count() == 0
-    call_command('parse_contract', TEST_CONTRACT_FILES_DIR)
-    assert Contract.objects.count() > 0
-
-
 def test_kdp_with_clause_list(client, contract, node):
     kdp_type = "start"
     NodeFactory(type=kdp_type, clause=node, contract=None)
@@ -56,29 +45,3 @@ def test_kdp_with_clause_list(client, contract, node):
     response = client.get(url, format='json')
     assert response.data["count"] == 1
     assert response.data["results"][0]["type"] == kdp_type
-
-
-class ContractFactory(DjangoModelFactory):
-    created_by = factory.SubFactory(UserFactory)
-    file_size = 1024
-
-    class Meta:
-        model = Contract
-
-    @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
-        if not create:
-            return
-
-        if extracted:
-            # A list of groups were passed in, use them
-            for extracted_group in extracted:
-                self.groups.add(extracted_group)
-
-
-class NodeFactory(DjangoModelFactory):
-    type = "term"
-    contract = factory.SubFactory(ContractFactory)
-
-    class Meta:
-        model = Node
