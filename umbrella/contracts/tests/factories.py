@@ -23,7 +23,7 @@ class ContractFactory(DjangoModelFactory):
                 self.groups.add(extracted_group)
 
 
-class NodeFactory(DjangoModelFactory):
+class TermNodeFactory(DjangoModelFactory):
     type = "term"
     contract = factory.SubFactory(ContractFactory)
 
