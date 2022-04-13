@@ -29,7 +29,7 @@ class Contract(CustomModel):
     analytics_data = models.JSONField(blank=True, null=True)
     file_hash = models.TextField(unique=True)
     file_size = models.BigIntegerField()
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='parent_contract')
     modified_file_name = models.CharField(max_length=256, unique=True)
     analytics_two = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
@@ -91,15 +91,15 @@ class Contract(CustomModel):
 
     @property
     def contracting_parties(self):
-        return self.node_set.filter(type='contractingParties')
+        return self.node.filter(type='contractingParties')
 
     @property
     def contracting_start(self):
-        return self.node_set.filter(type='start')
+        return self.node.filter(type='start')
 
     @property
     def contracts_type(self):
-        return self.node_set.filter(type='contractType')
+        return self.node.filter(type='contractType')
 
     @property
     def get_child_contracts(self):
@@ -139,7 +139,7 @@ class Node(CustomModel):
     # Used for KDP node type, otherwise null
     clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
     # Used for Clause node type, otherwise null
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True, related_name='node')
 
     content = models.JSONField(null=True, blank=True)
 

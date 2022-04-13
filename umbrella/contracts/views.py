@@ -140,30 +140,8 @@ class DocumentLibraryListView(ListAPIView):
     pagination_class = ContractStatisticPagination
     serializer_class = DocumentLibrarySerializer
 
-    # def list(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(self.get_queryset(), many=True)
-    #     serialized_data = serializer.data
-    #     contracts_statistic = Contract.contracts_task_statistic()
-    #     response_data = {
-    #         "contracts_documents": serialized_data,
-    #         "contracts_statistics": contracts_statistic
-    #     }
-    #     return Response(response_data)
 
 
-class UpdateContractParentsView(UpdateAPIView):
-    queryset = Contract.objects.all()
-    serializer_class = UpdateParentSerializer
-    lookup_field = 'id'
-
-    def partial_update(self, request, *args, **kwargs):
-        print(self.kwargs['id'])
-        instance = self.get_object()
-
-        sz = self.serializer_class(data=self.request.data, instance=instance)
-        sz.is_valid(raise_exception=True)
-        sz.save()
-        return Response(sz.data, status=status.HTTP_200_OK)
 
 
 
