@@ -1,7 +1,6 @@
 import json
 import logging
 import shutil
-from glob import glob
 from pathlib import Path
 
 import boto3

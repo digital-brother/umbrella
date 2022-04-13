@@ -34,7 +34,7 @@ class ClauseSerializer(serializers.ModelSerializer):
         fields = ("id", "type", "contract", "content")
 
 
-class KDPSerializer(CustomModelSerializer):
+class KDPClauseSerializer(CustomModelSerializer):
     clause = ClauseSerializer()
 
     class Meta:

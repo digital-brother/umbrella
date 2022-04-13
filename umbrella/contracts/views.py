@@ -10,7 +10,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
-from umbrella.contracts.serializers import ContractCreateSerializer, KDPSerializer
+from umbrella.contracts.serializers import ContractCreateSerializer, KDPClauseSerializer, ClauseSerializer
 from umbrella.contracts.serializers import ContractSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
@@ -100,7 +100,7 @@ class AWSContractProcessedWebhookView(GenericAPIView):
 
 class KDPClauseView(ListAPIView):
     """Iterate by KDPs, show Clause for each"""
-    serializer_class = KDPSerializer
+    serializer_class = KDPClauseSerializer
 
     def get_queryset(self):
         clause_type = self.kwargs['clause_type']
@@ -108,4 +108,15 @@ class KDPClauseView(ListAPIView):
 
         contract_uuid = self.kwargs['contract_uuid']
         kdps = Node.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
+        return kdps
+
+
+class ClauseView(ListAPIView):
+    """Iterate by Clauses"""
+    serializer_class = ClauseSerializer
+
+    def get_queryset(self):
+        clause_type = self.kwargs['clause_type']
+        contract_uuid = self.kwargs['contract_uuid']
+        kdps = Node.objects.filter(contract=contract_uuid, type=clause_type)
         return kdps
