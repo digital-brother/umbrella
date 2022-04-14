@@ -46,9 +46,9 @@ class Contract(CustomModel):
             try:
                 return object.__getattribute__(self, attrname)
             except AttributeError:
-                value = self.nodes.filter(type=attrname)
-                setattr(self, attrname, value)
-                return value
+                queryset = self.nodes.filter(type=attrname)
+                setattr(self, attrname, queryset)
+                return queryset
         return object.__getattribute__(self, attrname)
 
     @classmethod
