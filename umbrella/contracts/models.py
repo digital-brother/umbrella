@@ -41,6 +41,16 @@ class Contract(CustomModel):
     def __str__(self):
         return self.file_name
 
+    def __getattr__(self, attrname):
+        if attrname in ["contractingParties", 'start', 'contractType'] :
+            try:
+                return object.__getattribute__(self, attrname)
+            except AttributeError:
+                value = self.nodes.filter(type=attrname)
+                setattr(self, attrname, value)
+                return value
+        return object.__getattribute__(self, attrname)
+
     @classmethod
     def create(cls, file_name, **data):
         """
@@ -88,18 +98,6 @@ class Contract(CustomModel):
     @classmethod
     def get_aws_downloads_dir(cls, contract_uuid):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
-
-    @property
-    def contracting_parties(self):
-        return self.nodes.filter(type='contractingParties')
-
-    @property
-    def contracting_start(self):
-        return self.nodes.filter(type='start')
-
-    @property
-    def contracts_type(self):
-        return self.nodes.filter(type='contractType')
 
     @property
     def child_contracts(self):

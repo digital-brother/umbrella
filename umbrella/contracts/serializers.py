@@ -59,9 +59,9 @@ class TagsSerializer(CustomModelSerializer):
 class DocumentLibrarySerializer(CustomModelSerializer):
     tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='task_set')
     tags = TagsSerializer(many=True, read_only=True, source='tags_set')
-    contracting_start = NodeSerializer(many=True, read_only=True)
-    contracts_type = NodeSerializer(many=True, read_only=True)
-    contracting_parties = NodeSerializer(many=True, read_only=True)
+    contracting_start = NodeSerializer(many=True, read_only=True, source='start')
+    contracts_type = NodeSerializer(many=True, read_only=True, source='contractType')
+    contracting_parties = NodeSerializer(many=True, read_only=True, source='contractingParties')
 
     class Meta:
         model = Contract
