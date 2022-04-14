@@ -99,11 +99,6 @@ class Contract(CustomModel):
     def get_aws_downloads_dir(cls, contract_uuid):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
 
-    @property
-    def child_contracts(self):
-        return self.children.filter(parent_id=self.pk)
-
-
     @classmethod
     def contracts_task_statistic(cls):
         statistics = {
