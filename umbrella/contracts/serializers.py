@@ -28,7 +28,7 @@ class ContractSerializer(CustomModelSerializer):
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
 
 
-class ClauseSerializer(serializers.ModelSerializer):
+class ClauseSerializer(CustomModelSerializer):
     class Meta:
         model = Node
         fields = ("id", "type", "contract", "content")
