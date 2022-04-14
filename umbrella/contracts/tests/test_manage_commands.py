@@ -2,7 +2,7 @@ import pytest
 from django.core.management import call_command
 from uuid import UUID
 
-from umbrella.contracts.models import Contract, Node
+from umbrella.contracts.models import Node
 from umbrella.contracts.tests.factories import ContractFactory
 
 pytestmark = pytest.mark.django_db
