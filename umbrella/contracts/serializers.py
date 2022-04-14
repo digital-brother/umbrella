@@ -44,13 +44,13 @@ class KDPSerializer(CustomModelSerializer):
 
 
 
-class NodeSerializers(CustomModelSerializer):
+class NodeSerializer(CustomModelSerializer):
     class Meta:
         model = Node
         fields = ['content', 'type']
 
 
-class TagsSerializers(CustomModelSerializer):
+class TagsSerializer(CustomModelSerializer):
     class Meta:
         model = Tags
         fields = ['name', 'tag_group']
@@ -58,10 +58,10 @@ class TagsSerializers(CustomModelSerializer):
 
 class DocumentLibrarySerializer(CustomModelSerializer):
     tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='task_set')
-    tags = TagsSerializers(many=True, read_only=True, source='tags_set')
-    contracting_start = NodeSerializers(many=True, read_only=True)
-    contracts_type = NodeSerializers(many=True, read_only=True)
-    contracting_parties = NodeSerializers(many=True, read_only=True)
+    tags = TagsSerializer(many=True, read_only=True, source='tags_set')
+    contracting_start = NodeSerializer(many=True, read_only=True)
+    contracts_type = NodeSerializer(many=True, read_only=True)
+    contracting_parties = NodeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contract
