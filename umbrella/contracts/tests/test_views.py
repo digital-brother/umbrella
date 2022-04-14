@@ -40,9 +40,9 @@ def test_contract_create(client):
 
 def test_kdp_clause_list(client, contract, node):
     kdp_type = "start"
-    TermNodeFactory(type=kdp_type, clause=node, contract=None)
+    kdp = TermNodeFactory(type=kdp_type, clause=node, contract=None)
     url = reverse('kdp_clause', args=[contract.id, node.type])
     response = client.get(url, format='json')
-    assert response.data["count"] == 1
+    assert response.data["results"][0]["id"] == str(kdp.id)
     assert response.data["results"][0]["type"] == kdp_type
-    assert response.data["results"][0]["clause"] is not None
+    assert response.data["results"][0]["clause"]["id"] == str(node.id)
