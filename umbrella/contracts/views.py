@@ -123,14 +123,10 @@ class DocumentLibraryListView(ListAPIView):
     serializer_class = DocumentLibrarySerializer
 
     def list(self, request, *args, **kwargs):
-        serializer = self.get_serializer(self.get_queryset(), many=True)
-        serialized_data = serializer.data
+        response = super().list(request, *args, **kwargs)
         contracts_statistic = Contract.contracts_task_statistic()
-        response_data = {
-            "contracts_documents": serialized_data,
-            "contracts_statistics": contracts_statistic
-        }
-        return Response(response_data)
+        response.data["contracts_statistic"] = contracts_statistic
+        return response
 
 
 
