@@ -5,14 +5,16 @@ import uuid
 
 from botocore.exceptions import ClientError
 from django.conf import settings
-from django.http import Http404
-from rest_framework import filters, status
+
+
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
-from rest_framework.pagination import PageNumberPagination
+
 from rest_framework.response import Response
-from rest_framework.views import APIView
+
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
@@ -122,11 +124,18 @@ class DocumentLibraryListView(ListAPIView):
     queryset = Contract.objects.filter(parent=None)
     serializer_class = DocumentLibrarySerializer
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        contracts_statistic = Contract.contracts_task_statistic()
-        response.data["contracts_statistic"] = contracts_statistic
-        return response
+
+@api_view(('GET',))
+def contracts_statistics(request, *args, **kwargs):
+    data = {
+        'contracts_statistic': Contract.contracts_task_statistic(),
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 
