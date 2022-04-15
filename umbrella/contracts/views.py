@@ -118,25 +118,19 @@ class KDPClauseView(ListAPIView):
         return kdps
 
 
-class ContractStatisticPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page'
-
-    def get_paginated_response(self, data):
-        contracts_statistic = Contract.contracts_task_statistic()
-        return Response({
-            'next': self.get_next_link(),
-            'previous': self.get_previous_link(),
-            'count': self.page.paginator.count,
-            'contract_statistic': contracts_statistic,
-            'results': data,
-        })
-
-
 class DocumentLibraryListView(ListAPIView):
     queryset = Contract.objects.filter(parent=None)
-    pagination_class = ContractStatisticPagination
     serializer_class = DocumentLibrarySerializer
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        serialized_data = serializer.data
+        contracts_statistic = Contract.contracts_task_statistic()
+        response_data = {
+            "contracts_documents": serialized_data,
+            "contracts_statistics": contracts_statistic
+        }
+        return Response(response_data)
 
 
 
