@@ -41,16 +41,6 @@ class Contract(CustomModel):
     def __str__(self):
         return self.file_name
 
-    # def __getattr__(self, attrname):
-    #     if attrname in ["contractingParties", 'start', 'contractType'] :
-    #         try:
-    #             return object.__getattribute__(self, attrname)
-    #         except AttributeError:
-    #             queryset = self.nodes.filter(type=attrname)
-    #             setattr(self, attrname, queryset)
-    #             return queryset
-    #     return object.__getattribute__(self, attrname)
-
     @classmethod
     def create(cls, file_name, **data):
         """
@@ -101,15 +91,15 @@ class Contract(CustomModel):
 
     @property
     def contract_parties(self):
-        return self.node.filter(type='contractingParties')
+        return self.nodes.filter(type='contractingParties')
 
     @property
     def starts(self):
-        return self.node.filter(type='start')
+        return self.nodes.filter(type='start')
 
     @property
     def contract_types(self):
-        return self.node.filter(type='contractType')
+        return self.nodes.filter(type='contractType')
 
 
     @classmethod
