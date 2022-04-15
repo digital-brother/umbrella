@@ -59,13 +59,13 @@ class TagsSerializer(CustomModelSerializer):
 class DocumentLibrarySerializer(CustomModelSerializer):
     tasks = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='task_set')
     tags = TagsSerializer(many=True, read_only=True, source='tags_set')
-    contracting_start = NodeSerializer(many=True, read_only=True, source='start')
-    contracts_type = NodeSerializer(many=True, read_only=True, source='contractType')
-    contracting_parties = NodeSerializer(many=True, read_only=True, source='contractingParties')
+    starts = NodeSerializer(many=True, read_only=True)
+    contract_types = NodeSerializer(many=True, read_only=True)
+    contract_parties = NodeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'children', 'tasks', 'contracting_parties', 'contracting_start', 'tags', 'contracts_type']
+        fields = ['file_name', 'children', 'tasks', 'contract_parties', 'starts', 'tags', 'contract_types']
 
     def get_fields(self):
         fields = super(DocumentLibrarySerializer, self).get_fields()

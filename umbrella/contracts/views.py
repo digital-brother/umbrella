@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
-from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, UpdateParentSerializer
+from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
