@@ -10,8 +10,8 @@ urlpatterns = [
          name='aws-contract-processed-webhook'),
     path('<uuid:contract_uuid>/clauses/<str:clause_type>/', KDPClauseView.as_view(), name='kdp_clause'),
 
-    path('document-library/', DocumentLibraryListView.as_view(), name='get_contracts'),
-    path('contracts-statistics/', contracts_statistics, name='contracts_statistics'),
+    path('document-library/', DocumentLibraryListView.as_view(), name='get-contracts'),
+    path('contracts-statistics/', contracts_statistics, name='contracts-statistics'),
 
 
 ]
