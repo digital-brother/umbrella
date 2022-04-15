@@ -59,7 +59,7 @@ def parse_clause_file(clause_file):
     logger.info(f"Parsing '{clause_file}'.")
     with clause_file.open(mode="rb") as f:
         json_data = json.load(f)
-        clause_type = _get_clause_type_from_json_data(json_data)
+        clause_type = _get_clause_type_from_file_name(f.name)
 
         clause_nodes = {}
         for node_type, nodes_list in json_data.items():
@@ -69,8 +69,7 @@ def parse_clause_file(clause_file):
 
 
 def parse_node_list(node_type, nodes_list, contract, clause_type):
-    clause_types = CLAUSE_TYPE_KDP_TYPES_MAPPING.keys()
-    is_clause = node_type in clause_types
+    is_clause = node_type == clause_type
     handler = parse_clause if is_clause else parse_kdp
 
     node_list = []
@@ -112,12 +111,7 @@ def _get_contract_from_clause_file_path(clause_file):
     return contract
 
 
-def _get_clause_type_from_json_data(json_data):
-    json_keys = set(json_data)
-    available_clause_types = set(CLAUSE_TYPE_KDP_TYPES_MAPPING)
-    common_clauses = json_keys & available_clause_types
-    if len(common_clauses) != 1:
-        msg = f"File should contain 1 clause, but contains {len(common_clauses)}: {common_clauses}"
-        raise UmbrellaError(msg)
-    clause_type = list(common_clauses)[0]
-    return clause_type
+def _get_clause_type_from_file_name(file_path):
+    file_name = file_path.split("/")[-1]
+    name_without_extension = file_name.split(".")[0]
+    return name_without_extension

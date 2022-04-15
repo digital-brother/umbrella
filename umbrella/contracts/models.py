@@ -101,6 +101,12 @@ class Node(CustomModel):
 
     content = models.JSONField(null=True, blank=True)
 
+    @classmethod
+    def get_kdp_types(cls, clause_type):
+        kdp_types = Node.objects.filter(clause__isnull=False, clause__type=clause_type).values_list('type', flat=True)
+        unique_kdp_types = kdp_types.distinct()
+        return unique_kdp_types
+
 
 class ClauseManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
