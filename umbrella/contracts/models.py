@@ -106,8 +106,8 @@ class Contract(CustomModel):
     def contracts_task_statistic(cls):
         statistics = {
             'contracts_count': Contract.objects.all().count(),
-            'contracts_with_task_count': Contract.objects.all().filter(task__isnull=False).count(),
-            'contracts_without_task_count': Contract.objects.filter(task__contract=None).count()
+            'contracts_with_task_count': Contract.objects.all().filter(tasks__isnull=False).count(),
+            'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count()
         }
         return statistics
 
@@ -120,7 +120,7 @@ class Tags(CustomModel):
     )
     name = models.CharField(max_length=128)
     tag_group = models.CharField(max_length=128, choices=TAG_GROUP_CHOICES, blank=True, null=True)
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name='tags')
 
 
 
