@@ -43,6 +43,7 @@ def test_kdp_clause_list(client, contract, node):
     kdp = TermKDPFactory(type=kdp_type, clause=node, contract=None)
     url = reverse('kdp_clause', args=[contract.id, node.type])
     response = client.get(url, format='json')
-    assert response.data["results"][0]["id"] == str(kdp.id)
-    assert response.data["results"][0]["type"] == kdp_type
-    assert response.data["results"][0]["clause"]["id"] == str(node.id)
+    kdp_data = response.data["results"][0]["id"]
+    assert kdp_data == str(kdp.id)
+    assert kdp_data["type"] == kdp_type
+    assert kdp_data["clause"]["id"] == str(node.id)
