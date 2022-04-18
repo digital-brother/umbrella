@@ -43,13 +43,6 @@ class KDPSerializer(CustomModelSerializer):
         fields = ["id", "type", "content", "clause"]
 
 
-
-class NodeSerializer(CustomModelSerializer):
-    class Meta:
-        model = Node
-        fields = ['content', 'type']
-
-
 class TagsSerializer(CustomModelSerializer):
     class Meta:
         model = Tags
@@ -58,9 +51,9 @@ class TagsSerializer(CustomModelSerializer):
 
 class DocumentLibrarySerializer(CustomModelSerializer):
     tags = TagsSerializer(many=True, read_only=True)
-    starts = NodeSerializer(many=True, read_only=True)
-    contract_types = NodeSerializer(many=True, read_only=True)
-    contract_parties = NodeSerializer(many=True, read_only=True)
+    starts = KDPSerializer(many=True, read_only=True)
+    contract_types = KDPSerializer(many=True, read_only=True)
+    contract_parties = KDPSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contract

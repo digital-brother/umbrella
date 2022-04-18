@@ -67,8 +67,8 @@ class Contract(CustomModel):
 
         realm = self.created_by.realm or User.NO_REALM
 
-        is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
-        if not self.pk or is_duplicate:
+        is_duplicate = Contract.objects.exclude(pk=self.pk).filter(file_name=self.file_name, created_by__realm=realm).exists()
+        if is_duplicate:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
         if errors:
@@ -124,9 +124,7 @@ class Tags(CustomModel):
     )
     name = models.CharField(max_length=128)
     tag_group = models.CharField(max_length=128, choices=TAG_GROUP_CHOICES, blank=True, null=True)
-    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name='tags')
-
-    #TODO Here should be added method for creating Tags Group if user keykloak groupe exist
+    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
 
 
 CLAUSE_TYPE_KDP_TYPES_MAPPING = {
