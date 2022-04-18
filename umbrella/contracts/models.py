@@ -114,6 +114,9 @@ class Clause(Node):
     class Meta:
         proxy = True
 
+    def __str__(self):
+        return f"{self.type} - {self.id}"
+
 
 class KDPManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -126,3 +129,6 @@ class KDP(Node):
 
     class Meta:
         proxy = True
+
+    def __str__(self):
+        return f"{self.type} - {self.id}"
