@@ -1,6 +1,7 @@
 import json
 import logging
 import shutil
+from pathlib import Path
 
 import boto3
 from django.conf import settings
@@ -44,7 +45,7 @@ def download_s3_file(aws_file):
 
 
 def parse_contract(contract_dir):
-    clause_files = contract_dir.glob('*.json')
+    clause_files = list(Path(contract_dir).glob('*.json'))
 
     contract_nodes = {}
     for clause_file in clause_files:
