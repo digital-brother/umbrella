@@ -9,7 +9,7 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from umbrella.contracts.models import Contract, Node, KDP, Clause
+from umbrella.contracts.models import Contract, KDP, Clause
 from umbrella.contracts.serializers import ContractCreateSerializer, KDPClauseSerializer, ClauseSerializer
 from umbrella.contracts.serializers import ContractSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
