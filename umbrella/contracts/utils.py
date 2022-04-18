@@ -8,7 +8,7 @@ from django.conf import settings
 from django.forms import model_to_dict
 
 from config.settings.common import env
-from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.models import Contract, Node
 from umbrella.core.exceptions import UmbrellaError
 
 BUCKET_NAME = env('AWS_ANALYTICS_BUCKET_NAME')
@@ -112,6 +112,6 @@ def _get_contract_from_clause_file_path(clause_file):
 
 
 def _get_clause_type_from_file_name(file_path):
-    file_name = file_path.split("/")[-1]
-    name_without_extension = file_name.split(".")[0]
-    return name_without_extension
+    parsed_path = Path(file_path)
+    file_name = parsed_path.stem
+    return file_name

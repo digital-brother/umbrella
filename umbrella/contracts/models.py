@@ -85,12 +85,6 @@ class Contract(CustomModel):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
 
 
-CLAUSE_TYPE_KDP_TYPES_MAPPING = {
-    'term': ['start', 'end', 'duration', 'effective_date'],
-    'insurance': []
-}
-
-
 class Node(CustomModel):
     """Stores both Clause and KDP objects"""
     type = models.CharField(max_length=128)
@@ -100,12 +94,6 @@ class Node(CustomModel):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True)
 
     content = models.JSONField(null=True, blank=True)
-
-    @classmethod
-    def get_kdp_types(cls, clause_type):
-        kdp_types = Node.objects.filter(clause__isnull=False, clause__type=clause_type).values_list('type', flat=True)
-        unique_kdp_types = kdp_types.distinct()
-        return unique_kdp_types
 
 
 class ClauseManager(models.Manager):
@@ -132,3 +120,10 @@ class KDP(Node):
 
     class Meta:
         proxy = True
+
+    @staticmethod
+    def get_kdp_types(clause_type):
+        clauses = KDP.objects.filter(clause__type=clause_type)
+        kdp_types = clauses.values_list('type', flat=True)
+        unique_kdp_types = kdp_types.distinct()
+        return unique_kdp_types
