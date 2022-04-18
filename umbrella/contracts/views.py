@@ -93,7 +93,7 @@ class ContractProcessedAWSWebhookView(APIView):
             raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
 
         load_aws_analytics_jsons_to_db.delay(contract_id)
-        return Response(f"Downloaded contract {contract_id}")
+        return Response(f"Downloading data for contract {contract_id}")
 
 
 class KDPClauseView(ListAPIView):

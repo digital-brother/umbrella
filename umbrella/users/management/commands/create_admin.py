@@ -39,6 +39,7 @@ class Command(BaseCommand):
 
         ContractFactory(
             id=CONTRACT_UUID,
+            file_name='contract.pdf',
             created_by=admin_user,
         )
         print('Contract created successfully.')
