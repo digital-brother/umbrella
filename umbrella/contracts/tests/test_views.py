@@ -6,14 +6,14 @@ from django.urls import reverse
 from faker import Faker
 
 from umbrella.contracts.models import Contract
-from umbrella.contracts.tests.factories import TermNodeFactory
+from umbrella.contracts.tests.factories import StartKDPFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
 
 
 TEST_CONTRACT_FILES_DIR = "umbrella/contracts/test_analytics_jsons/6cb7fa02-457f-4e91-be84-3bfea7692d6b"
-TEST_CONTRACT_UUID = "6cb7fa02-457f-4e91-be84-3bfea7692d6b"
+TEST_CONTRACT_UUID = TEST_CONTRACT_FILES_DIR.split('/')[-1]
 
 
 def test_contract_list(client, contract):
@@ -38,11 +38,14 @@ def test_contract_create(client):
     assert Contract.objects.count() == 1
 
 
-def test_kdp_clause_list(client, contract, node):
+def test_kdp_clause_list(client):
+    start_kdp = StartKDPFactory()
     kdp_type = "start"
-    kdp = TermNodeFactory(type=kdp_type, clause=node, contract=None)
-    url = reverse('kdp_clause', args=[contract.id, node.type])
+    url = reverse('kdp_clause', args=[start_kdp.contract.id, start_kdp.clause.type])
+
     response = client.get(url, format='json')
-    assert response.data["results"][0]["id"] == str(kdp.id)
-    assert response.data["results"][0]["type"] == kdp_type
-    assert response.data["results"][0]["clause"]["id"] == str(node.id)
+
+    kdp_data = response.data["results"][0]
+    assert kdp_data["id"] == str(start_kdp.id)
+    assert kdp_data["type"] == kdp_type
+    assert kdp_data["clause"]["id"] == str(start_kdp.clause.id)

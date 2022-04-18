@@ -1,7 +1,8 @@
+from uuid import UUID
+
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 from rest_framework.authtoken.models import Token
-from uuid import UUID
 
 from umbrella.contracts.tests.factories import ContractFactory
 from umbrella.users.models import User
@@ -11,7 +12,7 @@ EMAIL = 'admin@gmail.com'
 PASSWORD = 'admin'
 GROUP = 'no_group'
 TOKEN = '2e8c259163886711152ce41256fbedc1fa125569'
-FILE_UUID = UUID("6cb7fa02-457f-4e91-be84-3bfea7692d6b")
+CONTRACT_UUID = UUID("6cb7fa02-457f-4e91-be84-3bfea7692d6b")
 
 
 class Command(BaseCommand):
@@ -37,7 +38,7 @@ class Command(BaseCommand):
         print('Admin created successfully.')
 
         ContractFactory(
-            id=FILE_UUID,
+            id=CONTRACT_UUID,
             created_by=admin_user,
         )
         print('Contract created successfully.')
