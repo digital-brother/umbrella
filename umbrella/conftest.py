@@ -4,13 +4,12 @@ from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
-from umbrella.contracts.tests.factories import ContractFactory, TermNodeFactory
+from umbrella.contracts.tests.factories import ContractFactory, TermKDPFactory
 from umbrella.users.tests.factories import UserFactory
-
 
 register(UserFactory)
 register(ContractFactory)
-register(TermNodeFactory)
+register(TermKDPFactory)
 
 
 @pytest.fixture
