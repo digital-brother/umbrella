@@ -7,9 +7,6 @@ from rest_framework.test import APIClient
 from umbrella.contracts.tests.factories import ContractFactory
 from umbrella.users.tests.factories import UserFactory
 
-register(UserFactory)
-register(ContractFactory)
-
 
 @pytest.fixture
 def client(user):

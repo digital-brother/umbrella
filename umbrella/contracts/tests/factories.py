@@ -1,5 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
+from pytest_factoryboy import register
 
 from umbrella.contracts.models import Contract, Clause, KDP
 from umbrella.users.tests.factories import UserFactory
@@ -26,6 +27,7 @@ class ContractFactory(DjangoModelFactory):
                 self.groups.add(extracted_group)
 
 
+@register
 class TermClauseFactory(DjangoModelFactory):
     type = "term"
     contract = factory.SubFactory(ContractFactory)
@@ -34,6 +36,7 @@ class TermClauseFactory(DjangoModelFactory):
         model = Clause
 
 
+@register
 class StartKDPFactory(DjangoModelFactory):
     type = 'start'
     clause = factory.SubFactory(TermClauseFactory)
