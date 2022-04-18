@@ -55,7 +55,6 @@ services:
     container_name: umbrella_production_celeryworker
     depends_on:
       - redis
-      - postgres
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO -E
 
