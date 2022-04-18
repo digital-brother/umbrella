@@ -108,6 +108,10 @@ class Clause(Node):
     class Meta:
         proxy = True
 
+    @property
+    def kdp_types(self):
+        return KDP.objects.filter(clause__type=self.type).values_list('type', flat=True)
+
 
 class KDPManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -120,10 +124,3 @@ class KDP(Node):
 
     class Meta:
         proxy = True
-
-    @staticmethod
-    def get_kdp_types(clause_type):
-        clauses = KDP.objects.filter(clause__type=clause_type)
-        kdp_types = clauses.values_list('type', flat=True)
-        unique_kdp_types = kdp_types.distinct()
-        return unique_kdp_types
