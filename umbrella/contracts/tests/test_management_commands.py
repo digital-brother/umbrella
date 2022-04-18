@@ -10,7 +10,7 @@ pytestmark = pytest.mark.django_db
 
 TEST_CONTRACT_FILES_DIR = \
     ROOT_DIR / "umbrella/contracts/test_analytics_jsons/6cb7fa02-457f-4e91-be84-3bfea7692d6b"
-TEST_CONTRACT_UUID = "6cb7fa02-457f-4e91-be84-3bfea7692d6b"
+TEST_CONTRACT_UUID = str(TEST_CONTRACT_FILES_DIR).split('/')[-1]
 TEST_KDP_TYPE = "start"
 TEST_CLAUSE_TYPE = "term"
 TEST_CLAUSE_PARAGRAPH_ID = 24
