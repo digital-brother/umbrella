@@ -1,13 +1,16 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from umbrella.contracts.models import Contract, Node
+from umbrella.contracts.models import Contract, Clause, KDP
 from umbrella.users.tests.factories import UserFactory
 
 
 class ContractFactory(DjangoModelFactory):
+    file_name = factory.Sequence(lambda n: f"contract_{n}.pdf")
     created_by = factory.SubFactory(UserFactory)
     file_size = 1024
+    file_hash = factory.Sequence(lambda n: f"file_hash_{n}")
+    modified_file_name = factory.Sequence(lambda n: f"modified_file_name_{n}")
 
     class Meta:
         model = Contract
@@ -23,9 +26,18 @@ class ContractFactory(DjangoModelFactory):
                 self.groups.add(extracted_group)
 
 
-class TermKDPFactory(DjangoModelFactory):
+class TermClauseFactory(DjangoModelFactory):
     type = "term"
     contract = factory.SubFactory(ContractFactory)
 
     class Meta:
-        model = Node
+        model = Clause
+
+
+class StartKDPFactory(DjangoModelFactory):
+    type = 'start'
+    clause = factory.SubFactory(TermClauseFactory)
+    contract = factory.LazyAttribute(lambda kdp: kdp.clause.contract)
+
+    class Meta:
+        model = KDP

@@ -6,7 +6,7 @@ from django.urls import reverse
 from faker import Faker
 
 from umbrella.contracts.models import Contract
-from umbrella.contracts.tests.factories import TermKDPFactory
+from umbrella.contracts.tests.factories import StartKDPFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -38,12 +38,14 @@ def test_contract_create(client):
     assert Contract.objects.count() == 1
 
 
-def test_kdp_clause_list(client, contract, node):
+def test_kdp_clause_list(client):
+    start_kdp = StartKDPFactory()
     kdp_type = "start"
-    kdp = TermKDPFactory(type=kdp_type, clause=node, contract=None)
-    url = reverse('kdp_clause', args=[contract.id, node.type])
+    url = reverse('kdp_clause', args=[start_kdp.contract.id, start_kdp.clause.type])
+
     response = client.get(url, format='json')
-    kdp_data = response.data["results"][0]["id"]
-    assert kdp_data == str(kdp.id)
+
+    kdp_data = response.data["results"][0]
+    assert kdp_data["id"] == str(start_kdp.id)
     assert kdp_data["type"] == kdp_type
-    assert kdp_data["clause"]["id"] == str(node.id)
+    assert kdp_data["clause"]["id"] == str(start_kdp.clause.id)
