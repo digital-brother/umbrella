@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 TEST_CONTRACT_FILES_DIR = "umbrella/contracts/test_analytics_jsons/6cb7fa02-457f-4e91-be84-3bfea7692d6b"
-TEST_CONTRACT_UUID = "6cb7fa02-457f-4e91-be84-3bfea7692d6b"
+TEST_CONTRACT_UUID = TEST_CONTRACT_FILES_DIR.split('/')[-1]
 
 
 def test_contract_list(client, contract):
