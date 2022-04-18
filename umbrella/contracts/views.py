@@ -107,7 +107,7 @@ class KDPClauseView(ListAPIView):
         kdp_types = KDP.get_kdp_types(clause_type)
 
         contract_uuid = self.kwargs['contract_uuid']
-        kdps = Node.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
+        kdps = Node.objects.filter(clause__contract=contract_uuid, clause__type=clause_type)
         return kdps
 
 
