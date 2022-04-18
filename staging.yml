@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  web:
+  web: &web
     build: ./
     image: umbrella_staging_web
     container_name: umbrella_staging_web
@@ -48,6 +48,30 @@ services:
       - acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
+
+  celeryworker:
+    <<: *web
+    image: umbrella_staging_celeryworker
+    container_name: umbrella_staging_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: [ ]
+    command: celery -A config.celery_app worker -l INFO -E
+
+  flower:
+    <<: *web
+    image: umbrella_staging_flower
+    container_name: umbrella_staging_flower
+    ports:
+      - "5555:5555"
+    command: ./compose/start-flower
+
+  redis:
+    image: redis:6
+    container_name: umbrella_staging_redis
+    ports:
+      - 6379:6379
 
 volumes:
   postgres_data:
