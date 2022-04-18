@@ -111,10 +111,6 @@ class Clause(Node):
     def __str__(self):
         return f"{self.type} - {self.id}"
 
-    @property
-    def kdp_types(self):
-        return KDP.objects.filter(clause__type=self.type).values_list('type', flat=True)
-
 
 class KDPManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
