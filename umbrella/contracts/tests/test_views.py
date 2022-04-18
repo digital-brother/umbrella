@@ -49,3 +49,10 @@ def test_kdp_clause_list(client):
     assert kdp_data["id"] == str(start_kdp.id)
     assert kdp_data["type"] == kdp_type
     assert kdp_data["clause"]["id"] == str(start_kdp.clause.id)
+
+
+@mock.patch('umbrella.contracts.views.load_aws_analytics_jsons_to_db', Mock())
+def test_contract_processed_aws_webhook(client, contract):
+    url = reverse('contract_processed_aws_webhook')
+    response = client.post(url, data={'contract_id': contract.id})
+    assert response.status_code == 200

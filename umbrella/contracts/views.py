@@ -86,17 +86,16 @@ class ContractListView(ListAPIView):
     filter_backends = [GroupFilterBackend]
 
 
-class AWSContractProcessedWebhookView(APIView):
+class ContractProcessedAWSWebhookView(APIView):
     def post(self, request):
-        field_name = 'contract_uuid'
-        contract_uuid = request.data.get(field_name)
+        contract_id = request.data.get('contract_id')
 
-        contract = Contract.objects.filter(id=contract_uuid)
+        contract = Contract.objects.filter(id=contract_id)
         if not contract:
-            raise ValidationError({'contract': f"No contract with uuid {contract_uuid}"})
+            raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
 
-        load_aws_analytics_jsons_to_db.delay(contract_uuid)
-        return Response(f"Downloaded contract {contract_uuid}")
+        load_aws_analytics_jsons_to_db.delay(contract_id)
+        return Response(f"Downloaded contract {contract_id}")
 
 
 class KDPClauseView(ListAPIView):
