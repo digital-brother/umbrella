@@ -85,12 +85,6 @@ class Contract(CustomModel):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
 
 
-CLAUSE_TYPE_KDP_TYPES_MAPPING = {
-    'term': ['start', 'end', 'duration', 'effective_date'],
-    'insurance': []
-}
-
-
 class Node(CustomModel):
     """Stores both Clause and KDP objects"""
     type = models.CharField(max_length=128)

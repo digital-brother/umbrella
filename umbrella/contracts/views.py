@@ -9,7 +9,7 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from umbrella.contracts.models import Contract, CLAUSE_TYPE_KDP_TYPES_MAPPING, KDP, Clause
+from umbrella.contracts.models import Contract, KDP, Clause
 from umbrella.contracts.serializers import ContractCreateSerializer, KDPClauseSerializer, ClauseSerializer
 from umbrella.contracts.serializers import ContractSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
@@ -104,10 +104,8 @@ class KDPClauseView(ListAPIView):
 
     def get_queryset(self):
         clause_type = self.kwargs['clause_type']
-        kdp_types = CLAUSE_TYPE_KDP_TYPES_MAPPING[clause_type]
-
         contract_uuid = self.kwargs['contract_uuid']
-        kdps = KDP.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
+        kdps = KDP.objects.filter(clause__contract=contract_uuid, clause__type=clause_type)
         return kdps
 
 
