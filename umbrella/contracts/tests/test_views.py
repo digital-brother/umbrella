@@ -53,6 +53,6 @@ def test_kdp_clause_list(client):
 
 @mock.patch('umbrella.contracts.views.load_aws_analytics_jsons_to_db', Mock())
 def test_contract_processed_aws_webhook(client, contract):
-    url = reverse('contract_processed_aws_webhook')
-    response = client.post(url, data={'contract_id': contract.id})
+    url = reverse('contract_processed_aws_webhook', args=[contract.id])
+    response = client.post(url)
     assert response.status_code == 200

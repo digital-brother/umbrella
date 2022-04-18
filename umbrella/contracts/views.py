@@ -87,9 +87,7 @@ class ContractListView(ListAPIView):
 
 
 class ContractProcessedAWSWebhookView(APIView):
-    def post(self, request):
-        contract_id = request.data.get('contract_id')
-
+    def post(self, request, contract_id):
         contract = Contract.objects.filter(id=contract_id)
         if not contract:
             raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
