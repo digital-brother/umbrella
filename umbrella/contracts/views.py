@@ -5,9 +5,10 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from rest_framework import filters
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, KDP, Clause
 from umbrella.contracts.serializers import ContractCreateSerializer, KDPClauseSerializer, ClauseSerializer
@@ -85,7 +86,7 @@ class ContractListView(ListAPIView):
     filter_backends = [GroupFilterBackend]
 
 
-class AWSContractProcessedWebhookView(GenericAPIView):
+class AWSContractProcessedWebhookView(APIView):
     def post(self, request):
         field_name = 'contract_uuid'
         contract_uuid = request.data.get(field_name)
