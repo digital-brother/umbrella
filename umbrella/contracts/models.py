@@ -67,7 +67,7 @@ class Contract(CustomModel):
 
         realm = self.created_by.realm or User.NO_REALM
 
-        is_duplicate = Contract.objects.exclude(pk=self.pk).filter(file_name=self.file_name, created_by__realm=realm).exists()
+        is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(pk=self.pk).exists()
         if is_duplicate:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
@@ -125,6 +125,21 @@ class Tags(CustomModel):
     name = models.CharField(max_length=128)
     tag_group = models.CharField(max_length=128, choices=TAG_GROUP_CHOICES, blank=True, null=True)
     contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
+    user_groups = models.ForeignKey(Group, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
+
+    @classmethod
+    def user_group_tags_create(cls):
+        groups = Group.objects.all()
+        if groups:
+            for group in groups:
+                tag_exist = Tags.objects.filter(user_groups=group).exists()
+                if not tag_exist:
+                    data = {
+                        "name": group.name,
+                        'tag_group': 'groups',
+                        'user_groups': group
+                    }
+                    Tags.objects.create(**data)
 
 
 CLAUSE_TYPE_KDP_TYPES_MAPPING = {

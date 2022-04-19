@@ -20,22 +20,6 @@ class User(AbstractUser):
         return self.username
 
 
-@receiver(models.signals.post_save, sender=User)
-def tags_created(sender, instance, created, **kwargs):
-    user = User.objects.filter(pk=instance.pk).last()
-    groups = user.groups.all()
-    if groups:
-        for group in groups:
-            from umbrella.contracts.models import Tags  # TODO Ask Alex about problem with importing models - now import localy
-            tag_exist = Tags.objects.filter(name=group).exists()
-            if not tag_exist:
-                data = {
-                    "name": group,
-                    'tag_group': 'groups',
-                }
-                Tags.objects.create(**data)
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
