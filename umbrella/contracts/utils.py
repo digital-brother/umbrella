@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 
 import boto3
+from botocore.exceptions import BotoCoreError
 from django.conf import settings
 from django.forms import model_to_dict
 
@@ -44,13 +45,29 @@ def download_s3_file(aws_file):
     return local_file
 
 
-def parse_contract(contract_dir):
-    clause_files = list(Path(contract_dir).glob('*.json'))
+# def parse_contract(contract_dir):
+#     clause_files = list(Path(contract_dir).glob('*.json'))
+#
+#     contract_nodes = {}
+#     for clause_file in clause_files:
+#         clause_nodes = parse_clause_file(clause_file)
+#         contract_nodes[clause_file.name] = clause_nodes
+#     return contract_nodes
+
+
+def parse_contract(contract_id):
+    aws_dir = str(contract_id).upper()
+    try:
+        aws_files = BUCKET.objects.filter(Prefix=aws_dir).all()
+    except BotoCoreError as err:
+        raise UmbrellaError(f"Can't get files from aws directory '{aws_dir}'. Error: {err}")
 
     contract_nodes = {}
-    for clause_file in clause_files:
-        clause_nodes = parse_clause_file(clause_file)
-        contract_nodes[clause_file.name] = clause_nodes
+    for aws_file in aws_files:
+        if aws_file.key.endswith('.json'):
+            clause_path = Path(aws_file.key)
+            clause_nodes = parse_clause_file(clause_path)
+            contract_nodes[clause_path.name] = clause_nodes
     return contract_nodes
 
 

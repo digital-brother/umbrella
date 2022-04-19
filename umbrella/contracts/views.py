@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError
@@ -10,10 +11,16 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from config.settings.common import env
 from umbrella.contracts.models import Contract, KDP, Clause
+from umbrella.contracts.models import Contract, Node, KDP
 from umbrella.contracts.serializers import ContractCreateSerializer, KDPClauseSerializer, ClauseSerializer
 from umbrella.contracts.serializers import ContractSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
+
+
+BUCKET_NAME = env('AWS_ANALYTICS_BUCKET_NAME')
+BUCKET = boto3.resource('s3').Bucket(BUCKET_NAME)
 
 
 def create_presigned_post(bucket_name, object_name, fields=None, conditions=None, expiration=3600):
@@ -116,3 +123,19 @@ class ClauseView(ListAPIView):
         contract_uuid = self.kwargs['contract_uuid']
         kdps = Clause.objects.filter(contract=contract_uuid, type=clause_type)
         return kdps
+
+
+class BotoView(APIView):
+    def get(self, request):
+        s3 = boto3.resource('s3')
+        aws_dir = "0D78638E-9FD7-4F02-A643-F7EE8767B6B4"
+        aws_files = BUCKET.objects.filter(Prefix=aws_dir).all()
+        print(aws_files)
+        for aws_file in aws_files:
+            print(aws_file)
+            json_file_key = aws_file.key
+            file_data = s3.Object(BUCKET_NAME, json_file_key).get()
+            encoded_json_data = file_data['Body'].read()
+            json_data = encoded_json_data.decode("utf-8")
+            print(json_data)
+        return Response()
