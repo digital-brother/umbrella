@@ -85,10 +85,13 @@ def parse_aws_contract(contract_id):
 
     contract_nodes = {}
     for aws_file in aws_files:
-        if aws_file.key.endswith('.json'):
-            clause_path = Path(aws_file.key)
-            clause_nodes = parse_aws_clause_file(clause_path)
-            contract_nodes[clause_path.name] = clause_nodes
+        if not aws_file.key.endswith('.json'):
+            continue
+
+        clause_path = Path(aws_file.key)
+        clause_nodes = parse_aws_clause_file(clause_path)
+
+        contract_nodes[clause_path.name] = clause_nodes
     return contract_nodes
 
 
