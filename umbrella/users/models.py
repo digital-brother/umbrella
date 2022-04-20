@@ -22,29 +22,21 @@ class User(AbstractUser):
         return self.username
 
 
-class KeycloakGroupManager(models.Manager):
-
-    def create_groups(self, name):
-
-        group = Group.objects.create(name=name)
-        keycloak_group = KeycloakGroups(group=group)
-        keycloak_group.save()
-        Tags = apps.get_model('contracts', 'Tags')
-        Tags.objects.create(name=name, user_groups=group, tag_group='groups')
-
-        return group
-
-
-class KeycloakGroups(models.Model):
+class KeycloakGroup(models.Model):
 
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='keycloak_groups',  blank=True, null=True)
-
-    objects = KeycloakGroupManager()
 
     def __str__(self):
         return self.group.name
 
+    @classmethod
+    def create(cls, group_name):
+        user_group = Group.objects.create(name=group_name)
+        keycloak_group = cls.objects.create(group=user_group)
+        Tags = apps.get_model('contracts', 'Tags')
+        Tags.objects.create(name=group_name, user_groups=user_group, tag_group='groups')
 
+        return user_group
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

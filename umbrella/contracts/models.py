@@ -122,8 +122,8 @@ class Tags(CustomModel):
     )
     name = models.CharField(max_length=128)
     tag_group = models.CharField(max_length=128, choices=TAG_GROUP_CHOICES, blank=True, null=True)
-    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
-    user_groups = models.ForeignKey(Group, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
+    contract = models.ForeignKey(Contract, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
+    user_groups = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 
     def __str__(self):
         return self.name
