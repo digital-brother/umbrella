@@ -22,17 +22,17 @@ class User(AbstractUser):
         return self.username
 
 
-class KeycloakGroup(models.Model):
+class KeycloakGroups(models.Model):
 
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='keycloak_groups',  blank=True, null=True)
+    user_group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='keycloak_groups',  blank=True, null=True)
 
     def __str__(self):
         return self.group.name
 
     @classmethod
-    def create(cls, group_name):
+    def create_related_object(cls, group_name):
         user_group = Group.objects.create(name=group_name)
-        keycloak_group = cls.objects.create(group=user_group)
+        keycloak_group = cls.objects.create(user_group=user_group)
         Tags = apps.get_model('contracts', 'Tags')
         Tags.objects.create(name=group_name, user_groups=user_group, tag_group='groups')
 
