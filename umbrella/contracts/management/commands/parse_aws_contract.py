@@ -4,7 +4,7 @@ from umbrella.contracts.utils import parse_aws_contract
 
 
 class Command(BaseCommand):
-    help = 'Parse clauses json from AWS'
+    help = 'Parse contract from AWS folder'
 
     def add_arguments(self, parser):
         parser.add_argument('contract_id', type=str)

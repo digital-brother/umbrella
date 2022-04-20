@@ -4,7 +4,7 @@ from umbrella.contracts.utils import parse_local_contract
 
 
 class Command(BaseCommand):
-    help = 'Parse local clauses json'
+    help = 'Parse contract from local folder'
 
     def add_arguments(self, parser):
         parser.add_argument('contract_path_dir', type=str)
