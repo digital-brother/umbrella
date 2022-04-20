@@ -16,9 +16,9 @@ TEST_CLAUSE_TYPE = "term"
 TEST_CLAUSE_PARAGRAPH_ID = 24
 
 
-def test_parse_contract_command(client):
+def test_parse_local_contract_command(client):
     contract = ContractFactory(id=UUID(TEST_CONTRACT_UUID))
-    call_command('parse_contract', TEST_CONTRACT_FILES_DIR)
+    call_command('parse_local_contract', TEST_CONTRACT_FILES_DIR)
 
     contract_terms = contract.clauses.filter(type=TEST_CLAUSE_TYPE)
     term = contract_terms.filter(content__paraId=TEST_CLAUSE_PARAGRAPH_ID).first()
