@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 
 from umbrella.core.models import CustomModel
 
+
 User = get_user_model()
 
 
@@ -112,9 +113,6 @@ class Contract(CustomModel):
         return statistics
 
 
-
-
-
 class Tags(CustomModel):
     TAG_GROUP_CHOICES = (
         ('nature', 'Nature'),
@@ -127,19 +125,8 @@ class Tags(CustomModel):
     contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
     user_groups = models.ForeignKey(Group, on_delete=models.DO_NOTHING, related_name='tags', blank=True, null=True)
 
-    @classmethod
-    def user_group_tags_create(cls):
-        groups = Group.objects.all()
-        if groups:
-            for group in groups:
-                tag_exist = Tags.objects.filter(user_groups=group).exists()
-                if not tag_exist:
-                    data = {
-                        "name": group.name,
-                        'tag_group': 'groups',
-                        'user_groups': group
-                    }
-                    Tags.objects.create(**data)
+    def __str__(self):
+        return self.name
 
 
 CLAUSE_TYPE_KDP_TYPES_MAPPING = {

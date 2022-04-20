@@ -8,6 +8,8 @@ from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from mozilla_django_oidc.contrib.drf import OIDCAuthentication
 from rest_framework import exceptions
 
+from umbrella.users.models import KeycloakGroups
+
 User = get_user_model()
 
 
@@ -36,8 +38,8 @@ class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             return user
 
         group_names = claims[self.groups_claim]
-        groups = [Group.objects.get_or_create(name=group_name)[0] for group_name in group_names]
-        user.groups.set(groups)
+        groups = [KeycloakGroups.objects.create_groups(name=group_name) for group_name in group_names]
+        add_groups_to_user = [user.groups.add(group) for group in groups]
         return user
 
     def get_or_create_user(self, access_token, id_token, payload):

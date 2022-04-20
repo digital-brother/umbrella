@@ -32,44 +32,44 @@ services:
     depends_on:
       - postgres
 
-  keycloak:
-    image: jboss/keycloak:16.1.1
-    container_name: umbrella_local_keycloak
-    environment:
-      DB_VENDOR: postgres
-      DB_ADDR: postgres
-      DB_USER: keycloak
-      DB_PASSWORD: keycloak
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_IMPORT: /tmp/local-realm.json
-    volumes:
-      - ./compose/keycloak/local-realm.json:/tmp/local-realm.json
-    ports:
-      - 8080:8080
-    depends_on:
-      - postgres
-
-  celeryworker:
-    <<: *web
-    image: umbrella_local_celeryworker
-    container_name: umbrella_local_celeryworker
-    depends_on:
-      - redis
-      - postgres
-    ports: [ ]
-    command: celery -A config.celery_app worker -l INFO -E
-
-  flower:
-    <<: *web
-    image: umbrella_local_flower
-    container_name: umbrella_local_flower
-    ports:
-      - "5555:5555"
-    command: ./compose/start-flower
-
-  redis:
-    image: redis:6
-    container_name: umbrella_local_redis
-    ports:
-      - 6379:6379
+#  keycloak:
+#    image: jboss/keycloak:16.1.1
+#    container_name: umbrella_local_keycloak
+#    environment:
+#      DB_VENDOR: postgres
+#      DB_ADDR: postgres
+#      DB_USER: keycloak
+#      DB_PASSWORD: keycloak
+#      KEYCLOAK_USER: admin
+#      KEYCLOAK_PASSWORD: admin
+#      KEYCLOAK_IMPORT: /tmp/local-realm.json
+#    volumes:
+#      - ./compose/keycloak/local-realm.json:/tmp/local-realm.json
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      - postgres
+#
+#  celeryworker:
+#    <<: *web
+#    image: umbrella_local_celeryworker
+#    container_name: umbrella_local_celeryworker
+#    depends_on:
+#      - redis
+#      - postgres
+#    ports: [ ]
+#    command: celery -A config.celery_app worker -l INFO -E
+#
+#  flower:
+#    <<: *web
+#    image: umbrella_local_flower
+#    container_name: umbrella_local_flower
+#    ports:
+#      - "5555:5555"
+#    command: ./compose/start-flower
+#
+#  redis:
+#    image: redis:6
+#    container_name: umbrella_local_redis
+#    ports:
+#      - 6379:6379
