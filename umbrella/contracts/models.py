@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import models
-from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 
 from umbrella.core.models import CustomModel
@@ -30,7 +29,7 @@ class Contract(CustomModel):
     analytics_data = models.JSONField(blank=True, null=True)
     file_hash = models.TextField(unique=True)
     file_size = models.BigIntegerField()
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.DO_NOTHING, related_name='children')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name='children')
     modified_file_name = models.CharField(max_length=256, unique=True)
     analytics_two = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
