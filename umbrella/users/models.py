@@ -24,7 +24,7 @@ class User(AbstractUser):
 
 class KeycloakGroups(models.Model):
 
-    user_group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='keycloak_groups',  blank=True, null=True)
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='keycloak_groups',  blank=True, null=True)
 
     def __str__(self):
         return self.group.name
@@ -32,7 +32,7 @@ class KeycloakGroups(models.Model):
     @classmethod
     def create_related_object(cls, group_name):
         user_group = Group.objects.create(name=group_name)
-        keycloak_group = cls.objects.create(user_group=user_group)
+        keycloak_group = cls.objects.create(group=user_group)
         Tags = apps.get_model('contracts', 'Tags')
         Tags.objects.create(name=group_name, user_groups=user_group, tag_group='groups')
 
