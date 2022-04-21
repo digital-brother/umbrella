@@ -136,13 +136,3 @@ def contracts_statistics(request, *args, **kwargs):
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
-
-
-
-
-
-
-
-
-
-
