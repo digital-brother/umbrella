@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from umbrella.contracts.models import Contract, Node, Tags
+from umbrella.contracts.models import Contract, Node, Tag
 from umbrella.core.serializers import CustomModelSerializer
 
 
@@ -42,14 +42,14 @@ class KDPClauseSerializer(CustomModelSerializer):
         fields = ["id", "type", "content", "clause"]
 
 
-class TagsSerializer(CustomModelSerializer):
+class TagSerializer(CustomModelSerializer):
     class Meta:
-        model = Tags
+        model = Tag
         fields = ['name', 'tag_group']
 
 
 class DocumentLibrarySerializer(CustomModelSerializer):
-    tags = TagsSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
     starts = KDPClauseSerializer(many=True, read_only=True)
     contract_types = KDPClauseSerializer(many=True, read_only=True)
     contract_parties = KDPClauseSerializer(many=True, read_only=True)

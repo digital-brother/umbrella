@@ -19,19 +19,19 @@ class User(AbstractUser):
         return self.username
 
 
-class KeycloakGroups(models.Model):
-    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='keycloak_groups', blank=True, null=True)
+class KeycloakGroup(Group):
+
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, parent_link=True, primary_key=True,)
 
     def __str__(self):
-        return self.group.name
+        return self.name
 
     @classmethod
     def create_related_object(cls, group_name):
-        user_group = Group.objects.create(name=group_name)
-        cls.objects.create(group=user_group)
-        Tags = apps.get_model('contracts', 'Tags')
-        Tags.objects.create(name=group_name, user_groups=user_group, tag_group='groups')
-
+        keycloak_group = cls.objects.create(name=group_name)
+        user_group = Group.objects.get(id=keycloak_group.id)
+        Tag = apps.get_model('contracts', 'Tag')
+        Tag.objects.create(name=group_name, user_groups=user_group, tag_type='groups')
         return user_group
 
 
