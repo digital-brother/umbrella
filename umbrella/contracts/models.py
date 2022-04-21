@@ -64,7 +64,8 @@ class Contract(CustomModel):
 
         realm = self.created_by.realm or User.NO_REALM
 
-        duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(pk=self.pk)
+        duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(
+            pk=self.pk)
         if duplicate_contracts:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
@@ -97,7 +98,6 @@ class Contract(CustomModel):
     @property
     def contract_types(self):
         return self.clauses.filter(type='contractType')
-
 
     @classmethod
     def contracts_task_statistic(cls):

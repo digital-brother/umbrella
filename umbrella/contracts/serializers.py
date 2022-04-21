@@ -3,6 +3,7 @@ from rest_framework import serializers
 from umbrella.contracts.models import Contract, Node, Tags
 from umbrella.core.serializers import CustomModelSerializer
 
+
 class ContractCreateSerializer(CustomModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -61,4 +62,3 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         fields = super(DocumentLibrarySerializer, self).get_fields()
         fields['children'] = DocumentLibrarySerializer(many=True)
         return fields
-

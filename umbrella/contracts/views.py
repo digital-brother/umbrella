@@ -1,13 +1,12 @@
 import logging
 
 import boto3
-import uuid
 
 from botocore.exceptions import ClientError
 from django.conf import settings
 
 
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.generics import CreateAPIView
@@ -15,7 +14,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from umbrella.contracts.models import Contract, Node, Clause, KDP
+from umbrella.contracts.models import Contract, Clause, KDP
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, ContractCreateSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
@@ -135,4 +134,3 @@ def contracts_statistics(request, *args, **kwargs):
         'contracts_statistic': Contract.contracts_task_statistic(),
     }
     return Response(data=data, status=status.HTTP_200_OK)
-
