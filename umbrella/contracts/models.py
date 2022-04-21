@@ -9,7 +9,6 @@ from rest_framework.exceptions import ValidationError
 
 from umbrella.core.models import CustomModel
 
-
 User = get_user_model()
 
 
@@ -50,8 +49,6 @@ class Contract(CustomModel):
         data['modified_file_name'] = Contract.generate_modified_file_name(file_name)
         contract = super().create(file_name=file_name, **data)
         return contract
-
-
 
     def clean(self):
         errors = {}
@@ -129,18 +126,13 @@ class Tags(CustomModel):
         return self.name
 
 
-CLAUSE_TYPE_KDP_TYPES_MAPPING = {
-    'term': ['start', 'end', 'duration', 'effective_date']
-}
-
-
 class Node(CustomModel):
     """Stores both Clause and KDP objects"""
     type = models.CharField(max_length=128)
     # Used for KDP node type, otherwise null
-    clause = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
+    clause = models.ForeignKey("self", related_name='kdps', on_delete=models.CASCADE, blank=True, null=True)
     # Used for Clause node type, otherwise null
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True, related_name='nodes')
+    contract = models.ForeignKey(Contract, related_name='clauses', on_delete=models.CASCADE, blank=True, null=True)
 
     content = models.JSONField(null=True, blank=True)
 
@@ -157,6 +149,9 @@ class Clause(Node):
     class Meta:
         proxy = True
 
+    def __str__(self):
+        return f"{self.type} - {self.id}"
+
 
 class KDPManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -169,3 +164,6 @@ class KDP(Node):
 
     class Meta:
         proxy = True
+
+    def __str__(self):
+        return f"{self.type} - {self.id}"

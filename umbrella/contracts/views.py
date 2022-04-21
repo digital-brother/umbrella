@@ -10,17 +10,15 @@ from django.conf import settings
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListAPIView
-
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-
-from umbrella.contracts.models import Contract, Node, CLAUSE_TYPE_KDP_TYPES_MAPPING
+from umbrella.contracts.models import Contract, Node
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
 from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
-
 
 
 def create_presigned_post(bucket_name, object_name, fields=None, conditions=None, expiration=3600):
@@ -54,7 +52,7 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
 
 
 class ContractCreateView(CreateAPIView):
-    serializer_class = GetAddFilePresignedUrlSerializer
+    serializer_class = ContractCreateSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -94,29 +92,35 @@ class ContractListView(ListAPIView):
     filter_backends = [GroupFilterBackend]
 
 
-class AWSContractProcessedWebhookView(GenericAPIView):
-    def post(self, request):
-        field_name = 'contract_uuid'
-        contract_uuid = request.data.get(field_name)
-
-        contract = Contract.objects.filter(id=contract_uuid)
+class ContractProcessedAWSWebhookView(APIView):
+    def post(self, request, contract_id):
+        contract = Contract.objects.filter(id=contract_id)
         if not contract:
-            raise ValidationError({'contract': f"No contract with uuid {contract_uuid}"})
+            raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
 
-        load_aws_analytics_jsons_to_db.delay(contract_uuid)
-        return Response(f"Downloaded contract {contract_uuid}")
+        load_aws_analytics_jsons_to_db.delay(contract_id)
+        return Response(f"Downloading data for contract {contract_id}")
 
 
 class KDPClauseView(ListAPIView):
     """Iterate by KDPs, show Clause for each"""
-    serializer_class = KDPSerializer
+    serializer_class = KDPClauseSerializer
 
     def get_queryset(self):
         clause_type = self.kwargs['clause_type']
-        kdp_types = CLAUSE_TYPE_KDP_TYPES_MAPPING[clause_type]
-
         contract_uuid = self.kwargs['contract_uuid']
-        kdps = Node.objects.filter(clause__contract=contract_uuid, type__in=kdp_types)
+        kdps = KDP.objects.filter(clause__contract=contract_uuid, clause__type=clause_type)
+        return kdps
+
+
+class ClauseView(ListAPIView):
+    """Iterate by Clauses"""
+    serializer_class = ClauseSerializer
+
+    def get_queryset(self):
+        clause_type = self.kwargs['clause_type']
+        contract_uuid = self.kwargs['contract_uuid']
+        kdps = Clause.objects.filter(contract=contract_uuid, type=clause_type)
         return kdps
 
 

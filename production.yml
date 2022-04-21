@@ -49,6 +49,29 @@ services:
     depends_on:
       - nginx-proxy
 
+  celeryworker:
+    <<: *web
+    image: umbrella_production_celeryworker
+    container_name: umbrella_production_celeryworker
+    depends_on:
+      - redis
+    ports: [ ]
+    command: celery -A config.celery_app worker -l INFO -E
+
+  flower:
+    <<: *web
+    image: umbrella_production_flower
+    container_name: umbrella_production_flower
+    ports:
+      - "5555:5555"
+    command: ./compose/start-flower
+
+  redis:
+    image: redis:6
+    container_name: umbrella_production_redis
+    ports:
+      - 6379:6379
+
 volumes:
   postgres_data:
   certs:

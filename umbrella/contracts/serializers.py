@@ -5,7 +5,7 @@ from umbrella.core.serializers import CustomModelSerializer
 from umbrella.users.auth import User
 
 
-class GetAddFilePresignedUrlSerializer(CustomModelSerializer):
+class ContractCreateSerializer(CustomModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -29,13 +29,13 @@ class ContractSerializer(CustomModelSerializer):
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
 
 
-class ClauseSerializer(serializers.ModelSerializer):
+class ClauseSerializer(CustomModelSerializer):
     class Meta:
         model = Node
         fields = ("id", "type", "contract", "content")
 
 
-class KDPSerializer(CustomModelSerializer):
+class KDPClauseSerializer(CustomModelSerializer):
     clause = ClauseSerializer()
 
     class Meta:
