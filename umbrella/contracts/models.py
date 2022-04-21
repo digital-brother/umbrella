@@ -64,9 +64,8 @@ class Contract(CustomModel):
 
         realm = self.created_by.realm or User.NO_REALM
 
-        contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(pk=self.pk)
-        is_duplicate = contracts.exists()
-        if is_duplicate:
+        duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(pk=self.pk)
+        if duplicate_contracts:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
         if errors:
