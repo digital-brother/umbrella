@@ -28,7 +28,7 @@ class KeycloakGroups(models.Model):
     @classmethod
     def create_related_object(cls, group_name):
         user_group = Group.objects.create(name=group_name)
-        keycloak_group = cls.objects.create(group=user_group)
+        cls.objects.create(group=user_group)
         Tags = apps.get_model('contracts', 'Tags')
         Tags.objects.create(name=group_name, user_groups=user_group, tag_group='groups')
 
