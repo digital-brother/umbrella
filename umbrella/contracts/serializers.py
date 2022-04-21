@@ -2,8 +2,6 @@ from rest_framework import serializers
 
 from umbrella.contracts.models import Contract, Node, Tags
 from umbrella.core.serializers import CustomModelSerializer
-from umbrella.users.auth import User
-
 
 class ContractCreateSerializer(CustomModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -51,9 +49,9 @@ class TagsSerializer(CustomModelSerializer):
 
 class DocumentLibrarySerializer(CustomModelSerializer):
     tags = TagsSerializer(many=True, read_only=True)
-    starts = KDPSerializer(many=True, read_only=True)
-    contract_types = KDPSerializer(many=True, read_only=True)
-    contract_parties = KDPSerializer(many=True, read_only=True)
+    starts = KDPClauseSerializer(many=True, read_only=True)
+    contract_types = KDPClauseSerializer(many=True, read_only=True)
+    contract_parties = KDPClauseSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contract

@@ -89,15 +89,15 @@ class Contract(CustomModel):
 
     @property
     def contract_parties(self):
-        return self.nodes.filter(type='contractingParties')
+        return self.clauses.filter(type='contractingParties')
 
     @property
     def starts(self):
-        return self.nodes.filter(type='start')
+        return self.clauses.filter(type='start')
 
     @property
     def contract_types(self):
-        return self.nodes.filter(type='contractType')
+        return self.clauses.filter(type='contractType')
 
 
     @classmethod

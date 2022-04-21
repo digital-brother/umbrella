@@ -15,9 +15,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from umbrella.contracts.models import Contract, Node
-from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer
-from umbrella.contracts.serializers import GetAddFilePresignedUrlSerializer, KDPSerializer
+from umbrella.contracts.models import Contract, Node, Clause, KDP
+from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
+    KDPClauseSerializer, ContractCreateSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
 
