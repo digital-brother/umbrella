@@ -22,10 +22,8 @@ class Production(Common):
     AWS_DEFAULT_ACL = 'public-read'
     AWS_AUTO_CREATE_BUCKET = True
     AWS_QUERYSTRING_AUTH = False
-    AWS_STATIC_BUCKET = env('AWS_STATIC_BUCKET', default=None)
-    AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION', default=None)
     MEDIA_URL = f'https://s3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}/'
-    STATIC_URL = f'https://{AWS_STATIC_BUCKET}.s3.{AWS_DEFAULT_REGION}.amazonaws.com/'
+    STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 
     # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching#cache-control
     # Response can be cached by browser and any intermediary caches (i.e. it is "public") for up to 1 day
