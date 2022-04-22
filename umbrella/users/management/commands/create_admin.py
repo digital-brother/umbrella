@@ -12,7 +12,7 @@ EMAIL = 'admin@gmail.com'
 PASSWORD = 'admin'
 GROUP = 'no_group'
 TOKEN = '2e8c259163886711152ce41256fbedc1fa125569'
-CONTRACT_UUID = UUID("6cb7fa02-457f-4e91-be84-3bfea7692d6b")
+CONTRACT_UUID = UUID("6CB7FA02-457F-4E91-BE84-3BFEA7692D6B")
 
 
 class Command(BaseCommand):
