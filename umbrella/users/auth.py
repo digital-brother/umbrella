@@ -37,7 +37,7 @@ class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             return user
 
         group_names = claims[self.groups_claim]
-        related_user_groups = [KeycloakGroup.create_related_object(group_name=group_name) for group_name in
+        related_user_groups = [KeycloakGroup.create_group_and_tag(group_name=group_name) for group_name in
                                group_names]
         [user.groups.add(group) for group in related_user_groups]
         return user

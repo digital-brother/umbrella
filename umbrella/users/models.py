@@ -27,11 +27,11 @@ class KeycloakGroup(Group):
         return self.name
 
     @classmethod
-    def create_related_object(cls, group_name):
+    def create_group_and_tag(cls, group_name):
         keycloak_group = cls.objects.create(name=group_name)
         user_group = Group.objects.get(id=keycloak_group.id)
         Tag = apps.get_model('contracts', 'Tag')
-        Tag.objects.create(name=group_name, user_groups=user_group, tag_type='groups')
+        Tag.objects.create(name=group_name, group=user_group, tag_type=Tag.TagTypes.GROUPS)
         return user_group
 
 

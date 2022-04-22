@@ -110,16 +110,16 @@ class Contract(CustomModel):
 
 
 class Tag(CustomModel):
-    TAG_TYPE_CHOICES = (
-        ('nature', 'Nature'),
-        ('type', 'Type'),
-        ('groups', 'Groups'),
-        ('others', 'Others'),
-    )
+    class TagTypes(models.TextChoices):
+        NATURE = 'nt', 'Nature'
+        TYPE = 'tp', 'Type'
+        GROUPS = 'gr', 'Groups'
+        OTHERS = 'oth', 'Others'
+
     name = models.CharField(max_length=128)
-    tag_type = models.CharField(max_length=128, choices=TAG_TYPE_CHOICES)
-    contract = models.ManyToManyField(Contract, related_name='tags', blank=True, null=True)
-    user_groups = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
+    tag_type = models.CharField(max_length=128, choices=TagTypes.choices)
+    contracts = models.ManyToManyField(Contract, related_name='tags', blank=True)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 
     def __str__(self):
         return self.name
