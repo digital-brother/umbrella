@@ -12,6 +12,7 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 # Local Development
 
 - Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
+- Add '127.0.0.1 redis' to your local '/etc/hosts' file (Linux).
 
 You should do auth requests to Keycloak using 'http://keycloak:8080' host.
 Otherwise JWT token check will fail in Docker container. 
