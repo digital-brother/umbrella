@@ -18,12 +18,14 @@ class Production(Common):
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', default=None)
     AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', default=None)
-    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
     AWS_DEFAULT_ACL = 'public-read'
     AWS_AUTO_CREATE_BUCKET = True
     AWS_QUERYSTRING_AUTH = False
-    MEDIA_URL = f'https://s3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}/'
-    STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', default=None)
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
     # https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching#cache-control
     # Response can be cached by browser and any intermediary caches (i.e. it is "public") for up to 1 day
