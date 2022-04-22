@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
+
 class User(AbstractUser):
     NO_REALM = 'no_realm'
 
@@ -27,10 +28,10 @@ class KeycloakGroup(Group):
         return self.name
 
     @classmethod
-    def create_group_and_tag(cls, group_name):
+    def create_keycloak_group_and_group_and_tag(cls, group_name):
+        from umbrella.contracts.models import Tag
         keycloak_group = cls.objects.create(name=group_name)
         user_group = Group.objects.get(id=keycloak_group.id)
-        Tag = apps.get_model('contracts', 'Tag')
         Tag.objects.create(name=group_name, group=user_group, tag_type=Tag.TagTypes.GROUPS)
         return user_group
 
