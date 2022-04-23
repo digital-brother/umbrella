@@ -3,6 +3,8 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
+from umbrella.notifications.utils import send_message_to_channels_group
+
 
 class NotificationsConsumer(WebsocketConsumer):
     """
@@ -36,21 +38,16 @@ class NotificationsConsumer(WebsocketConsumer):
         )
 
     # Receive message from WebSocket
-    def receive(self, text_data):
+    def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
         # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.realm,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
+
+        send_message_to_channels_group(self.realm, message)
 
     # Receive message from room group
-    def chat_message(self, event):
+    def realm_message(self, event):
         message = event['message']
 
         # Send message to WebSocket
