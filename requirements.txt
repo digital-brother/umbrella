@@ -44,6 +44,7 @@ pytest-django==4.5.2
 pytest-factoryboy==2.1.0
 coverage==6.2
 pytest-cov==3.0.0
+pytest-asyncio==0.18.3
 
 # Static and Media Storage
 django-storages==1.12.3
