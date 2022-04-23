@@ -45,7 +45,7 @@ class KDPClauseSerializer(CustomModelSerializer):
 class TagSerializer(CustomModelSerializer):
     class Meta:
         model = Tag
-        fields = ['name', 'tag_group']
+        fields = ['name', 'type']
 
 
 class DocumentLibrarySerializer(CustomModelSerializer):

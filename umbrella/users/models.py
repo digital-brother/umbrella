@@ -29,9 +29,9 @@ class KeycloakGroup(Group):
     def create_keycloak_group_and_group_and_tag(cls, group_name):
         from umbrella.contracts.models import Tag
         keycloak_group = cls.objects.create(name=group_name)
-        user_group = Group.objects.get(id=keycloak_group.id)
-        Tag.objects.create(name=group_name, group=user_group, tag_type=Tag.TagTypes.GROUPS)
-        return user_group
+        group = Group.objects.get(id=keycloak_group.id)
+        Tag.objects.create(name=group_name, group=group, tag_type=Tag.TagTypes.GROUPS)
+        return group
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
