@@ -7,23 +7,10 @@ from umbrella.notifications.utils import send_message_to_channels_group
 
 
 class NotificationsConsumer(JsonWebsocketConsumer):
-    """
-    To send a message from shell:
-
-        import channels
-
-        channel_layer = channels.layers.get_channel_layer()
-
-        async_to_sync(channel_layer.group_send)(
-            "no_realm", {"type": "chat_message", "message": "Hi"}
-        )
-
-    """
-
     def connect(self):
         # Join room group
-        user = self.scope['user']
-        self.realm = user.realm if user.is_authenticated else'no_realm'
+        self.user = self.scope['user']
+        self.realm = self.user.realm if self.user.is_authenticated else'no_realm'
         async_to_sync(self.channel_layer.group_add)(
             self.realm,
             self.channel_name
@@ -51,5 +38,6 @@ class NotificationsConsumer(JsonWebsocketConsumer):
 
         # Send message to WebSocket
         self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'user': self.user.username,
         }))
