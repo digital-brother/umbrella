@@ -19,10 +19,11 @@ class NotificationsConsumer(JsonWebsocketConsumer):
         )
 
     """
-    realm = 'no_realm'
 
     def connect(self):
         # Join room group
+        user = self.scope['user']
+        self.realm = user.realm if user.is_authenticated else'no_realm'
         async_to_sync(self.channel_layer.group_add)(
             self.realm,
             self.channel_name
