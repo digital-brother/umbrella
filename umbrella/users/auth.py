@@ -1,8 +1,9 @@
-import jwt
 import time
 
+import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from mozilla_django_oidc.contrib.drf import OIDCAuthentication
 from rest_framework import exceptions
@@ -15,16 +16,29 @@ def decode_token(encoded_access_token):
         access_token_payload = jwt.decode(encoded_access_token, options={"verify_signature": False})
         return access_token_payload
     except jwt.PyJWTError:
-        msg = f"Invalid JWT token"
+        msg = "Invalid JWT token"
         raise exceptions.AuthenticationFailed(msg)
 
 
 class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
+    groups_claim = 'groups'
+
     def create_user(self, claims):
         """Return object for a newly created user account."""
         email = claims.get('email')
         username = self.get_username(claims)
-        return self.UserModel.objects.create_user(username, email=email, realm=self.realm)
+        user = self.UserModel.objects.create_user(username, email=email, realm=self.realm)
+        self.update_user(user, claims)
+        return user
+
+    def update_user(self, user, claims):
+        if self.groups_claim not in claims:
+            return user
+
+        group_names = claims[self.groups_claim]
+        groups = [Group.objects.get_or_create(name=group_name)[0] for group_name in group_names]
+        user.groups.set(groups)
+        return user
 
     def get_or_create_user(self, access_token, id_token, payload):
         access_token_payload = decode_token(access_token)

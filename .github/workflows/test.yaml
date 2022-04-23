@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+  workflow_call:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build compose containers
+      run: |
+        cp .envs/.local.example .envs/.local
+        docker-compose -f local.yml build web 
+        docker-compose -f local.yml build postgres
+    - name: Run pytest
+      run: docker-compose -f local.yml run --rm web pytest
+    - name: Run flake8
+      run: docker-compose -f local.yml run --rm web flake8

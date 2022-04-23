@@ -3,20 +3,27 @@ version: '3'
 services:
   postgres:
     image: postgres:14.1
+    container_name: umbrella_local_postgres
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_MULTIPLE_DATABASES: keycloak
+    env_file:
+      - .envs/.local
+    volumes:
+      - ./compose/create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
     ports:
       - 5432:5432
-  web:
+
+  web: &web
     restart: always
     env_file:
-      - .envs/.env.local
-    build:
-      context: ./
-      dockerfile: ./Dockerfile.local
+      - .envs/.local
+    build: ./
+    image: umbrella_local_web
+    container_name: umbrella_local_web
     command: >
       bash -c "python wait_for_postgres.py &&
                ./manage.py migrate &&
+               ./manage.py create_admin &&
                ./manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./:/code
@@ -24,11 +31,13 @@ services:
       - 8000:8000
     depends_on:
       - postgres
+
   keycloak:
     image: jboss/keycloak:16.1.1
+    container_name: umbrella_local_keycloak
     environment:
       DB_VENDOR: postgres
-      DB_ADDR: keycloak_postgres
+      DB_ADDR: postgres
       DB_USER: keycloak
       DB_PASSWORD: keycloak
       KEYCLOAK_USER: admin
@@ -39,11 +48,28 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - keycloak_postgres
-  keycloak_postgres:
-    image: postgres:14.1
-    environment:
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD:
+      - postgres
+
+  celeryworker:
+    <<: *web
+    image: umbrella_local_celeryworker
+    container_name: umbrella_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: [ ]
+    command: celery -A config.celery_app worker -l INFO -E
+
+  flower:
+    <<: *web
+    image: umbrella_local_flower
+    container_name: umbrella_local_flower
+    ports:
+      - "5555:5555"
+    command: ./compose/start-flower
+
   redis:
     image: redis:6
+    container_name: umbrella_local_redis
+    ports:
+      - 6379:6379

@@ -3,29 +3,16 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db import models
 from rest_framework.exceptions import ValidationError
+
+from umbrella.core.models import CustomModel
 
 User = get_user_model()
 
 
-class LeaseManager(models.Manager):
-    def create_lease(self, file_name, **data):
-        """
-        Typical Django business logic placement
-        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
-        """
-        data['modified_file_name'] = Lease.generate_modified_file_name(file_name)
-        lease = self.model(file_name=file_name, **data)
-        lease.full_clean()
-
-        lease.save()
-        return lease
-
-
-# TODO: Rename to Contract
-class Lease(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class Contract(CustomModel):
     file_name = models.CharField(max_length=512)
     pdf = models.BinaryField(blank=True, null=True)
     txt = models.TextField(blank=True, null=True)
@@ -47,20 +34,26 @@ class Lease(models.Model):
     textract_done = models.BooleanField(blank=False, null=False, default=False)
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
-
-    objects = LeaseManager()
-
-    class Meta:
-        db_table = 'lease'
+    groups = models.ManyToManyField(Group, blank=True, related_name='contracts')
 
     def __str__(self):
         return self.file_name
+
+    @classmethod
+    def create(cls, file_name, **data):
+        """
+        Typical Django business logic placement
+        (Two Scoops of Django 3.x, chapter 4.5.1 Service Layers)
+        """
+        data['modified_file_name'] = Contract.generate_modified_file_name(file_name)
+        contract = super().create(file_name=file_name, **data)
+        return contract
 
     def clean(self):
         errors = {}
 
         _, file_extension = os.path.splitext(self.file_name)
-        if file_extension not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
+        if file_extension.lower() not in settings.ALLOWED_FILE_UPLOAD_EXTENSIONS:
             allowed_file_extensions_str = ', '.join(settings.ALLOWED_FILE_UPLOAD_EXTENSIONS)
             errors['file_name'] = f"Invalid file extension {file_extension}. Allowed are: {allowed_file_extensions_str}"
 
@@ -69,7 +62,7 @@ class Lease(models.Model):
             raise ValidationError(errors)
 
         realm = self.created_by.realm or User.NO_REALM
-        is_duplicate = Lease.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
+        is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
         if is_duplicate:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
@@ -86,3 +79,50 @@ class Lease(models.Model):
     def status(self):
         # TODO: Add status calculation
         return 'Not implemented'
+
+    @classmethod
+    def get_aws_downloads_dir(cls, contract_uuid):
+        return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
+
+
+class Node(CustomModel):
+    """Stores both Clause and KDP objects"""
+    type = models.CharField(max_length=128)
+    # Used for KDP node type, otherwise null
+    clause = models.ForeignKey("self", related_name='kdps', on_delete=models.CASCADE, blank=True, null=True)
+    # Used for Clause node type, otherwise null
+    contract = models.ForeignKey(Contract, related_name='clauses', on_delete=models.CASCADE, blank=True, null=True)
+
+    content = models.JSONField(null=True, blank=True)
+
+
+class ClauseManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        return qs.filter(contract__isnull=False)
+
+
+class Clause(Node):
+    objects = ClauseManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return f"{self.type} - {self.id}"
+
+
+class KDPManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        return qs.filter(clause__isnull=False)
+
+
+class KDP(Node):
+    objects = KDPManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return f"{self.type} - {self.id}"

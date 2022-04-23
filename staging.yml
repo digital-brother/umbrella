@@ -3,26 +3,26 @@ version: '3.8'
 services:
   web: &web
     build: ./
-    image: umbrella_production_web
-    container_name: umbrella_production_web
+    image: umbrella_staging_web
+    container_name: umbrella_staging_web
     command: bash -c "
-        python wait_for_postgres.py &&
-        ./manage.py migrate --noinput &&
-        ./manage.py collectstatic --noinput &&
-        gunicorn config.wsgi:application --bind 0.0.0.0:8000
+      python wait_for_postgres.py &&
+      ./manage.py migrate --noinput &&
+      ./manage.py collectstatic --noinput &&
+      gunicorn config.wsgi:application --bind 0.0.0.0:8000
       "
     volumes:
       - ./:/code
     expose:
       - 8000
     env_file:
-      - .envs/.prod
-      - .envs/.prod.db
+      - .envs/.staging
+      - .envs/.staging.db
 
   nginx-proxy:
     build: compose/nginx
-    image: umbrella_production_nginx_proxy
-    container_name: umbrella_production_nginx_proxy
+    image: umbrella_staging_nginx_proxy
+    container_name: umbrella_staging_nginx_proxy
     restart: always
     ports:
       - 443:443
@@ -37,9 +37,9 @@ services:
 
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: umbrella_production_nginx_proxy_companion
+    container_name: umbrella_staging_nginx_proxy_companion
     env_file:
-      - .envs/.prod.proxy-companion
+      - .envs/.staging.proxy-companion
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
@@ -51,8 +51,8 @@ services:
 
   celeryworker:
     <<: *web
-    image: umbrella_production_celeryworker
-    container_name: umbrella_production_celeryworker
+    image: umbrella_staging_celeryworker
+    container_name: umbrella_staging_celeryworker
     depends_on:
       - redis
     ports: [ ]
@@ -60,15 +60,15 @@ services:
 
   flower:
     <<: *web
-    image: umbrella_production_flower
-    container_name: umbrella_production_flower
+    image: umbrella_staging_flower
+    container_name: umbrella_staging_flower
     ports:
       - "5555:5555"
     command: ./compose/start-flower
 
   redis:
     image: redis:6
-    container_name: umbrella_production_redis
+    container_name: umbrella_staging_redis
     ports:
       - 6379:6379
 
