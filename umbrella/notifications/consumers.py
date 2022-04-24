@@ -30,7 +30,7 @@ class NotificationsConsumer(JsonWebsocketConsumer):
 
     # Receive message from WebSocket
     def receive_json(self, content, **kwargs):
-        message = content['message']
+        message = content.get('message')
 
         # Send message to room group
         send_message_to_channels_group(self.realm, message)
