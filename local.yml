@@ -31,6 +31,8 @@ services:
       - 8000:8000
     depends_on:
       - postgres
+      - celeryworker
+      - redis
 
   keycloak:
     image: jboss/keycloak:16.1.1

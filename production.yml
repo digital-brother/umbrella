@@ -19,6 +19,7 @@ services:
       - .envs/.prod
       - .envs/.prod.db
     depends_on:
+      - celeryworker
       - redis
 
   nginx-proxy:

@@ -17,6 +17,8 @@ jobs:
         cp .envs/.local.example .envs/.local
         docker-compose -f local.yml build web 
         docker-compose -f local.yml build postgres
+        docker-compose -f local.yml build celeryworker
+        docker-compose -f local.yml build redis
     - name: Run pytest
       run: docker-compose -f local.yml run --rm web pytest
     - name: Run flake8
