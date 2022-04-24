@@ -6,13 +6,15 @@ from umbrella.notifications.utils import send_message_to_channels_group
 
 class NotificationsConsumer(JsonWebsocketConsumer):
     def connect(self):
-        # Join room group
         self.user = self.scope['user']
-        self.realm = self.user.realm if self.user.is_authenticated else'no_realm'
-        async_to_sync(self.channel_layer.group_add)(
-            self.realm,
-            self.channel_name
-        )
+        
+        if self.user.is_authenticated:
+            # Join realm group
+            self.realm = self.user.realm
+            async_to_sync(self.channel_layer.group_add)(
+                self.realm,
+                self.channel_name
+            )
 
         self.accept()
 
@@ -26,6 +28,10 @@ class NotificationsConsumer(JsonWebsocketConsumer):
     # Receive message from WebSocket
     def receive_json(self, content, **kwargs):
         message = content['message']
+
+        if not self.user.is_authenticated:
+            self.send_json({'error': 'Incorrect authentication credentials.'})
+            return
 
         # Send message to room group
         send_message_to_channels_group(self.realm, message)
