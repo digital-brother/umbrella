@@ -18,6 +18,8 @@ services:
     env_file:
       - .envs/.prod
       - .envs/.prod.db
+    depends_on:
+      - redis
 
   nginx-proxy:
     build: compose/nginx
