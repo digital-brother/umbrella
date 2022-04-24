@@ -23,7 +23,6 @@ urlpatterns = [
 
     path('api/v1/contracts/', include('umbrella.contracts.urls')),
     path('api/v1/', include('umbrella.tasks.urls')),
-    path('api/v1/', include('umbrella.notifications.urls')),
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
