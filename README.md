@@ -10,15 +10,22 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 - [Docker](https://docs.docker.com/docker-for-mac/install/)  
 
 # Local Development
+- Copy content from `.envs/.local.example` to `.envs/.local`
 
-- Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
 
-You should do auth requests to Keycloak using 'http://keycloak:8080' host.
-Otherwise JWT token check will fail in Docker container. 
-That is because web container sees keycloak container under 'keycloak' name.
+- To enable JWT Keycloak auth:
 
-- Add .envs/.local file, copy content from .envs/.local.example to it
 
+    Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
+
+    You should do auth requests to Keycloak using 'http://keycloak:8080' host.
+    Otherwise JWT token check will fail in Docker container. 
+    That is because web container sees keycloak container under 'keycloak' name.
+
+- To run Project outside of docker-compose, i.e. in PyCharm or shell:
+
+
+     Add '127.0.0.1 umbrella_local_redis' to your local '/etc/hosts' file (Linux).
 
 - Start the dev server for local development:
 ```bash
