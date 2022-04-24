@@ -34,6 +34,7 @@ class Common(Configuration):
         'drf_spectacular_sidecar',
         'django_extensions',
         'corsheaders',
+        'channels',
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',
@@ -42,6 +43,7 @@ class Common(Configuration):
         'umbrella.users',
         'umbrella.contracts',
         'umbrella.tasks',
+        'umbrella.notifications',
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -61,6 +63,15 @@ class Common(Configuration):
     ROOT_URLCONF = 'config.urls'
     SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'config.wsgi.application'
+    ASGI_APPLICATION = 'config.asgi.application'
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [('redis', 6379)],
+            },
+        },
+    }
 
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

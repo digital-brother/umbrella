@@ -44,6 +44,7 @@ pytest-django==4.5.2
 pytest-factoryboy==2.1.0
 coverage==6.2
 pytest-cov==3.0.0
+pytest-asyncio==0.18.3
 
 # Static and Media Storage
 django-storages==1.12.3
@@ -56,3 +57,7 @@ PyJWT==2.3.0
 # Swagger
 drf-spectacular==0.21.2
 drf-spectacular-sidecar==2022.2.7
+
+# Asynchronous server
+channels==3.0.4
+channels-redis==3.4.0
