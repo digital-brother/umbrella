@@ -9,7 +9,6 @@ from rest_framework.routers import DefaultRouter
 
 from umbrella.users.views import UserViewSet, UserCreateViewSet
 
-
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'users', UserCreateViewSet)
@@ -24,6 +23,7 @@ urlpatterns = [
 
     path('api/v1/contracts/', include('umbrella.contracts.urls')),
     path('api/v1/', include('umbrella.tasks.urls')),
+    path('api/v1/', include('umbrella.notifications.urls')),
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
