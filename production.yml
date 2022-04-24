@@ -9,7 +9,7 @@ services:
         python wait_for_postgres.py &&
         ./manage.py migrate --noinput &&
         ./manage.py collectstatic --noinput &&
-        daphne -b 0.0.0.0 -p $PORT --access-log - --proxy-headers config.asgi:application
+        daphne -b 0.0.0.0 -p 8000 --access-log - --proxy-headers config.asgi:application
       "
     volumes:
       - ./:/code
