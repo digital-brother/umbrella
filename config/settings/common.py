@@ -64,11 +64,12 @@ class Common(Configuration):
     SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'config.wsgi.application'
     ASGI_APPLICATION = 'config.asgi.application'
+    REDIS_HOST = env('REDIS_HOST', default='redis')
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
             'CONFIG': {
-                "hosts": [('redis', 6379)],
+                "hosts": [(REDIS_HOST, 6379)],
             },
         },
     }
@@ -274,7 +275,7 @@ class Common(Configuration):
         # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
         CELERY_TIMEZONE = TIME_ZONE
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
-    CELERY_BROKER_URL = "redis://redis:6379"
+    CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379"
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
