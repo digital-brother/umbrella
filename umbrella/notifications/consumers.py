@@ -1,5 +1,3 @@
-import json
-
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 
@@ -37,7 +35,7 @@ class NotificationsConsumer(JsonWebsocketConsumer):
         message = event['message']
 
         # Send message to WebSocket
-        self.send(text_data=json.dumps({
+        self.send_json({
             'message': message,
             'user': self.user.username,
-        }))
+        })
