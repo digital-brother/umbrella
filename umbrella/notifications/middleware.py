@@ -14,6 +14,10 @@ def get_user(token_key):
 
 
 class TokenAuthMiddleware(BaseMiddleware):
+    """
+    https://stackoverflow.com/questions/43392889/how-do-you-authenticate-a-websocket-with-token-authentication-on-django-channels
+    """
+
     def __init__(self, inner):
         super().__init__(inner)
 
