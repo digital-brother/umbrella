@@ -1,7 +1,8 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
+from channels.layers import get_channel_layer
 
-from umbrella.notifications.utils import send_message_to_channels_group
+channel_layer = get_channel_layer()
 
 
 class NotificationsConsumer(JsonWebsocketConsumer):
@@ -33,7 +34,7 @@ class NotificationsConsumer(JsonWebsocketConsumer):
         message = content.get('message')
 
         # Send message to room group
-        send_message_to_channels_group(self.realm, message)
+        self.send_message_to_channels_group(self.realm, message)
 
     # Receive message from room group
     def realm_message(self, event):
@@ -44,3 +45,9 @@ class NotificationsConsumer(JsonWebsocketConsumer):
             'message': message,
             'user': self.user.username,
         })
+
+    @classmethod
+    def send_message_to_channels_group(cls, group, message):
+        async_to_sync(channel_layer.group_send)(
+            group, {"type": "realm.message", "message": message}
+        )
