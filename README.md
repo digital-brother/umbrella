@@ -6,8 +6,8 @@
 umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.github.io/umbrella/).
 
 # Prerequisites
-
-- [Docker](https://docs.docker.com/docker-for-mac/install/)  
+- Docker version 20.10.12
+- docker-compose version 1.29.2
 
 # Local Development
 - Copy content from `.envs/.local.example` to `.envs/.local`
