@@ -111,10 +111,10 @@ class Contract(CustomModel):
 
 class Tag(CustomModel):
     class TagTypes(models.TextChoices):
-        NATURE = 'nt', 'Nature'
-        TYPE = 'tp', 'Type'
-        GROUPS = 'gr', 'Groups'
-        OTHERS = 'oth', 'Others'
+        NATURE = 'nature', 'Nature'
+        TYPE = 'type', 'Type'
+        GROUPS = 'groups', 'Groups'
+        OTHERS = 'others', 'Others'
 
     name = models.CharField(max_length=128)
     type = models.CharField(max_length=128, choices=TagTypes.choices)
