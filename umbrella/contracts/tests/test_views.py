@@ -61,17 +61,6 @@ def test_contract_processed_aws_webhook(client, contract):
     assert response.status_code == 200
 
 
-def test_document_library_list(client, contract):
-    url = reverse('document_library')
-    response = client.get(url, format='json')
-    assert response.status_code == 200
-    print(response.data)
-    assert response.data['count']
-    response_contract_data = response.data['results'][0]
-    assert response_contract_data['id'] == str(contract.id)
-
-
-
 class TestDocumentLibraryTestCase(APITestCase):
 
 
