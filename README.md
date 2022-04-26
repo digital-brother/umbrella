@@ -22,7 +22,7 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
     Otherwise JWT token check will fail in Docker container. 
     That is because web container sees keycloak container under 'keycloak' name.
 
-- To run Project outside of docker-compose, i.e. in PyCharm or shell:
+- To run web container outside of docker-compose, i.e. in PyCharm or shell:
 
 
      Add '127.0.0.1 umbrella_local_redis' to your local '/etc/hosts' file (Linux).
