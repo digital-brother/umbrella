@@ -67,30 +67,22 @@ class TestDocumentLibraryTestCase(APITestCase):
 
 
     def setUp(self):
-        self.url = reverse('document_library')
 
         self.user = UserFactory()
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.user.auth_token}')
 
-        self.contract_1 = ContractFactory()
-        self.contract_party = PartyClauseFactory()
-        self.contract_start = StartClauseFactory()
-        self.contract_type = TypeClauseFactory()
-        self.tag = TagFactory()
-        self.task = TaskFactory()
-
-        self.tag.contracts.add(self.contract_1)
-
 
     def test_get_list_with_data_for_document_library(self):
-        response = self.client.get(self.url, {})
-        self.assertEqual(200, response.status_code)
+        response = self.client.get(reverse('document_library'))
+        assert response.status_code == 200
 
     def test_get_statistics_from_contracts_for_document_library(self):
         response = self.client.get(reverse('contracts_statistics'))
+        contract = ContractFactory()
+        task = TaskFactory()
         data = response.data['contracts_statistic']
-        self.assertEqual(Contract.objects.all().count(), data['contracts_count'])
-        self.assertEqual(Contract.objects.filter(tasks__isnull=False).count(), data['contracts_with_task_count'])
-        self.assertEqual(200, response.status_code)
+        assert data['contracts_count'] == Contract.objects.all().count()
+        assert data['contracts_with_task_count'] == Contract.objects.filter(tasks__isnull=False).count()
+        assert response.status_code == 200
 
 

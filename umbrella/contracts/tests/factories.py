@@ -38,41 +38,6 @@ class TermClauseFactory(DjangoModelFactory):
 
 
 @register
-class StartClauseFactory(DjangoModelFactory):
-    type = "start"
-    contract = factory.SubFactory(ContractFactory)
-
-    class Meta:
-        model = Node
-
-
-@register
-class TypeClauseFactory(DjangoModelFactory):
-    type = "contractType"
-    contract = factory.SubFactory(ContractFactory)
-
-    class Meta:
-        model = Node
-
-
-@register
-class PartyClauseFactory(DjangoModelFactory):
-    type = "contractingParties"
-    contract = factory.SubFactory(ContractFactory)
-
-    class Meta:
-        model = Node
-
-
-@register
-class TagFactory(DjangoModelFactory):
-    name = factory.Sequence(lambda n: f"tag_{n}")
-
-    class Meta:
-        model = Tag
-
-
-@register
 class TaskFactory(DjangoModelFactory):
     title = factory.Sequence(lambda n: f"tag_{n}")
     contract = factory.SubFactory(ContractFactory)
