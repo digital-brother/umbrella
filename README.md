@@ -45,6 +45,14 @@ password: admin
 auth_token: 2e8c259163886711152ce41256fbedc1fa125569
 ```
 
+- Default Keycloak credentials:
+```bash
+realm: local-realm
+group: local-group
+username: umbrella
+password: umbrella 
+```
+
 # Useful links
 
 - [Add Keycloak groups claim to JWT](ttps://stackoverflow.com/questions/56362197/keycloak-oidc-retrieve-user-groups-attributes)
