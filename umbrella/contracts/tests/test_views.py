@@ -7,8 +7,7 @@ from faker import Faker, factory
 from rest_framework.test import APITestCase, APIClient
 
 from umbrella.contracts.models import Contract, Node, Tag
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, TagFactory, \
-    PartyClauseFactory, TypeClauseFactory, ContractFactory, StartClauseFactory
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory
 from umbrella.tasks.models import Task
 from umbrella.users.auth import User
 from umbrella.users.tests.factories import UserFactory
@@ -63,26 +62,20 @@ def test_contract_processed_aws_webhook(client, contract):
     assert response.status_code == 200
 
 
-class TestDocumentLibraryTestCase(APITestCase):
+def test_get_list_with_data_for_document_library(client):
+    response = client.get(reverse('document_library'))
+    assert response.status_code == 200
 
 
-    def setUp(self):
+def test_get_statistics_from_contracts_for_document_library(client):
+    response = client.get(reverse('contracts_statistics'))
+    contract = ContractFactory()
+    task = TaskFactory()
+    data = response.data['contracts_statistic']
+    assert data['contracts_count'] == Contract.objects.all().count()
+    assert data['contracts_with_task_count'] == Contract.objects.filter(tasks__isnull=False).count()
+    assert response.status_code == 200
 
-        self.user = UserFactory()
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.user.auth_token}')
 
-
-    def test_get_list_with_data_for_document_library(self):
-        response = self.client.get(reverse('document_library'))
-        assert response.status_code == 200
-
-    def test_get_statistics_from_contracts_for_document_library(self):
-        response = self.client.get(reverse('contracts_statistics'))
-        contract = ContractFactory()
-        task = TaskFactory()
-        data = response.data['contracts_statistic']
-        assert data['contracts_count'] == Contract.objects.all().count()
-        assert data['contracts_with_task_count'] == Contract.objects.filter(tasks__isnull=False).count()
-        assert response.status_code == 200
 
 
