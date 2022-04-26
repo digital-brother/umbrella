@@ -38,6 +38,13 @@ sudo docker-compose -f local.yml up -d --build
 sudo docker-compose run --rm web [command]
 ```
 
+- Default local admin credentials:
+```bash
+username: admin
+password: admin
+auth_token: 2e8c259163886711152ce41256fbedc1fa125569
+```
+
 # Useful links
 
 - [Add Keycloak groups claim to JWT](ttps://stackoverflow.com/questions/56362197/keycloak-oidc-retrieve-user-groups-attributes)
