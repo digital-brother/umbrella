@@ -18,7 +18,7 @@ urlpatterns = [
     path('document-library/', DocumentLibraryListView.as_view(), name='document_library'),
     path('contracts-statistics/', contracts_statistics, name='contracts_statistics'),
 
-    path('contract-tag/', include(router_contract_tag.urls)),
-    path('contracts-update/', ContractUpdateView.as_view(), name='contracts_update'),
+    path('contract-tag/', include(router_contract_tag.urls), name='contract_tag'),
+    path('contract-update/', ContractUpdateView.as_view(), name='contract_update'),
 
 ]
