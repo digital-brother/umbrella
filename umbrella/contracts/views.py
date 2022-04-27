@@ -148,18 +148,18 @@ class TagViewSet(viewsets.ModelViewSet):
 
     def check_permissions(self, request):
         if request.method in permissions.SAFE_METHODS:
-            return True
+            return
 
-        if request.method in {"POST", }:
-            type = request.data.get('type', None)
-            if type and type != Tag.TagTypes.OTHERS:
-                return False
-        return True
+        type = request.data.get('type', None)
+        if type and type != Tag.TagTypes.OTHERS:
+            self.permission_denied(
+                request,
+                message='Only Others tag type is allowed for edit',
+                code='invalid_tag_type',
+            )
 
     def check_object_permissions(self, request, obj):
         if request.method in {"PATCH", "PUT", "DELETE"}:
-            if obj.type == Tag.TagTypes.OTHERS:
-                return True
             contracts = request.data.get('contracts', None)
             if contracts and len(request.data) == 1:
                 return True
