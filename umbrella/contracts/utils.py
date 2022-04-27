@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 
 import boto3
+from botocore.exceptions import BotoCoreError
 from django.conf import settings
 from django.forms import model_to_dict
 
@@ -12,9 +13,21 @@ from umbrella.contracts.models import Contract, Node
 from umbrella.core.exceptions import UmbrellaError
 
 BUCKET_NAME = env('AWS_ANALYTICS_BUCKET_NAME')
-BUCKET = boto3.resource('s3').Bucket(BUCKET_NAME)
+S3 = boto3.resource('s3')
+BUCKET = S3.Bucket(BUCKET_NAME)
 
 logger = logging.getLogger('load_aws_analytics_jsons_to_db')
+
+
+def get_files_from_aws_dir(aws_dir):
+    try:
+        aws_files = BUCKET.objects.filter(Prefix=aws_dir).all()
+    except BotoCoreError as err:
+        raise UmbrellaError(f"Can't get files from aws directory '{aws_dir}'. Error: {err}")
+    if not list(aws_files):
+        raise UmbrellaError(f"No data for contract '{aws_dir}'.")
+
+    return aws_files
 
 
 # Download analytics json files
@@ -24,9 +37,7 @@ def download_s3_folder(aws_dir):
     local_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Cleaned dir '{local_dir}'.")
 
-    aws_files = BUCKET.objects.filter(Prefix=aws_dir).all()
-    if not list(aws_files):
-        raise UmbrellaError(f"No data for contract '{aws_dir}'.")
+    aws_files = get_files_from_aws_dir(aws_dir)
 
     downloaded_files = []
     for aws_file in aws_files:
@@ -44,17 +55,17 @@ def download_s3_file(aws_file):
     return local_file
 
 
-def parse_contract(contract_dir):
+def parse_local_contract(contract_dir):
     clause_files = list(Path(contract_dir).glob('*.json'))
 
     contract_nodes = {}
     for clause_file in clause_files:
-        clause_nodes = parse_clause_file(clause_file)
+        clause_nodes = parse_local_clause_file(clause_file)
         contract_nodes[clause_file.name] = clause_nodes
     return contract_nodes
 
 
-def parse_clause_file(clause_file):
+def parse_local_clause_file(clause_file):
     contract = _get_contract_from_clause_file_path(clause_file)
     logger.info(f"Parsing '{clause_file}'.")
     with clause_file.open(mode="rb") as f:
@@ -64,6 +75,42 @@ def parse_clause_file(clause_file):
         clause_nodes = {}
         for node_type, nodes_list in json_data.items():
             clause_nodes[node_type] = parse_node_list(node_type, nodes_list, contract, clause_type)
+
+    return clause_nodes
+
+
+def parse_aws_contract(contract_id):
+    aws_dir = str(contract_id).upper()
+    aws_files = get_files_from_aws_dir(aws_dir)
+
+    contract_nodes = {}
+    for aws_file in aws_files:
+        if not aws_file.key.endswith('.json'):
+            continue
+
+        clause_path = Path(aws_file.key)
+        clause_nodes = parse_aws_clause_file(clause_path)
+
+        contract_nodes[clause_path.name] = clause_nodes
+    return contract_nodes
+
+
+def parse_aws_clause_file(clause_file):
+    contract = _get_contract_from_clause_file_path(clause_file)
+    logger.info(f"Parsing '{clause_file}'.")
+    try:
+        file_data = S3.Object(BUCKET_NAME, str(clause_file)).get()
+    except BotoCoreError as err:
+        raise UmbrellaError(f"Can't get file '{clause_file.name}' data. Error: {err}")
+
+    encoded_json_data = file_data['Body'].read()
+    decoded_json_data = encoded_json_data.decode("utf-8")
+    json_data = json.loads(decoded_json_data)
+
+    clause_type = clause_file.stem
+    clause_nodes = {}
+    for node_type, nodes_list in json_data.items():
+        clause_nodes[node_type] = parse_node_list(node_type, nodes_list, contract, clause_type)
 
     return clause_nodes
 

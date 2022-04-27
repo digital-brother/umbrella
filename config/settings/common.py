@@ -34,6 +34,7 @@ class Common(Configuration):
         'drf_spectacular_sidecar',
         'django_extensions',
         'corsheaders',
+        'channels',
 
         # https://mozilla-django-oidc.readthedocs.io/en/stable/installation.html
         'mozilla_django_oidc',
@@ -42,6 +43,7 @@ class Common(Configuration):
         'umbrella.users',
         'umbrella.contracts',
         'umbrella.tasks',
+        'umbrella.notifications',
     )
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -61,6 +63,16 @@ class Common(Configuration):
     ROOT_URLCONF = 'config.urls'
     SECRET_KEY = env("SECRET_KEY", default=None)
     WSGI_APPLICATION = 'config.wsgi.application'
+    ASGI_APPLICATION = 'config.asgi.application'
+    REDIS_HOST = env('REDIS_HOST', default='redis')
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [(REDIS_HOST, 6379)],
+            },
+        },
+    }
 
     # Email
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -263,7 +275,7 @@ class Common(Configuration):
         # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
         CELERY_TIMEZONE = TIME_ZONE
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
-    CELERY_BROKER_URL = "redis://redis:6379"
+    CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379"
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content

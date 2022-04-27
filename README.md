@@ -1,4 +1,4 @@
-# umbrella
+# Umbrella 2.0 API [Django Tech Stack]
 
 [![Build Status](https://travis-ci.org/shuryhin-oleksandr/umbrella.svg?branch=master)](https://travis-ci.org/shuryhin-oleksandr/umbrella)
 [![Built with](https://img.shields.io/badge/Built_with-Cookiecutter_Django_Rest-F7B633.svg)](https://github.com/agconti/cookiecutter-django-rest)
@@ -6,30 +6,51 @@
 umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.github.io/umbrella/).
 
 # Prerequisites
-
-- [Docker](https://docs.docker.com/docker-for-mac/install/)  
+- Docker version 20.10.12
+- docker-compose version 1.29.2
 
 # Local Development
+- Copy content from `.envs/.local.example` to `.envs/.local`
 
-- Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
-- Add '127.0.0.1 redis' to your local '/etc/hosts' file (Linux).
 
-You should do auth requests to Keycloak using 'http://keycloak:8080' host.
-Otherwise JWT token check will fail in Docker container. 
-That is because web container sees keycloak container under 'keycloak' name.
+- To enable JWT Keycloak auth:
 
-- Add .envs/.local file, copy content from .envs/.local.example to it
 
+    Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
+
+    You should do auth requests to Keycloak using 'http://keycloak:8080' host.
+    Otherwise JWT token check will fail in Docker container. 
+    That is because web container sees keycloak container under 'keycloak' name.
+
+- To run web container outside of docker-compose, i.e. in PyCharm or shell:
+
+
+     Add '127.0.0.1 umbrella_local_redis' to your local '/etc/hosts' file (Linux).
 
 - Start the dev server for local development:
 ```bash
-docker-compose -f local.yml up -d --build
+sudo docker-compose -f local.yml up -d --build
 ```
 
 - Run a command inside the docker container:
 
 ```bash
-docker-compose run --rm web [command]
+sudo docker-compose run --rm web [command]
+```
+
+- Default local admin credentials:
+```bash
+username: admin
+password: admin
+auth_token: 2e8c259163886711152ce41256fbedc1fa125569
+```
+
+- Default Keycloak credentials:
+```bash
+realm: local-realm
+group: local-group
+username: umbrella
+password: umbrella 
 ```
 
 # Useful links

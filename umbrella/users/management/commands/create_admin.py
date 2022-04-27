@@ -11,8 +11,8 @@ USERNAME = 'admin'
 EMAIL = 'admin@gmail.com'
 PASSWORD = 'admin'
 GROUP = 'no_group'
-TOKEN = '2e8c259163886711152ce41256fbedc1fa125569'
-CONTRACT_UUID = UUID("6cb7fa02-457f-4e91-be84-3bfea7692d6b")
+AUTH_TOKEN = '2e8c259163886711152ce41256fbedc1fa125569'
+CONTRACT_UUID = UUID("6CB7FA02-457F-4E91-BE84-3BFEA7692D6B")
 
 
 class Command(BaseCommand):
@@ -34,7 +34,7 @@ class Command(BaseCommand):
         admin_user = User.objects.create_superuser(username=USERNAME, email=EMAIL, password=PASSWORD)
         group = Group.objects.create(name=GROUP)
         admin_user.groups.set([group])
-        Token.objects.filter(user=admin_user).update(key=TOKEN)
+        Token.objects.filter(user=admin_user).update(key=AUTH_TOKEN)
         print('Admin created successfully.')
 
         ContractFactory(
