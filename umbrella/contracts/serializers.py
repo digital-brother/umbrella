@@ -52,11 +52,11 @@ class DocumentLibrarySerializer(CustomModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     starts = KDPClauseSerializer(many=True, read_only=True)
     contract_types = KDPClauseSerializer(many=True, read_only=True)
-    contract_parties = KDPClauseSerializer(many=True, read_only=True)
+    contracting_parties = KDPClauseSerializer(many=True, read_only=True)
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'children', 'tasks', 'contract_parties', 'starts', 'tags', 'contract_types', 'tasks']
+        fields = ['file_name', 'children', 'tasks', 'contracting_parties', 'starts', 'tags', 'contract_types', 'tasks']
 
     def get_fields(self):
         fields = super(DocumentLibrarySerializer, self).get_fields()

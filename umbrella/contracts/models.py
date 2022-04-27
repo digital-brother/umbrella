@@ -88,7 +88,7 @@ class Contract(CustomModel):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
 
     @property
-    def contract_parties(self):
+    def contracting_parties(self):
         return self.clauses.filter(type='contractingParties')
 
     @property
