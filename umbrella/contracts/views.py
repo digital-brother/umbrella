@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, ContractCreateSerializer, TagSerializer, ContractUpdateSerializer
+    KDPClauseSerializer, ContractCreateSerializer, TagSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
 User = get_user_model()
@@ -86,10 +86,14 @@ class GroupFilterBackend(filters.BaseFilterBackend):
         return queryset.filter(groups__in=user_groups)
 
 
-class ContractListView(ListAPIView):
+class ContractViewSet(viewsets.ModelViewSet):
     queryset = Contract.objects.all()
     serializer_class = ContractSerializer
     filter_backends = [GroupFilterBackend]
+
+    def perform_create(self, serializer):
+        user_groups = self.request.user.groups.all()
+        serializer.save(groups=user_groups)
 
 
 class ContractProcessedAWSWebhookView(APIView):
@@ -157,35 +161,3 @@ class TagViewSet(viewsets.ModelViewSet):
                 message='Only Others tag type is allowed for edit',
                 code='invalid_tag_type',
             )
-
-
-class ContractUpdateView(APIView):
-    serializer_class = ContractUpdateSerializer
-    queryset = Contract.objects.all()
-
-    def get_object(self, obj_id):
-        try:
-            return Contract.objects.get(id=obj_id)
-        except (Contract.DoesNotExist, ValidationError):
-            raise status.HTTP_400_BAD_REQUEST
-
-    def validate_ids(self, id_list):
-        for id in id_list:
-            try:
-                Contract.objects.get(id=id)
-            except (Contract.DoesNotExist, ValidationError):
-                raise status.HTTP_400_BAD_REQUEST
-        return True
-
-    def put(self, request, *args, **kwargs):
-        id_list = request.data['ids']
-        parent = self.get_object(obj_id=request.data['parent'])
-        self.validate_ids(id_list=id_list)
-        instances = []
-        for id in id_list:
-            obj = self.get_object(obj_id=id)
-            obj.parent = parent
-            obj.save()
-            instances.append(obj)
-        serializer = ContractUpdateSerializer(instances, many=True)
-        return Response(serializer.data)

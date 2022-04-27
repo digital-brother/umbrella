@@ -36,6 +36,7 @@ class Contract(CustomModel):
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
     groups = models.ManyToManyField(Group, blank=True, related_name='contracts')
+    tags = models.ManyToManyField('Tag', related_name='contracts', blank=True, null=True)
 
     def __str__(self):
         return self.file_name
@@ -118,7 +119,6 @@ class Tag(CustomModel):
 
     name = models.CharField(max_length=128)
     type = models.CharField(max_length=128, choices=TagTypes.choices)
-    contracts = models.ManyToManyField(Contract, related_name='tags', blank=True, null=True)
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 
     def __str__(self):

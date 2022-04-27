@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from umbrella.contracts.models import Contract, Node, Tag
-from umbrella.core.serializers import CustomModelSerializer
+from umbrella.core.serializers import CustomModelSerializer, CustomWritableNestedModelSerializer
 
 
 class ContractCreateSerializer(CustomModelSerializer):
@@ -22,10 +22,19 @@ class ContractCreateSerializer(CustomModelSerializer):
         return attrs
 
 
-class ContractSerializer(CustomModelSerializer):
+class TagSerializer(CustomModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name', 'type', 'contracts', 'group']
+
+
+class ContractSerializer(CustomWritableNestedModelSerializer):
+    tags = TagSerializer(many=True)
+
     class Meta:
         model = Contract
-        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'status']
+        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent', 'tags', 'groups']
+        read_only_fields = ['groups']
 
 
 class ClauseSerializer(CustomModelSerializer):
@@ -42,12 +51,6 @@ class KDPClauseSerializer(CustomModelSerializer):
         fields = ["id", "type", "content", "clause"]
 
 
-class TagSerializer(CustomModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ['name', 'type', 'contracts', 'group']
-
-
 class DocumentLibrarySerializer(CustomModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     starts = KDPClauseSerializer(many=True, read_only=True)
@@ -62,9 +65,3 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         fields = super(DocumentLibrarySerializer, self).get_fields()
         fields['children'] = DocumentLibrarySerializer(many=True)
         return fields
-
-
-class ContractUpdateSerializer(CustomModelSerializer):
-    class Meta:
-        model = Contract
-        fields = ['parent', 'tags', 'id']
