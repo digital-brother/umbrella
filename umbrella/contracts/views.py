@@ -1,23 +1,19 @@
 import logging
 
 import boto3
-from django.contrib.auth import get_user_model
-
 from botocore.exceptions import ClientError
-
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db.models import Q
-
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status, viewsets, permissions
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
-from umbrella.contracts.permissions import TagPermissions
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, ContractCreateSerializer, TagSerializer, ContractUpdateSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
@@ -142,7 +138,6 @@ def contracts_statistics(request, *args, **kwargs):
 
 
 class TagViewSet(viewsets.ModelViewSet):
-    permission_classes = (TagPermissions,)
     serializer_class = TagSerializer
 
     def get_queryset(self):
@@ -151,9 +146,27 @@ class TagViewSet(viewsets.ModelViewSet):
                                   Q(group__user=user))
         return tags
 
+    def check_permissions(self, request):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.method in {"POST", }:
+            type = request.data.get('type', None)
+            if type and type != Tag.TagTypes.OTHERS:
+                return False
+        return True
+
+    def check_object_permissions(self, request, obj):
+        if request.method in {"PATCH", "PUT", "DELETE"}:
+            if obj.type == Tag.TagTypes.OTHERS:
+                return True
+            contracts = request.data.get('contracts', None)
+            if contracts and len(request.data) == 1:
+                return True
+        return False
+
 
 class ContractUpdateView(APIView):
-
     serializer_class = ContractUpdateSerializer
     queryset = Contract.objects.all()
 
@@ -183,11 +196,3 @@ class ContractUpdateView(APIView):
             instances.append(obj)
         serializer = ContractUpdateSerializer(instances, many=True)
         return Response(serializer.data)
-
-
-
-
-
-
-
-
