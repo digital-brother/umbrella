@@ -1,23 +1,28 @@
 import logging
 
 import boto3
+from django.contrib.auth import get_user_model
 
 from botocore.exceptions import ClientError
+
 from django.conf import settings
+from django.db.models import Q
 
-
-from rest_framework import filters, status
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from umbrella.contracts.models import Contract, Clause, KDP
+from umbrella.contracts.models import Contract, Clause, KDP, Tag
+from umbrella.contracts.permissions import TagPermissions
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, ContractCreateSerializer
+    KDPClauseSerializer, ContractCreateSerializer, TagSerializer, ContractUpdateSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
+
+User = get_user_model()
 
 
 def create_presigned_post(bucket_name, object_name, fields=None, conditions=None, expiration=3600):
@@ -134,3 +139,55 @@ def contracts_statistics(request, *args, **kwargs):
         'contracts_statistic': Contract.contracts_task_statistic(),
     }
     return Response(data=data, status=status.HTTP_200_OK)
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    permission_classes = (TagPermissions,)
+    serializer_class = TagSerializer
+
+    def get_queryset(self):
+        user = User.objects.get(id=self.request.user.id)
+        tags = Tag.objects.filter(Q(group=None) |
+                                  Q(group__user=user))
+        return tags
+
+
+class ContractUpdateView(APIView):
+
+    serializer_class = ContractUpdateSerializer
+    queryset = Contract.objects.all()
+
+    def get_object(self, obj_id):
+        try:
+            return Contract.objects.get(id=obj_id)
+        except (Contract.DoesNotExist, ValidationError):
+            raise status.HTTP_400_BAD_REQUEST
+
+    def validate_ids(self, id_list):
+        for id in id_list:
+            try:
+                Contract.objects.get(id=id)
+            except (Contract.DoesNotExist, ValidationError):
+                raise status.HTTP_400_BAD_REQUEST
+        return True
+
+    def put(self, request, *args, **kwargs):
+        id_list = request.data['ids']
+        parent = self.get_object(obj_id=request.data['parent'])
+        self.validate_ids(id_list=id_list)
+        instances = []
+        for id in id_list:
+            obj = self.get_object(obj_id=id)
+            obj.parent = parent
+            obj.save()
+            instances.append(obj)
+        serializer = ContractUpdateSerializer(instances, many=True)
+        return Response(serializer.data)
+
+
+
+
+
+
+
+

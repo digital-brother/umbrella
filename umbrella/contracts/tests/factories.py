@@ -38,6 +38,15 @@ class TermClauseFactory(DjangoModelFactory):
 
 
 @register
+class ContractPartyFactory(DjangoModelFactory):
+    type = "contractingParties"
+    contract = factory.SubFactory(ContractFactory)
+
+    class Meta:
+        model = Node
+
+
+@register
 class TaskFactory(DjangoModelFactory):
     title = factory.Sequence(lambda n: f"tag_{n}")
     contract = factory.SubFactory(ContractFactory)
