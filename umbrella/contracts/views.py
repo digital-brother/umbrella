@@ -131,6 +131,7 @@ class ClauseView(ListAPIView):
 class DocumentLibraryListView(ListAPIView):
     queryset = Contract.objects.filter(parent=None)
     serializer_class = DocumentLibrarySerializer
+    filter_backends = [GroupFilterBackend]
 
 
 @api_view(('GET',))
