@@ -158,13 +158,6 @@ class TagViewSet(viewsets.ModelViewSet):
                 code='invalid_tag_type',
             )
 
-    def check_object_permissions(self, request, obj):
-        if request.method in {"PATCH", "PUT", "DELETE"}:
-            contracts = request.data.get('contracts', None)
-            if contracts and len(request.data) == 1:
-                return True
-        return False
-
 
 class ContractUpdateView(APIView):
     serializer_class = ContractUpdateSerializer
