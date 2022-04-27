@@ -45,7 +45,7 @@ class KDPClauseSerializer(CustomModelSerializer):
 class TagSerializer(CustomModelSerializer):
     class Meta:
         model = Tag
-        fields = ['name', 'type']
+        fields = '__all__'
 
 
 class DocumentLibrarySerializer(CustomModelSerializer):
@@ -62,3 +62,9 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         fields = super(DocumentLibrarySerializer, self).get_fields()
         fields['children'] = DocumentLibrarySerializer(many=True)
         return fields
+
+
+class ContractUpdateSerializer(CustomModelSerializer):
+    class Meta:
+        model = Contract
+        fields = ['parent', 'tags', 'id']

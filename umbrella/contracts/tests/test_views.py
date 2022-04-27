@@ -4,13 +4,9 @@ from unittest.mock import Mock
 import pytest
 from django.urls import reverse
 from faker import Faker, factory
-from rest_framework.test import APITestCase, APIClient
 
 from umbrella.contracts.models import Contract, Node, Tag
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory
-from umbrella.tasks.models import Task
-from umbrella.users.auth import User
-from umbrella.users.tests.factories import UserFactory
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -59,7 +55,10 @@ def test_contract_processed_aws_webhook(client, contract):
 
 
 def test_get_list_with_data_for_document_library(client):
+    contract = ContractFactory()
+    contract_party = ContractPartyFactory()
     response = client.get(reverse('document_library'))
+    data = response.data.get('contract')
     assert response.status_code == 200
 
 

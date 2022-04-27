@@ -1,7 +1,11 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from umbrella.contracts.views import ContractCreateView, ContractListView, ContractProcessedAWSWebhookView, \
-    KDPClauseView, ClauseView, DocumentLibraryListView, contracts_statistics
+    KDPClauseView, ClauseView, DocumentLibraryListView, contracts_statistics, TagViewSet, ContractUpdateView
+
+router_contract_tag = routers.DefaultRouter()
+router_contract_tag.register('', TagViewSet, basename='contract_tag')
 
 urlpatterns = [
     path('get-add-file-presigned-url/', ContractCreateView.as_view(), name='contract-create'),
@@ -14,5 +18,7 @@ urlpatterns = [
     path('document-library/', DocumentLibraryListView.as_view(), name='document_library'),
     path('contracts-statistics/', contracts_statistics, name='contracts_statistics'),
 
+    path('contract-tag/', include(router_contract_tag.urls)),
+    path('contracts-update/', ContractUpdateView.as_view(), name='contracts_update'),
 
 ]

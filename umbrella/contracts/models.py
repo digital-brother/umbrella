@@ -118,7 +118,7 @@ class Tag(CustomModel):
 
     name = models.CharField(max_length=128)
     type = models.CharField(max_length=128, choices=TagTypes.choices)
-    contracts = models.ManyToManyField(Contract, related_name='tags', blank=True)
+    contracts = models.ManyToManyField(Contract, related_name='tags', blank=True, null=True)
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 
     def __str__(self):
