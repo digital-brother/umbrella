@@ -30,6 +30,12 @@ class GroupFactory(DjangoModelFactory):
 
 
 @pytest.fixture
+def group():
+    group = GroupFactory()
+    return group
+
+
+@pytest.fixture
 def contract(group):
     contract = ContractFactory(groups=[group])
     return contract

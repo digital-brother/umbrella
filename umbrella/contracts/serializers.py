@@ -33,7 +33,8 @@ class ContractSerializer(CustomWritableNestedModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent', 'tags', 'groups']
+        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent',
+                  'tags', 'groups', 'children']
         read_only_fields = ['groups']
 
 

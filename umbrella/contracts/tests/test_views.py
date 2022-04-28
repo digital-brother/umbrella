@@ -5,6 +5,7 @@ import pytest
 from django.urls import reverse
 from faker import Faker, factory
 
+from umbrella.conftest import GroupFactory
 from umbrella.contracts.models import Contract, Node, Tag
 from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory
 from umbrella.users.tests.factories import UserFactory
@@ -56,9 +57,11 @@ def test_contract_processed_aws_webhook(client, contract):
 
 
 def test_get_list_with_data_for_document_library(client):
+    group = GroupFactory(name="test")
     user = UserFactory()
-    contract = ContractFactory(created_by=user)
-    [contract.groups.add(group) for group in user.groups.all()]
+    user.groups.add(group)
+    contract = ContractFactory()
+    contract.groups.add(group)
     client.force_authenticate(user)
     response = client.get(reverse('document_library'))
     data = response.data['results']
