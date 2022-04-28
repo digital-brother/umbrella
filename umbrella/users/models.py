@@ -30,7 +30,7 @@ class KeycloakGroup(Group):
         from umbrella.contracts.models import Tag
         keycloak_group = cls.objects.create(name=group_name)
         group = Group.objects.get(id=keycloak_group.id)
-        Tag.objects.create(name=group_name, group=group, tag_type=Tag.TagTypes.GROUPS)
+        Tag.objects.create(name=group_name, group=group, type=Tag.TagTypes.GROUPS)
         return group
 
 

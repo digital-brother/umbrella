@@ -7,6 +7,7 @@ from faker import Faker, factory
 
 from umbrella.contracts.models import Contract, Node, Tag
 from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory
+from umbrella.users.tests.factories import UserFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -55,21 +56,27 @@ def test_contract_processed_aws_webhook(client, contract):
 
 
 def test_get_list_with_data_for_document_library(client):
-    contract = ContractFactory()
-    contract_party = ContractPartyFactory()
+    user = UserFactory()
+    contract = ContractFactory(created_by=user)
+    [contract.groups.add(group) for group in user.groups.all()]
+    client.force_authenticate(user)
     response = client.get(reverse('document_library'))
-    data = response.data.get('contract')
+    data = response.data['results']
+    dict_data = dict((key, value) for (key, value) in data[0].items())
+    assert dict_data['file_name'] == contract.file_name
+    assert len(data) == 1
     assert response.status_code == 200
 
 
 def test_get_statistics_from_contracts_for_document_library(client):
-    response = client.get(reverse('contracts_statistics'))
     contract = ContractFactory()
     task = TaskFactory()
+    response = client.get(reverse('contracts_statistics'))
     data = response.data['contracts_statistic']
-    assert data['contracts_count'] == Contract.objects.all().count()
-    assert data['contracts_with_task_count'] == Contract.objects.filter(tasks__isnull=False).count()
     assert response.status_code == 200
+    assert data['contracts_count'] == 2
+    assert data['contracts_with_task_count'] == 1
+    assert data['contracts_without_task_count'] == 1
 
 
 
