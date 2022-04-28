@@ -56,13 +56,7 @@ def test_contract_processed_aws_webhook(client, contract):
     assert response.status_code == 200
 
 
-def test_get_list_with_data_for_document_library(client):
-    group = GroupFactory(name="test")
-    user = UserFactory()
-    user.groups.add(group)
-    contract = ContractFactory()
-    contract.groups.add(group)
-    client.force_authenticate(user)
+def test_get_list_with_data_for_document_library(client, contract):
     response = client.get(reverse('document_library'))
     data = response.data['results']
     dict_data = dict((key, value) for (key, value) in data[0].items())
