@@ -68,8 +68,6 @@ def test_get_list_with_data_for_document_library(client, contract):
     assert data['contracting_parties'][0]['id'] == str(contractig_party.id)
 
 
-
-
 def test_get_statistics_from_contracts_for_document_library(client):
     url = reverse('contracts_statistics')
     ContractFactory()
@@ -82,6 +80,19 @@ def test_get_statistics_from_contracts_for_document_library(client):
     assert data['contracts_with_task_count'] == 1
     assert data['contracts_without_task_count'] == 1
     
+
+def test_get_tags(client, contract):
+    url = '/api/v1/contracts/tags/'
+    tag = TagFactory()
+    tag.contracts.add(contract)
+
+    response = client.get(url,  format='json')
+    data = response.data["results"][0]
+    assert response.status_code == 200
+    assert response.data['count'] == 1
+    assert data['id'] == str(tag.id)
+    assert data['contracts'][0] == contract.id
+
 
 def test_create_tag_with_different_type(client, contract):
     url = '/api/v1/contracts/tags/'
