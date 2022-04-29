@@ -17,6 +17,13 @@ def test_task_list(client, task):
     assert response_contract_data['id'] == str(task.id)
 
 
+def test_task_detail(client, task):
+    url = reverse('task-detail', args=[task.id])
+    response = client.get(url, format='json')
+    assert response.status_code == 200
+    assert response.data["title"] == task.title
+
+
 def test_task_create(client, contract):
     url = reverse('task-list')
     data = {
@@ -40,3 +47,9 @@ def test_task_update(client, task):
     response = client.patch(url, data=data, format='json')
     assert response.status_code == 200
     assert response.data["title"] == new_title
+
+
+def test_task_delete(client, task):
+    url = reverse('task-detail', args=[task.id])
+    response = client.delete(url, format='json')
+    assert response.status_code == 204
