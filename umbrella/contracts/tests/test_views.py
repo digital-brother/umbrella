@@ -16,7 +16,7 @@ def test_contract_list(client, contract):
     url = reverse('contract-list')
     response = client.get(url, format='json')
     assert response.status_code == 200
-    assert response.data['count']
+    assert response.data['count'] == 1
     response_contract_data = response.data['results'][0]
     assert response_contract_data['id'] == str(contract.id)
 
@@ -56,11 +56,10 @@ def test_contract_processed_aws_webhook(client, contract):
 
 def test_get_list_with_data_for_document_library(client, contract):
     response = client.get(reverse('document_library'))
-    data = response.data['results']
-    dict_data = dict((key, value) for (key, value) in data[0].items())
-    assert dict_data['file_name'] == contract.file_name
-    assert len(data) == 1
     assert response.status_code == 200
+    assert response.data['count'] == 1
+    response_contract_data = response.data['results'][0]
+    assert response_contract_data['id'] == contract.id
 
 
 def test_get_statistics_from_contracts_for_document_library(client):
