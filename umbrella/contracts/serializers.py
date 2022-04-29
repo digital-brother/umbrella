@@ -29,11 +29,11 @@ class TagSerializer(CustomModelSerializer):
 
     def validate(self, attrs):
         contracts = attrs.get('contracts', None)
-        type = attrs.get('type', None)
+        tag_type = attrs.get('type', None)
         if self.instance and self.instance.type != Tag.TagTypes.OTHERS:
             if not contracts or len(attrs) != 1:
                 raise serializers.ValidationError("Only Others tag type is allowed for edit")
-        if not self.instance and type != Tag.TagTypes.OTHERS:
+        if not self.instance and tag_type != Tag.TagTypes.OTHERS:
             raise serializers.ValidationError("Only Others tag can be created")
         return attrs
 
@@ -70,7 +70,8 @@ class DocumentLibrarySerializer(CustomModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'children', 'tasks', 'contracting_parties', 'starts', 'tags', 'contract_types', 'tasks', 'groups']
+        fields = ['file_name', 'children', 'tasks', 'contracting_parties', 'starts', 'tags', 'contract_types',
+                  'tasks', 'groups']
 
     def get_fields(self):
         fields = super(DocumentLibrarySerializer, self).get_fields()

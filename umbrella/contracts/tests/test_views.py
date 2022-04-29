@@ -3,12 +3,10 @@ from unittest.mock import Mock
 
 import pytest
 from django.urls import reverse
-from faker import Faker, factory
+from faker import Faker
 
-from umbrella.conftest import GroupFactory
-from umbrella.contracts.models import Contract, Node, Tag
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory
-from umbrella.users.tests.factories import UserFactory
+from umbrella.contracts.models import Contract
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -66,15 +64,11 @@ def test_get_list_with_data_for_document_library(client, contract):
 
 
 def test_get_statistics_from_contracts_for_document_library(client):
-    contract = ContractFactory()
-    task = TaskFactory()
+    ContractFactory()
+    TaskFactory()
     response = client.get(reverse('contracts_statistics'))
     data = response.data['contracts_statistic']
     assert response.status_code == 200
     assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
     assert data['contracts_without_task_count'] == 1
-
-
-
-

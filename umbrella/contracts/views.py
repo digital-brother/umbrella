@@ -97,6 +97,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 
 class ContractProcessedAWSWebhookView(APIView):
+
     def post(self, request, contract_id):
         contract = Contract.objects.filter(id=contract_id)
         if not contract:
@@ -155,8 +156,8 @@ class TagViewSet(viewsets.ModelViewSet):
         if request.method in permissions.SAFE_METHODS:
             return
 
-        type = request.data.get('type', None)
-        if type and type != Tag.TagTypes.OTHERS:
+        tag_type = request.data.get('type', None)
+        if tag_type and tag_type != Tag.TagTypes.OTHERS:
             self.permission_denied(
                 request,
                 message='Only Others tag type is allowed for edit',
