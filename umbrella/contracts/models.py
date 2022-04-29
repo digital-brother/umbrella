@@ -114,11 +114,12 @@ class Tag(CustomModel):
     class TagTypes(models.TextChoices):
         NATURE = 'nature', 'Nature'
         TYPE = 'type', 'Type'
-        GROUPS = 'groups', 'Groups'
+        GROUP = 'group', 'Group'
         OTHERS = 'others', 'Others'
 
     name = models.CharField(max_length=128)
     type = models.CharField(max_length=128, choices=TagTypes.choices)
+    # Used for group Tags only
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 
     def __str__(self):
