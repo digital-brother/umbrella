@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from rest_framework import filters, status, viewsets, permissions
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.generics import CreateAPIView

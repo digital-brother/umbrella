@@ -79,14 +79,14 @@ def test_get_statistics_from_contracts_for_document_library(client):
     assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
     assert data['contracts_without_task_count'] == 1
-    
+
 
 def test_get_tags(client, contract):
     url = '/api/v1/contracts/tags/'
     tag = TagFactory()
     tag.contracts.add(contract)
 
-    response = client.get(url,  format='json')
+    response = client.get(url, format='json')
     data = response.data["results"][0]
     assert response.status_code == 200
     assert response.data['count'] == 1
@@ -114,7 +114,7 @@ def test_create_tag_with_different_type(client, contract):
     invalid_response = client.post(url, data=invalid_data, format='json')
     assert valid_response.status_code == 201
     assert invalid_response.status_code == 400
-    
+
 
 def test_update_tag_with_different_type(client, contract):
     url = '/api/v1/contracts/tags/'
