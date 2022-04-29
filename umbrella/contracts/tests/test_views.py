@@ -5,8 +5,9 @@ import pytest
 from django.urls import reverse
 from faker import Faker
 
-from umbrella.contracts.models import Contract
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory
+from umbrella.contracts.models import Contract, Tag
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory, \
+    TagFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -104,4 +105,13 @@ def test_create_tag_with_different_type(client, contract):
     assert invalid_response.status_code == 400
     
 
+def test_update_tag_with_different_type(client, contract):
+    url = '/api/v1/contracts/tags/'
+    valid_tag = TagFactory()
+    invalid_tag = TagFactory(type=Tag.TagTypes.NATURE)
+    data = {"name": "Test"}
 
+    valid_response = client.patch(f"{url}{valid_tag.id}/", data=data, format='json')
+    invalid_response = client.patch(f"{url}{invalid_tag.id}/", data=data, format='json')
+    assert valid_response.status_code == 200
+    assert invalid_response.status_code == 400
