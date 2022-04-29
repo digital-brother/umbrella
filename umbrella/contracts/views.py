@@ -151,15 +151,3 @@ class TagViewSet(viewsets.ModelViewSet):
         tags = Tag.objects.filter(Q(group=None) |
                                   Q(group__user=user))
         return tags
-
-    def check_permissions(self, request):
-        if request.method in permissions.SAFE_METHODS:
-            return
-
-        tag_type = request.data.get('type', None)
-        if tag_type and tag_type != Tag.TagTypes.OTHERS:
-            self.permission_denied(
-                request,
-                message='Only Others tag type is allowed for edit',
-                code='invalid_tag_type',
-            )
