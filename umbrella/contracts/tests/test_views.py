@@ -115,3 +115,14 @@ def test_update_tag_with_different_type(client, contract):
     invalid_response = client.patch(f"{url}{invalid_tag.id}/", data=data, format='json')
     assert valid_response.status_code == 200
     assert invalid_response.status_code == 400
+
+
+def test_delete_tag_with_different_type(client, contract):
+    url = '/api/v1/contracts/tags/'
+    valid_tag = TagFactory()
+    invalid_tag = TagFactory(type=Tag.TagTypes.NATURE)
+
+    valid_response = client.delete(f"{url}{valid_tag.id}/", format='json')
+    invalid_response = client.delete(f"{url}{invalid_tag.id}/", format='json')
+    assert valid_response.status_code == 204
+    assert invalid_response.status_code == 400
