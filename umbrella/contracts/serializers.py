@@ -28,7 +28,7 @@ class TagSerializer(CustomModelSerializer):
         fields = ['id', 'name', 'type', 'contracts', 'group']
 
     def validate(self, attrs):
-        tag_type = attrs.get('type')
+        tag_type = attrs.get('type') if 'type' in attrs.keys() else self.instance.type
         tag_is_restricted_for_create_or_change = tag_type != Tag.TagTypes.OTHERS
         is_change_flow = not('contracts' in attrs.keys() and len(attrs) == 1)
         is_create_flow = not self.instance
@@ -37,7 +37,7 @@ class TagSerializer(CustomModelSerializer):
             raise serializers.ValidationError("Only Others tag can be created")
 
         if is_change_flow and tag_is_restricted_for_create_or_change:
-            raise serializers.ValidationError(f"{tag_type}' allows only contracts to be updated")
+            raise serializers.ValidationError(f"{tag_type}' allows only contracts field to be updated")
 
         return attrs
 
@@ -74,7 +74,7 @@ class DocumentLibrarySerializer(CustomModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['file_name', 'children', 'tasks', 'contracting_parties', 'starts', 'tags', 'contract_types',
+        fields = ['id', 'file_name', 'children', 'tasks', 'contracting_parties', 'starts', 'tags', 'contract_types',
                   'tasks', 'groups']
 
     def get_fields(self):

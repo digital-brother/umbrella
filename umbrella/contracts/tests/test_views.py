@@ -6,7 +6,7 @@ from django.urls import reverse
 from faker import Faker
 
 from umbrella.contracts.models import Contract
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory, ContractPartyFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -55,11 +55,18 @@ def test_contract_processed_aws_webhook(client, contract):
 
 
 def test_get_list_with_data_for_document_library(client, contract):
-    response = client.get(reverse('document_library'))
+    url = reverse('document_library')
+    contractig_party = ContractPartyFactory(contract=contract)
+    child_contract = ContractFactory(parent=contract)
+
+    response = client.get(url, format='json')
+    data = response.data["results"][0]
     assert response.status_code == 200
-    assert response.data['count'] == 1
-    response_contract_data = response.data['results'][0]
-    assert response_contract_data['id'] == contract.id
+    assert data['id'] == str(contract.id)
+    assert data['children'][0]['id'] == str(child_contract.id)
+    assert data['contracting_parties'][0]['id'] == str(contractig_party.id)
+
+
 
 
 def test_get_statistics_from_contracts_for_document_library(client):
