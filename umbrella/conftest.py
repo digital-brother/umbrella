@@ -5,6 +5,7 @@ from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
 from umbrella.contracts.tests.factories import ContractFactory
+from umbrella.tasks.tests.factories import TaskFactory
 from umbrella.users.tests.factories import UserFactory
 
 
@@ -33,3 +34,9 @@ class GroupFactory(DjangoModelFactory):
 def contract(group):
     contract = ContractFactory(groups=[group])
     return contract
+
+
+@pytest.fixture
+def task(user):
+    task = TaskFactory(assignees=[user])
+    return task
