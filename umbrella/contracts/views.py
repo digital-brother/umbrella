@@ -153,6 +153,7 @@ class TagViewSet(viewsets.ModelViewSet):
         return tags
 
     def perform_destroy(self, instance):
-        if instance.type != Tag.TagTypes.OTHERS:
+        tag_not_can_be_deleted = instance.type != Tag.TagTypes.OTHERS
+        if tag_not_can_be_deleted:
             raise ValidationError(f"You are not allowed to delete Tag with type '{instance.type}'.")
         instance.delete()

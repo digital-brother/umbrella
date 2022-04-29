@@ -70,11 +70,38 @@ def test_get_list_with_data_for_document_library(client, contract):
 
 
 def test_get_statistics_from_contracts_for_document_library(client):
+    url = reverse('contracts_statistics')
     ContractFactory()
     TaskFactory()
-    response = client.get(reverse('contracts_statistics'))
+
+    response = client.get(url, format='json')
     data = response.data['contracts_statistic']
     assert response.status_code == 200
     assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
     assert data['contracts_without_task_count'] == 1
+    
+
+def test_create_tag_with_different_type(client, contract):
+    url = '/api/v1/contracts/tags/'
+    valid_data = {
+        "name": "Test",
+        "type": "others",
+        "contracts": [
+            contract.id
+        ]
+    }
+    invalid_data = {
+        "name": "Test",
+        "type": "nature",
+        "contracts": [
+            contract.id
+        ]
+    }
+    valid_response = client.post(url, data=valid_data, format='json')
+    invalid_response = client.post(url, data=invalid_data, format='json')
+    assert valid_response.status_code == 201
+    assert invalid_response.status_code == 400
+    
+
+
