@@ -29,14 +29,16 @@ class TagSerializer(CustomModelSerializer):
 
     def validate(self, attrs):
         tag_type = attrs.get('type')
-        tag_is_restricted_for_create_or_change = tag_type != Tag.TagTypes.OTHERS
-        is_change_flow = not('contracts' in attrs.keys() and len(attrs) == 1)
-        is_create_flow = not self.instance
 
-        if is_create_flow and tag_is_restricted_for_create_or_change:
+        is_create_flow = not self.instance
+        is_update_flow = self.instance
+        tag_is_protected = tag_type != Tag.TagTypes.OTHERS
+        is_restricted_update_flow = not('contracts' in attrs.keys() and len(attrs) == 1)
+
+        if tag_is_protected and is_create_flow:
             raise serializers.ValidationError("Only Others tag can be created")
 
-        if is_change_flow and tag_is_restricted_for_create_or_change:
+        if tag_is_protected and is_update_flow and is_restricted_update_flow:
             raise serializers.ValidationError(f"{tag_type}' allows only contracts to be updated")
 
         return attrs
