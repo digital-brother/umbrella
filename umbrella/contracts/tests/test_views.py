@@ -81,20 +81,20 @@ def test_contracts_statistics(client):
     assert data['contracts_without_task_count'] == 1
 
 
-def test_get_tags(client, contract):
+def test_tag_list(client, contract):
     url = reverse('tag-list')
     tag = TagFactory()
     tag.contracts.add(contract)
 
     response = client.get(url, format='json')
-    data = response.data["results"][0]
     assert response.status_code == 200
     assert response.data['count'] == 1
-    assert data['id'] == str(tag.id)
-    assert data['contracts'][0] == contract.id
+    tag_data = response.data["results"][0]
+    assert tag_data['id'] == str(tag.id)
+    assert tag_data['contracts'][0] == contract.id
 
 
-def test_create_tag_with_different_type(client, contract):
+def test_create_tag_with_others_type(client, contract):
     url = reverse('tag-list')
     valid_data = {
         "name": "Test",
@@ -116,7 +116,7 @@ def test_create_tag_with_different_type(client, contract):
     assert invalid_response.status_code == 400
 
 
-def test_update_tag_with_different_type(client, contract):
+def test_update_tag_with_others_type(client, contract):
     url = reverse('tag-list')
     valid_tag = TagFactory()
     invalid_tag = TagFactory(type=Tag.TagTypes.NATURE)
@@ -128,7 +128,7 @@ def test_update_tag_with_different_type(client, contract):
     assert invalid_response.status_code == 400
 
 
-def test_delete_tag_with_different_type(client, contract):
+def test_delete_tag_with_others_type(client, contract):
     url = reverse('tag-list')
     valid_tag = TagFactory()
     invalid_tag = TagFactory(type=Tag.TagTypes.NATURE)
