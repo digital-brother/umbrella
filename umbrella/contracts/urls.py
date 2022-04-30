@@ -7,7 +7,7 @@ from umbrella.contracts.views import ContractCreateView, ContractProcessedAWSWeb
 
 # TODO: check router usage
 router = routers.DefaultRouter()
-router.register('tags', TagViewSet, basename='contract_tags')
+router.register('tags', TagViewSet, basename='tag')
 router.register(r'', ContractViewSet, basename="contract")
 
 urlpatterns = [

@@ -55,7 +55,7 @@ def test_contract_processed_aws_webhook(client, contract):
     assert response.status_code == 200
 
 
-def test_get_list_with_data_for_document_library(client, contract):
+def test_document_library(client, contract):
     url = reverse('document_library')
     contractig_party = ContractPartyFactory(contract=contract)
     child_contract = ContractFactory(parent=contract)
@@ -68,7 +68,7 @@ def test_get_list_with_data_for_document_library(client, contract):
     assert data['contracting_parties'][0]['id'] == str(contractig_party.id)
 
 
-def test_get_statistics_from_contracts_for_document_library(client):
+def test_contracts_statistics(client):
     url = reverse('contracts_statistics')
     ContractFactory()
     TaskFactory()
@@ -82,7 +82,7 @@ def test_get_statistics_from_contracts_for_document_library(client):
 
 
 def test_get_tags(client, contract):
-    url = '/api/v1/contracts/tags/'
+    url = reverse('tag-list')
     tag = TagFactory()
     tag.contracts.add(contract)
 
@@ -95,7 +95,7 @@ def test_get_tags(client, contract):
 
 
 def test_create_tag_with_different_type(client, contract):
-    url = '/api/v1/contracts/tags/'
+    url = reverse('tag-list')
     valid_data = {
         "name": "Test",
         "type": "others",
@@ -117,7 +117,7 @@ def test_create_tag_with_different_type(client, contract):
 
 
 def test_update_tag_with_different_type(client, contract):
-    url = '/api/v1/contracts/tags/'
+    url = reverse('tag-list')
     valid_tag = TagFactory()
     invalid_tag = TagFactory(type=Tag.TagTypes.NATURE)
     data = {"name": "Test"}
@@ -129,7 +129,7 @@ def test_update_tag_with_different_type(client, contract):
 
 
 def test_delete_tag_with_different_type(client, contract):
-    url = '/api/v1/contracts/tags/'
+    url = reverse('tag-list')
     valid_tag = TagFactory()
     invalid_tag = TagFactory(type=Tag.TagTypes.NATURE)
 
