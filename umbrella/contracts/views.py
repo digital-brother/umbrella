@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from rest_framework import filters, status, viewsets, permissions
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.generics import CreateAPIView
@@ -151,3 +151,9 @@ class TagViewSet(viewsets.ModelViewSet):
         tags = Tag.objects.filter(Q(group=None) |
                                   Q(group__user=user))
         return tags
+
+    def perform_destroy(self, instance):
+        tag_not_can_be_deleted = instance.type != Tag.TagTypes.OTHERS
+        if tag_not_can_be_deleted:
+            raise ValidationError(f"You are not allowed to delete Tag with type '{instance.type}'.")
+        instance.delete()
