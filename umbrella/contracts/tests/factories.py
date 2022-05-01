@@ -2,7 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 
-from umbrella.contracts.models import Contract, Clause, KDP, Node, Tag
+from umbrella.contracts.models import Contract, Clause, KDP
 from umbrella.tasks.models import Task
 from umbrella.users.tests.factories import UserFactory
 
@@ -13,9 +13,11 @@ class ContractFactory(DjangoModelFactory):
     file_size = 1024
     file_hash = factory.Sequence(lambda n: f"file_hash_{n}")
     modified_file_name = factory.Sequence(lambda n: f"modified_file_name_{n}")
+    parent = factory.SubFactory('umbrella.contracts.tests.factories.ContractFactory', parent=None)
 
     class Meta:
         model = Contract
+
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
@@ -26,6 +28,26 @@ class ContractFactory(DjangoModelFactory):
             # A list of groups were passed in, use them
             for extracted_group in extracted:
                 self.groups.add(extracted_group)
+                self.parent.groups.add(extracted_group)
+
+    @factory.post_generation
+    def clauses(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            self.clauses.add(extracted)
+
+    @factory.post_generation
+    def tags(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            # A list of tags were passed in, use them
+            for extracted_tag in extracted:
+                self.tags.add(extracted_tag)
+
 
 
 @register
@@ -35,15 +57,6 @@ class TermClauseFactory(DjangoModelFactory):
 
     class Meta:
         model = Clause
-
-
-@register
-class ContractPartyFactory(DjangoModelFactory):
-    type = "contractingParties"
-    contract = factory.SubFactory(ContractFactory)
-
-    class Meta:
-        model = Node
 
 
 @register
@@ -65,10 +78,4 @@ class StartKDPFactory(DjangoModelFactory):
         model = KDP
 
 
-@register
-class TagFactory(DjangoModelFactory):
-    name = factory.Sequence(lambda n: f"tag_{n}")
-    type = Tag.TagTypes.OTHERS
 
-    class Meta:
-        model = Tag

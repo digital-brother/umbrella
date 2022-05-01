@@ -4,6 +4,7 @@ from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
+from umbrella.contracts.models import Node, Tag
 from umbrella.contracts.tests.factories import ContractFactory
 from umbrella.users.tests.factories import UserFactory
 
@@ -29,7 +30,24 @@ class GroupFactory(DjangoModelFactory):
     name = 'no_group'
 
 
+@register
+class ContractPartyFactory(DjangoModelFactory):
+    type = "contractingParties"
+
+    class Meta:
+        model = Node
+
+
+@register
+class TagFactory(DjangoModelFactory):
+    name = 'test_tag'
+    type = Tag.TagTypes.OTHERS
+
+    class Meta:
+        model = Tag
+
+
 @pytest.fixture
-def contract(group):
-    contract = ContractFactory(groups=[group])
+def contract(group, node, tag):
+    contract = ContractFactory(groups=[group], clauses=node, tags=[tag])
     return contract
