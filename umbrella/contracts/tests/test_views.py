@@ -61,10 +61,10 @@ def test_document_library(client, contract):
 
     response = client.get(url, format='json')
     contract_data = response.data["results"][0]
-    child_contract_data = contract_data['children'][0]
 
     assert response.status_code == 200
     assert contract_data['id'] == str(contract.parent_id)
+    child_contract_data = contract_data['children'][0]
     assert child_contract_data['id'] == str(contract.id)
     assert child_contract_data['contracting_parties'][0]['id'] == str(related_contracting_party.id)
 
