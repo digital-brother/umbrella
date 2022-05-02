@@ -17,8 +17,8 @@ def test_contract_list(client, contract):
     response = client.get(url, format='json')
     assert response.status_code == 200
     assert response.data['count'] == 1
-    response_contract_data = response.data['results'][0]
-    assert response_contract_data['id'] == str(contract.id)
+    contract_data = response.data['results'][0]
+    assert contract_data['id'] == str(contract.id)
 
 
 @mock.patch('umbrella.contracts.views.create_presigned_post', Mock(return_value={}))
@@ -76,23 +76,22 @@ def test_contracts_statistics(client, contract):
     TaskFactory()
 
     response = client.get(url, format='json')
-    data = response.data['contracts_statistic']
+
     assert response.status_code == 200
-    assert data['contracts_count'] == 4
+    data = response.data['contracts_statistic']
+    assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
-    assert data['contracts_without_task_count'] == 3
+    assert data['contracts_without_task_count'] == 1
 
 
-def test_tag_list(client, contract):
+def test_tag_list(client, tag):
     url = reverse('tag-list')
     response = client.get(url, format='json')
-    related_tags_ids = contract.tags.all().values_list('id', flat=True)
 
     assert response.status_code == 200
     assert response.data['count'] == 1
     tag_data = response.data["results"][0]
-    assert tag_data['id'] in str(related_tags_ids)
-    assert tag_data['contracts'][0] == contract.id
+    assert tag_data['id'] == str(tag.id)
 
 
 def test_create_tag_with_others_type(client, contract):
@@ -108,21 +107,17 @@ def test_create_tag_with_others_type(client, contract):
     assert response.status_code == 201
 
 
-def test_create_tag_with_nature_type(client, contract):
+def test_create_tag_with_nature_type(client):
     url = reverse('tag-list')
     data = {
         "name": "Test",
         "type": "nature",
-        "contracts": [
-            contract.id
-        ]
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 400
 
 
-def test_update_tag_with_others_type(client, contract):
-    tag = TagFactory()
+def test_update_tag_with_others_type(client, tag):
     data = {"name": "Test"}
     url = reverse('tag-detail', args=[tag.id])
 
