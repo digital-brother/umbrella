@@ -147,9 +147,7 @@ class TagViewSet(viewsets.ModelViewSet):
     serializer_class = TagSerializer
 
     def get_queryset(self):
-        user = User.objects.get(id=self.request.user.id)
-        tags = Tag.objects.filter(Q(group=None) | Q(group__user=user))
-        return tags
+        return Tag.objects.filter(Q(group=None) | Q(group__user=self.request.user))
 
     def perform_destroy(self, instance):
         tag_is_protected = instance.type != Tag.TagTypes.OTHERS
