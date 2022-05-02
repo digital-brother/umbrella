@@ -112,7 +112,7 @@ def test_create_tag_with_others_type(client, contract):
 def test_create_tag_with_nature_type(client):
     url = reverse('tag-list')
     data = {
-        "name": "Test",
+        "name": "test_nature_tag",
         "type": "nature",
     }
     response = client.post(url, data=data, format='json')
