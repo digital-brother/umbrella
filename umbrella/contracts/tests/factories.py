@@ -17,7 +17,6 @@ class ContractFactory(DjangoModelFactory):
     class Meta:
         model = Contract
 
-
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         if not create:
@@ -34,7 +33,9 @@ class ContractFactory(DjangoModelFactory):
             return
 
         if extracted:
-            self.clauses.add(extracted)
+            # A list of tags were passed in, use them
+            for extracted_clause in extracted:
+                self.clauses.add(extracted_clause)
 
     @factory.post_generation
     def tags(self, create, extracted, **kwargs):
@@ -45,7 +46,6 @@ class ContractFactory(DjangoModelFactory):
             # A list of tags were passed in, use them
             for extracted_tag in extracted:
                 self.tags.add(extracted_tag)
-
 
 
 @register
