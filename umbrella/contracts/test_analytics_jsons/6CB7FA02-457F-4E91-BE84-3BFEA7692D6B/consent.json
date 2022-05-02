@@ -1,0 +1,29 @@
+{
+  "consent": [
+    {
+      "paraId": 49,
+      "sentence": "The parties therefore mutually agree that neither party shall without the other's prior written consent.",
+      "sentenceId": 0,
+      "type": "Non-Regulatory"
+    },
+    {
+      "paraId": 53,
+      "sentence": "The costs and expenses associated with Development activities shall include, but are not limited to,",
+      "sentenceId": 0,
+      "type": "Regulatory",
+      "extraction": [
+        {
+          "entity": "to a governmental authority",
+          "startWordId": 97,
+          "endWordId": 100
+        }
+      ]
+    },
+    {
+      "paraId": 54,
+      "sentence": "In determining \u201cDevelopment Costs\u201d chargeable under this Agreement.",
+      "sentenceId": 0,
+      "type": "Non-Regulatory"
+    }
+  ]
+}
