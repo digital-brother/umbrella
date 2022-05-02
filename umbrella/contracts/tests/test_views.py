@@ -120,16 +120,18 @@ def test__create_tag__with_nature_type(client):
 
 
 def test__update_tag__with_others_type(client, tag):
-    data = {"name": "Test"}
+    updated_name = 'updated_test_others_tag'
+    data = {"name": updated_name}
     url = reverse('tag-detail', args=[tag.id])
 
     response = client.patch(url, data=data, format='json')
     assert response.status_code == 200
+    assert response.data['name'] == updated_name
 
 
 def test__update_tag__with_nature_type(client, contract):
     tag = TagFactory(type=Tag.TagTypes.NATURE)
-    data = {"name": "Test"}
+    data = {"name": "test_nature_tag"}
     url = reverse('tag-detail', args=[tag.id])
 
     response = client.patch(url, data=data, format='json')
