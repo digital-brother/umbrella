@@ -5,9 +5,8 @@ import pytest
 from django.urls import reverse
 from faker import Faker
 
-from umbrella.conftest import TagFactory
-from umbrella.contracts.models import Contract, Tag, Node
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory
+from umbrella.contracts.models import Contract, Tag
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, TagFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db

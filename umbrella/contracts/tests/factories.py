@@ -2,7 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 
-from umbrella.contracts.models import Contract, Clause, KDP
+from umbrella.contracts.models import Contract, Clause, KDP, Tag, Node
 from umbrella.tasks.models import Task
 from umbrella.users.tests.factories import UserFactory
 
@@ -78,4 +78,16 @@ class StartKDPFactory(DjangoModelFactory):
         model = KDP
 
 
+class TagFactory(DjangoModelFactory):
+    name = 'test_tag'
+    type = Tag.TagTypes.OTHERS
 
+    class Meta:
+        model = Tag
+
+
+class ContractingPartyFactory(DjangoModelFactory):
+    type = "contractingParties"
+
+    class Meta:
+        model = Node
