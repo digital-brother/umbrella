@@ -94,7 +94,7 @@ def test_tag_list(client, tag):
     assert tag_data['id'] == str(tag.id)
 
 
-def test_create_tag_with_others_type(client, contract):
+def test__create_tag__with_others_type(client, contract):
     url = reverse('tag-list')
     data = {
         "name": "test_others_tag",
@@ -109,7 +109,7 @@ def test_create_tag_with_others_type(client, contract):
     assert Tag.objects.count() == 1
 
 
-def test_create_tag_with_nature_type(client):
+def test__create_tag__with_nature_type(client):
     url = reverse('tag-list')
     data = {
         "name": "test_nature_tag",
@@ -119,7 +119,7 @@ def test_create_tag_with_nature_type(client):
     assert response.status_code == 400
 
 
-def test_update_tag_with_others_type(client, tag):
+def test__update_tag__with_others_type(client, tag):
     data = {"name": "Test"}
     url = reverse('tag-detail', args=[tag.id])
 
@@ -127,7 +127,7 @@ def test_update_tag_with_others_type(client, tag):
     assert response.status_code == 200
 
 
-def test_update_tag_with_nature_type(client, contract):
+def test__update_tag__with_nature_type(client, contract):
     tag = TagFactory(type=Tag.TagTypes.NATURE)
     data = {"name": "Test"}
     url = reverse('tag-detail', args=[tag.id])
@@ -136,7 +136,7 @@ def test_update_tag_with_nature_type(client, contract):
     assert response.status_code == 400
 
 
-def test_delete_tag_with_others_type(client, contract):
+def test__delete_tag__with_others_type(client, contract):
     tag = TagFactory()
     url = reverse('tag-detail', args=[tag.id])
 
@@ -144,7 +144,7 @@ def test_delete_tag_with_others_type(client, contract):
     assert response.status_code == 204
 
 
-def test_delete_tag_with_nature_type(client, contract):
+def test__delete_tag__with_nature_type(client, contract):
     tag = TagFactory(type=Tag.TagTypes.NATURE)
     url = reverse('tag-detail', args=[tag.id])
 
