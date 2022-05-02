@@ -1,5 +1,8 @@
+from urllib.parse import urlencode
+
 import pytest
 from django.contrib.auth.models import Group
+from django.urls import reverse
 from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
@@ -40,3 +43,17 @@ def contract(group):
 def task(user):
     task = TaskFactory(assignees=[user])
     return task
+
+
+def reverse_with_params(viewname, args=None, kwargs=None, query_kwargs=None):
+    """
+    Custom reverse to add a query string after the url
+    Example usage:
+    url = my_reverse('my_test_url', kwargs={'pk': object.id}, query_kwargs={'next': reverse('home')})
+    """
+    url = reverse(viewname, args=args, kwargs=kwargs)
+
+    if query_kwargs:
+        return f'{url}?{urlencode(query_kwargs)}'
+
+    return url
