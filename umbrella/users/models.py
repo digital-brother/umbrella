@@ -20,8 +20,6 @@ class User(AbstractUser):
 
 class KeycloakGroup(Group):
 
-    group = models.OneToOneField(Group, on_delete=models.CASCADE, parent_link=True, primary_key=True,)
-
     def __str__(self):
         return self.name
 
