@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from umbrella.contracts.tests.factories import ContractFactory
 from umbrella.users.models import User
 
+ADMIN_UUID = UUID('7a16f3ed-8cdb-47ab-903b-f52a8a9c9c62')
 USERNAME = 'admin'
 EMAIL = 'admin@gmail.com'
 PASSWORD = 'admin'
@@ -31,7 +32,7 @@ class Command(BaseCommand):
             print(error_msg)
             return
 
-        admin_user = User.objects.create_superuser(username=USERNAME, email=EMAIL, password=PASSWORD)
+        admin_user = User.objects.create_superuser(id=ADMIN_UUID, username=USERNAME, email=EMAIL, password=PASSWORD)
         group = Group.objects.create(name=GROUP)
         admin_user.groups.set([group])
         Token.objects.filter(user=admin_user).update(key=AUTH_TOKEN)

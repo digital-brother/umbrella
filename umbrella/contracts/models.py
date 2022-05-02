@@ -4,8 +4,8 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.db import models
-from rest_framework.exceptions import ValidationError
 
 from umbrella.core.models import CustomModel
 
