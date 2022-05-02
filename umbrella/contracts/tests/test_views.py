@@ -60,14 +60,13 @@ def test_document_library(client, contract):
     related_contracting_party = contract.clauses.filter(type='contractingParties').last()
 
     response = client.get(url, format='json')
-    contract_data = response.data["results"][0]
+    contract_parent_data = response.data["results"][0]
 
     assert response.status_code == 200
-    assert contract_data['id'] == str(contract.parent_id)
-    child_contract_data = contract_data['children'][0]
-    assert child_contract_data['id'] == str(contract.id)
-    assert child_contract_data['contracting_parties'][0]['id'] == str(related_contracting_party.id)
-
+    assert contract_parent_data['id'] == str(contract.parent_id)
+    contract_data = contract_parent_data['children'][0]
+    assert contract_data['id'] == str(contract.id)
+    assert contract_data['contracting_parties'][0]['id'] == str(related_contracting_party.id)
 
 
 def test_contracts_statistics(client, contract):
@@ -120,7 +119,6 @@ def test_create_tag_with_nature_type(client, contract):
     assert response.status_code == 400
 
 
-
 def test_update_tag_with_others_type(client, contract):
     tag = TagFactory()
     data = {"name": "Test"}
@@ -145,7 +143,6 @@ def test_delete_tag_with_others_type(client, contract):
 
     response = client.delete(url, format='json')
     assert response.status_code == 204
-
 
 
 def test_delete_tag_with_nature_type(client, contract):
