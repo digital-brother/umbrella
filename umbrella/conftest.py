@@ -27,3 +27,10 @@ def user(group):
 def contract(group, node, tag):
     contract = ContractFactory(groups=[group], clauses=node, tags=[tag])
     return contract
+
+
+@pytest.fixture
+def parent_contract(contract):
+    child_contract = ContractFactory()
+    contract.children.add(child_contract)
+    return contract

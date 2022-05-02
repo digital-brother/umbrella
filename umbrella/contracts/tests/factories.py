@@ -13,7 +13,6 @@ class ContractFactory(DjangoModelFactory):
     file_size = 1024
     file_hash = factory.Sequence(lambda n: f"file_hash_{n}")
     modified_file_name = factory.Sequence(lambda n: f"modified_file_name_{n}")
-    parent = factory.SubFactory('umbrella.contracts.tests.factories.ContractFactory', parent=None)
 
     class Meta:
         model = Contract
@@ -28,7 +27,6 @@ class ContractFactory(DjangoModelFactory):
             # A list of groups were passed in, use them
             for extracted_group in extracted:
                 self.groups.add(extracted_group)
-                self.parent.groups.add(extracted_group)
 
     @factory.post_generation
     def clauses(self, create, extracted, **kwargs):

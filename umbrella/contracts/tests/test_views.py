@@ -16,7 +16,7 @@ def test_contract_list(client, contract):
     url = reverse('contract-list')
     response = client.get(url, format='json')
     assert response.status_code == 200
-    assert response.data['count'] == 2
+    assert response.data['count'] == 1
     response_contract_data = response.data['results'][0]
     assert response_contract_data['id'] == str(contract.id)
 
@@ -54,18 +54,21 @@ def test_contract_processed_aws_webhook(client, contract):
     assert response.status_code == 200
 
 
-def test_document_library(client, contract):
+def test_document_library(client, parent_contract):
     url = reverse('document_library')
-    related_contracting_party = contract.contracting_parties.last()
-
     response = client.get(url, format='json')
-    contract_parent_data = response.data["results"][0]
+    parent_contract_data = response.data["results"][0]
 
     assert response.status_code == 200
-    assert contract_parent_data['id'] == str(contract.parent_id)
-    contract_data = contract_parent_data['children'][0]
-    assert contract_data['id'] == str(contract.id)
-    assert contract_data['contracting_parties'][0]['id'] == str(related_contracting_party.id)
+    assert parent_contract_data['id'] == str(parent_contract.id)
+
+    child_contract_data = parent_contract_data['children'][0]
+    child_contract = parent_contract.children.first()
+    assert child_contract_data['id'] == str(child_contract.id)
+
+    parent_contract_contracting_party = parent_contract.contracting_parties.last()
+    parent_contract_contracting_parties_data = parent_contract_data['contracting_parties'][0]
+    assert parent_contract_contracting_parties_data['id'] == str(parent_contract_contracting_party.id)
 
 
 def test_contracts_statistics(client, contract):
