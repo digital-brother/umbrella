@@ -1,4 +1,6 @@
 import factory
+from django.contrib.auth.models import Group
+from factory.django import DjangoModelFactory
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -26,3 +28,10 @@ class UserFactory(factory.django.DjangoModelFactory):
             # A list of groups were passed in, use them
             for extracted_group in extracted:
                 self.groups.add(extracted_group)
+
+
+class GroupFactory(DjangoModelFactory):
+    class Meta:
+        model = Group
+
+    name = 'no_group'

@@ -46,7 +46,7 @@ class Task(CustomModel):
         max_length=32, choices=StatusChoices.choices, default=StatusChoices.OVERDUE
     )
 
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="tasks")
     # TODO: Add Clause Types and convert current field to ChoiceField
     contract_clause_type = models.TextField()
     contract_business_intelligence_type = models.TextField()

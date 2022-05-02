@@ -2,7 +2,8 @@ import factory
 from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 
-from umbrella.contracts.models import Contract, Clause, KDP
+from umbrella.contracts.models import Contract, Clause, KDP, Tag, Node
+from umbrella.tasks.models import Task
 from umbrella.users.tests.factories import UserFactory
 
 
@@ -26,6 +27,26 @@ class ContractFactory(DjangoModelFactory):
             for extracted_group in extracted:
                 self.groups.add(extracted_group)
 
+    @factory.post_generation
+    def clauses(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            # A list of tags were passed in, use them
+            for extracted_clause in extracted:
+                self.clauses.add(extracted_clause)
+
+    @factory.post_generation
+    def tags(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            # A list of tags were passed in, use them
+            for extracted_tag in extracted:
+                self.tags.add(extracted_tag)
+
 
 @register
 class TermClauseFactory(DjangoModelFactory):
@@ -37,6 +58,15 @@ class TermClauseFactory(DjangoModelFactory):
 
 
 @register
+class TaskFactory(DjangoModelFactory):
+    title = factory.Sequence(lambda n: f"task_{n}")
+    contract = factory.SubFactory(ContractFactory)
+
+    class Meta:
+        model = Task
+
+
+@register
 class StartKDPFactory(DjangoModelFactory):
     type = 'start'
     clause = factory.SubFactory(TermClauseFactory)
@@ -44,3 +74,18 @@ class StartKDPFactory(DjangoModelFactory):
 
     class Meta:
         model = KDP
+
+
+class TagFactory(DjangoModelFactory):
+    name = factory.Sequence(lambda n: f"tag_{n}")
+    type = Tag.TagTypes.OTHERS
+
+    class Meta:
+        model = Tag
+
+
+class ContractingPartyFactory(DjangoModelFactory):
+    type = "contractingParties"
+
+    class Meta:
+        model = Node
