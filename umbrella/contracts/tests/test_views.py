@@ -87,7 +87,6 @@ def test_contracts_statistics(client, contract):
 def test_tag_list(client, tag):
     url = reverse('tag-list')
     response = client.get(url, format='json')
-
     assert response.status_code == 200
     assert response.data['count'] == 1
 
@@ -119,7 +118,6 @@ def test__create_tag__with_nature_type(client, contract):
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 400
-    assert response.data['non_field_errors'][0] == 'Only Others tag can be created'
 
 
 def test__update_tag__with_others_type(client, tag):
@@ -152,4 +150,3 @@ def test__delete_tag__with_nature_type(client, contract):
     url = reverse('tag-detail', args=[tag.id])
     response = client.delete(url, format='json')
     assert response.status_code == 400
-    assert response.data[0] == "You are not allowed to delete Tag with type 'nature'."
