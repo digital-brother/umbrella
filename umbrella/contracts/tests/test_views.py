@@ -90,8 +90,6 @@ def test_tag_list(client, tag):
 
     assert response.status_code == 200
     assert response.data['count'] == 1
-    tag_data = response.data["results"][0]
-    assert tag_data['id'] == str(tag.id)
 
 
 def test__create_tag__with_others_type(client, contract):
@@ -110,14 +108,18 @@ def test__create_tag__with_others_type(client, contract):
     assert Tag.objects.count() == 1
 
 
-def test__create_tag__with_nature_type(client):
+def test__create_tag__with_nature_type(client, contract):
     url = reverse('tag-list')
     data = {
         "name": "created_test_nature_tag",
         "type": "nature",
+        "contracts": [
+            contract.id
+        ]
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 400
+    assert response.data['non_field_errors'][0] == 'Only Others tag can be created'
 
 
 def test__update_tag__with_others_type(client, tag):
@@ -150,3 +152,4 @@ def test__delete_tag__with_nature_type(client, contract):
     url = reverse('tag-detail', args=[tag.id])
     response = client.delete(url, format='json')
     assert response.status_code == 400
+    assert response.data[0] == "You are not allowed to delete Tag with type 'nature'."
