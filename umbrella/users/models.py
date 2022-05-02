@@ -26,12 +26,12 @@ class KeycloakGroup(Group):
         return self.name
 
     @classmethod
-    def create_keycloak_group_and_group_and_tag(cls, group_name):
+    def create_with_group_and_tag(cls, group_name):
         from umbrella.contracts.models import Tag
         keycloak_group = cls.objects.create(name=group_name)
         group = Group.objects.get(id=keycloak_group.id)
-        Tag.objects.create(name=group_name, group=group, type=Tag.TagTypes.GROUPS)
-        return group
+        Tag.objects.create(name=group_name, group=group, type=Tag.TagTypes.GROUP)
+        return keycloak_group
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
