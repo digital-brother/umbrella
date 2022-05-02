@@ -1,3 +1,4 @@
+import factory
 import pytest
 from django.contrib.auth.models import Group
 from factory.django import DjangoModelFactory
@@ -31,7 +32,7 @@ class GroupFactory(DjangoModelFactory):
 
 
 @register
-class ContractPartyFactory(DjangoModelFactory):
+class NodeFactory(DjangoModelFactory):
     type = "contractingParties"
 
     class Meta:
@@ -40,7 +41,7 @@ class ContractPartyFactory(DjangoModelFactory):
 
 @register
 class TagFactory(DjangoModelFactory):
-    name = 'test_tag'
+    name = factory.Sequence(lambda n: f"task_{n}")
     type = Tag.TagTypes.OTHERS
 
     class Meta:
@@ -51,3 +52,10 @@ class TagFactory(DjangoModelFactory):
 def contract(group, node, tag):
     contract = ContractFactory(groups=[group], clauses=node, tags=[tag])
     return contract
+
+
+@pytest.fixture
+def parent_contract(contract, group):
+    parent_contract = ContractFactory(groups=[group])
+    parent_contract.children.add(contract)
+    return parent_contract

@@ -6,8 +6,8 @@ from django.urls import reverse
 from faker import Faker
 
 from umbrella.conftest import TagFactory
-from umbrella.contracts.models import Contract, Tag, Node
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, ContractFactory
+from umbrella.contracts.models import Contract, Tag
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -17,7 +17,7 @@ def test_contract_list(client, contract):
     url = reverse('contract-list')
     response = client.get(url, format='json')
     assert response.status_code == 200
-    assert response.data['count'] == 2
+    assert response.data['count'] == 1
     response_contract_data = response.data['results'][0]
     assert response_contract_data['id'] == str(contract.id)
 
@@ -55,17 +55,18 @@ def test_contract_processed_aws_webhook(client, contract):
     assert response.status_code == 200
 
 
-def test_document_library(client, contract):
+def test_document_library(client, parent_contract):
     url = reverse('document_library')
-    related_contracting_party = contract.clauses.filter(type='contractingParties').last()
+    child_contract = parent_contract.children.all().last()
+    related_contracting_party = child_contract.contracting_parties.last()
 
     response = client.get(url, format='json')
     contract_data = response.data["results"][0]
 
     assert response.status_code == 200
-    assert contract_data['id'] == str(contract.parent_id)
+    assert contract_data['id'] == str(parent_contract.id)
     child_contract_data = contract_data['children'][0]
-    assert child_contract_data['id'] == str(contract.id)
+    assert child_contract_data['id'] == str(child_contract.id)
     assert child_contract_data['contracting_parties'][0]['id'] == str(related_contracting_party.id)
 
 
@@ -76,10 +77,11 @@ def test_contracts_statistics(client, contract):
 
     response = client.get(url, format='json')
     data = response.data['contracts_statistic']
+    print(data)
     assert response.status_code == 200
-    assert data['contracts_count'] == 4
+    assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
-    assert data['contracts_without_task_count'] == 3
+    assert data['contracts_without_task_count'] == 1
 
 
 def test_tag_list(client, contract):
