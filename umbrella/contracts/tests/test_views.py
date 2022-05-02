@@ -138,12 +138,11 @@ def test__update_tag__with_nature_type(client, contract):
     assert response.status_code == 400
 
 
-def test__delete_tag__with_others_type(client, contract):
-    tag = TagFactory()
+def test__delete_tag__with_others_type(client, tag):
     url = reverse('tag-detail', args=[tag.id])
-
     response = client.delete(url, format='json')
     assert response.status_code == 204
+    assert Tag.objects.count() == 0
 
 
 def test__delete_tag__with_nature_type(client, contract):
