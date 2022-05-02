@@ -24,9 +24,12 @@ def user(group):
 
 
 @pytest.fixture
-def contract(group, node, tag):
-    contract = ContractFactory(groups=[group], clauses=node, tags=[tag])
-    return contract
+def contract(group, node):
+    return ContractFactory(groups=[group], clauses=node)
+
+
+def contract_with_tag(group, node, tag):
+    return ContractFactory(groups=[group], clauses=node, tags=[tag])
 
 
 @pytest.fixture

@@ -97,7 +97,7 @@ def test_tag_list(client, tag):
 def test_create_tag_with_others_type(client, contract):
     url = reverse('tag-list')
     data = {
-        "name": "Test",
+        "name": "test_others_tag",
         "type": "others",
         "contracts": [
             contract.id
@@ -105,6 +105,8 @@ def test_create_tag_with_others_type(client, contract):
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 201
+    assert response.data['name'] == 'test_others_tag'
+    assert Tag.objects.count() == 1
 
 
 def test_create_tag_with_nature_type(client):
