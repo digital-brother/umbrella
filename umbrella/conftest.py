@@ -1,13 +1,14 @@
 import factory
 import pytest
-from django.contrib.auth.models import Group
-from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
-from umbrella.contracts.models import Node, Tag
-from umbrella.contracts.tests.factories import ContractFactory
-from umbrella.users.tests.factories import UserFactory
+from umbrella.contracts.tests.factories import ContractFactory, TagFactory, ContractingPartyFactory
+from umbrella.users.tests.factories import UserFactory, GroupFactory
+
+register(GroupFactory)
+register(TagFactory)
+register(ContractingPartyFactory)
 
 
 @pytest.fixture
@@ -23,39 +24,17 @@ def user(group):
     return user
 
 
-@register
-class GroupFactory(DjangoModelFactory):
-    class Meta:
-        model = Group
-
-    name = 'no_group'
+@pytest.fixture
+def contract(group, node):
+    return ContractFactory(groups=[group], clauses=[node])
 
 
-@register
-class NodeFactory(DjangoModelFactory):
-    type = "contractingParties"
-
-    class Meta:
-        model = Node
-
-
-@register
-class TagFactory(DjangoModelFactory):
-    name = factory.Sequence(lambda n: f"task_{n}")
-    type = Tag.TagTypes.OTHERS
-
-    class Meta:
-        model = Tag
+def contract_with_tag(group, node, tag):
+    return ContractFactory(groups=[group], clauses=[node], tags=[tag])
 
 
 @pytest.fixture
-def contract(group, node, tag):
-    contract = ContractFactory(groups=[group], clauses=node, tags=[tag])
+def parent_contract(contract):
+    child_contract = ContractFactory()
+    contract.children.add(child_contract)
     return contract
-
-
-@pytest.fixture
-def parent_contract(contract, group):
-    parent_contract = ContractFactory(groups=[group])
-    parent_contract.children.add(contract)
-    return parent_contract

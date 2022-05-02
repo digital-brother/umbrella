@@ -104,7 +104,7 @@ class Contract(CustomModel):
     def contracts_task_statistic(cls):
         statistics = {
             'contracts_count': Contract.objects.all().count(),
-            'contracts_with_task_count': Contract.objects.all().filter(tasks__isnull=False).count(),
+            'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
             'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count()
         }
         return statistics

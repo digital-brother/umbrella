@@ -5,9 +5,8 @@ import pytest
 from django.urls import reverse
 from faker import Faker
 
-from umbrella.conftest import TagFactory
 from umbrella.contracts.models import Contract, Tag
-from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory
+from umbrella.contracts.tests.factories import StartKDPFactory, TaskFactory, TagFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -18,8 +17,8 @@ def test_contract_list(client, contract):
     response = client.get(url, format='json')
     assert response.status_code == 200
     assert response.data['count'] == 1
-    response_contract_data = response.data['results'][0]
-    assert response_contract_data['id'] == str(contract.id)
+    contract_data = response.data['results'][0]
+    assert contract_data['id'] == str(contract.id)
 
 
 @mock.patch('umbrella.contracts.views.create_presigned_post', Mock(return_value={}))
@@ -57,18 +56,19 @@ def test_contract_processed_aws_webhook(client, contract):
 
 def test_document_library(client, parent_contract):
     url = reverse('document_library')
-    child_contract = parent_contract.children.all().last()
-    related_contracting_party = child_contract.contracting_parties.last()
-
     response = client.get(url, format='json')
-    contract_data = response.data["results"][0]
+    parent_contract_data = response.data["results"][0]
 
     assert response.status_code == 200
-    assert contract_data['id'] == str(parent_contract.id)
-    child_contract_data = contract_data['children'][0]
-    assert child_contract_data['id'] == str(child_contract.id)
-    assert child_contract_data['contracting_parties'][0]['id'] == str(related_contracting_party.id)
+    assert parent_contract_data['id'] == str(parent_contract.id)
 
+    child_contract_data = parent_contract_data['children'][0]
+    child_contract = parent_contract.children.first()
+    assert child_contract_data['id'] == str(child_contract.id)
+
+    parent_contract_contracting_party = parent_contract.contracting_parties.last()
+    parent_contract_contracting_parties_data = parent_contract_data['contracting_parties'][0]
+    assert parent_contract_contracting_parties_data['id'] == str(parent_contract_contracting_party.id)
 
 
 def test_contracts_statistics(client, contract):
@@ -76,30 +76,28 @@ def test_contracts_statistics(client, contract):
     TaskFactory()
 
     response = client.get(url, format='json')
-    data = response.data['contracts_statistic']
-    print(data)
+
     assert response.status_code == 200
+    data = response.data['contracts_statistic']
     assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
     assert data['contracts_without_task_count'] == 1
 
 
-def test_tag_list(client, contract):
+def test_tag_list(client, tag):
     url = reverse('tag-list')
     response = client.get(url, format='json')
-    related_tags_ids = contract.tags.all().values_list('id', flat=True)
 
     assert response.status_code == 200
     assert response.data['count'] == 1
     tag_data = response.data["results"][0]
-    assert tag_data['id'] in str(related_tags_ids)
-    assert tag_data['contracts'][0] == contract.id
+    assert tag_data['id'] == str(tag.id)
 
 
-def test_create_tag_with_others_type(client, contract):
+def test__create_tag__with_others_type(client, contract):
     url = reverse('tag-list')
     data = {
-        "name": "Test",
+        "name": "test_others_tag",
         "type": "others",
         "contracts": [
             contract.id
@@ -107,52 +105,47 @@ def test_create_tag_with_others_type(client, contract):
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 201
+    assert response.data['name'] == 'test_others_tag'
+    assert Tag.objects.count() == 1
 
 
-def test_create_tag_with_nature_type(client, contract):
+def test__create_tag__with_nature_type(client):
     url = reverse('tag-list')
     data = {
-        "name": "Test",
+        "name": "test_nature_tag",
         "type": "nature",
-        "contracts": [
-            contract.id
-        ]
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 400
 
 
-
-def test_update_tag_with_others_type(client, contract):
-    tag = TagFactory()
-    data = {"name": "Test"}
+def test__update_tag__with_others_type(client, tag):
+    updated_name = 'updated_test_others_tag'
+    data = {"name": updated_name}
     url = reverse('tag-detail', args=[tag.id])
 
     response = client.patch(url, data=data, format='json')
     assert response.status_code == 200
+    assert response.data['name'] == updated_name
 
 
-def test_update_tag_with_nature_type(client, contract):
+def test__update_tag__with_nature_type(client, contract):
     tag = TagFactory(type=Tag.TagTypes.NATURE)
-    data = {"name": "Test"}
+    data = {"name": "updated_test_nature_tag"}
     url = reverse('tag-detail', args=[tag.id])
-
     response = client.patch(url, data=data, format='json')
     assert response.status_code == 400
 
 
-def test_delete_tag_with_others_type(client, contract):
-    tag = TagFactory()
+def test__delete_tag__with_others_type(client, tag):
     url = reverse('tag-detail', args=[tag.id])
-
     response = client.delete(url, format='json')
     assert response.status_code == 204
+    assert Tag.objects.count() == 0
 
 
-
-def test_delete_tag_with_nature_type(client, contract):
+def test__delete_tag__with_nature_type(client, contract):
     tag = TagFactory(type=Tag.TagTypes.NATURE)
     url = reverse('tag-detail', args=[tag.id])
-
     response = client.delete(url, format='json')
     assert response.status_code == 400
