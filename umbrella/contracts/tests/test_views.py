@@ -120,6 +120,7 @@ def test__create_tag__with_nature_type(client, contract):
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 400
+    assert Tag.objects.count() == 0
 
 
 def test__update_tag__with_others_type(client, tag):
@@ -152,3 +153,4 @@ def test__delete_tag__with_nature_type(client, contract):
     url = reverse('tag-detail', args=[tag.id])
     response = client.delete(url, format='json')
     assert response.status_code == 400
+    assert Tag.objects.count() == 1
