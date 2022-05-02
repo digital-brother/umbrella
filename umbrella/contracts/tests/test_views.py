@@ -76,8 +76,8 @@ def test_contracts_statistics(client, contract):
     TaskFactory()
 
     response = client.get(url, format='json')
-
     assert response.status_code == 200
+
     data = response.data['contracts_statistic']
     assert data['contracts_count'] == 2
     assert data['contracts_with_task_count'] == 1
@@ -96,8 +96,9 @@ def test_tag_list(client, tag):
 
 def test__create_tag__with_others_type(client, contract):
     url = reverse('tag-list')
+    tag_name = 'created_test_others_tag'
     data = {
-        "name": "test_others_tag",
+        "name": tag_name,
         "type": "others",
         "contracts": [
             contract.id
@@ -105,14 +106,14 @@ def test__create_tag__with_others_type(client, contract):
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 201
-    assert response.data['name'] == 'test_others_tag'
+    assert response.data['name'] == tag_name
     assert Tag.objects.count() == 1
 
 
 def test__create_tag__with_nature_type(client):
     url = reverse('tag-list')
     data = {
-        "name": "test_nature_tag",
+        "name": "created_test_nature_tag",
         "type": "nature",
     }
     response = client.post(url, data=data, format='json')
@@ -120,13 +121,13 @@ def test__create_tag__with_nature_type(client):
 
 
 def test__update_tag__with_others_type(client, tag):
-    updated_name = 'updated_test_others_tag'
-    data = {"name": updated_name}
+    new_tag_name = 'updated_test_others_tag'
+    data = {"name": new_tag_name}
     url = reverse('tag-detail', args=[tag.id])
 
     response = client.patch(url, data=data, format='json')
     assert response.status_code == 200
-    assert response.data['name'] == updated_name
+    assert response.data['name'] == new_tag_name
 
 
 def test__update_tag__with_nature_type(client, contract):
