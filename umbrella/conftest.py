@@ -1,11 +1,13 @@
 import pytest
-from django.contrib.auth.models import Group
-from factory.django import DjangoModelFactory
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
-from umbrella.contracts.tests.factories import ContractFactory
-from umbrella.users.tests.factories import UserFactory
+from umbrella.contracts.tests.factories import ContractFactory, TagFactory, ContractingPartyFactory
+from umbrella.users.tests.factories import UserFactory, GroupFactory
+
+register(GroupFactory)
+register(TagFactory)
+register(ContractingPartyFactory)
 
 
 @pytest.fixture
@@ -21,15 +23,17 @@ def user(group):
     return user
 
 
-@register
-class GroupFactory(DjangoModelFactory):
-    class Meta:
-        model = Group
+@pytest.fixture
+def contract(group, node):
+    return ContractFactory(groups=[group], clauses=[node])
 
-    name = 'no_group'
+
+def contract_with_tag(group, node, tag):
+    return ContractFactory(groups=[group], clauses=[node], tags=[tag])
 
 
 @pytest.fixture
-def contract(group):
-    contract = ContractFactory(groups=[group])
+def parent_contract(contract):
+    child_contract = ContractFactory()
+    contract.children.add(child_contract)
     return contract

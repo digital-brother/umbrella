@@ -3,10 +3,11 @@ import time
 import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from mozilla_django_oidc.contrib.drf import OIDCAuthentication
 from rest_framework import exceptions
+
+from umbrella.users.models import KeycloakGroup
 
 User = get_user_model()
 
@@ -36,7 +37,9 @@ class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             return user
 
         group_names = claims[self.groups_claim]
-        groups = [Group.objects.get_or_create(name=group_name)[0] for group_name in group_names]
+        keycloak_groups = [KeycloakGroup.create_with_group_and_tag(group_name=group_name)
+                           for group_name in group_names]
+        groups = [keycloak_group.group for keycloak_group in keycloak_groups]
         user.groups.set(groups)
         return user
 

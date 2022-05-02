@@ -12,7 +12,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 env = environ.Env()
 
 # OS environment variables take precedence over variables from .env
-DOT_ENV_FILE_PATHS = env.list('DJANGO_DOT_ENV_FILE_PATHS', default=[])
+DOT_ENV_FILE_PATHS = env.list('DJANGO_DOT_ENV_FILE_PATHS', default=['.envs/.local'])
 for dot_env_file_path in DOT_ENV_FILE_PATHS:
     env.read_env(str(ROOT_DIR / dot_env_file_path))
 

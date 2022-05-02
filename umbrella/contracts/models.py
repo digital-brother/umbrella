@@ -28,6 +28,7 @@ class Contract(CustomModel):
     analytics_data = models.JSONField(blank=True, null=True)
     file_hash = models.TextField(unique=True)
     file_size = models.BigIntegerField()
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name='children')
     modified_file_name = models.CharField(max_length=256, unique=True)
     analytics_two = models.JSONField(blank=True, null=True)
     doc_type = models.CharField(max_length=258, blank=True, null=True)
@@ -35,6 +36,7 @@ class Contract(CustomModel):
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
     groups = models.ManyToManyField(Group, blank=True, related_name='contracts')
+    tags = models.ManyToManyField('Tag', related_name='contracts', blank=True)
 
     def __str__(self):
         return self.file_name
@@ -62,8 +64,10 @@ class Contract(CustomModel):
             raise ValidationError(errors)
 
         realm = self.created_by.realm or User.NO_REALM
-        is_duplicate = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exists()
-        if is_duplicate:
+
+        duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(
+            pk=self.pk)
+        if duplicate_contracts:
             errors['__all__'] = f"Duplicate file name {self.file_name} for realm {realm}"
 
         if errors:
@@ -83,6 +87,43 @@ class Contract(CustomModel):
     @classmethod
     def get_aws_downloads_dir(cls, contract_uuid):
         return f"{settings.AWS_DOWNLOADS_LOCAL_ROOT}/{contract_uuid.upper()}"
+
+    @property
+    def contracting_parties(self):
+        return self.clauses.filter(type='contractingParties')
+
+    @property
+    def starts(self):
+        return self.clauses.filter(type='start')
+
+    @property
+    def contract_types(self):
+        return self.clauses.filter(type='contractType')
+
+    @classmethod
+    def contracts_task_statistic(cls):
+        statistics = {
+            'contracts_count': Contract.objects.all().count(),
+            'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
+            'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count()
+        }
+        return statistics
+
+
+class Tag(CustomModel):
+    class TagTypes(models.TextChoices):
+        NATURE = 'nature', 'Nature'
+        TYPE = 'type', 'Type'
+        GROUP = 'group', 'Group'
+        OTHERS = 'others', 'Others'
+
+    name = models.CharField(max_length=128)
+    type = models.CharField(max_length=128, choices=TagTypes.choices)
+    # Used for group Tags only
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Node(CustomModel):
