@@ -89,6 +89,8 @@ def test_tag_list(client, tag):
     response = client.get(url, format='json')
     assert response.status_code == 200
     assert response.data['count'] == 1
+    tag_data = response.data['results'][0]
+    assert tag_data['id'] == str(tag.id)
 
 
 def test__create_tag__with_others_type(client, contract):
