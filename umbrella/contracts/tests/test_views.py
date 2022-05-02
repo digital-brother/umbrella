@@ -56,7 +56,7 @@ def test_contract_processed_aws_webhook(client, contract):
 
 def test_document_library(client, contract):
     url = reverse('document_library')
-    related_contracting_party = contract.clauses.filter(type='contractingParties').last()
+    related_contracting_party = contract.contracting_parties.last()
 
     response = client.get(url, format='json')
     contract_parent_data = response.data["results"][0]
