@@ -39,7 +39,7 @@ class TagSerializer(CustomModelSerializer):
             raise serializers.ValidationError("Only Others tag can be created")
 
         if tag_is_protected and is_update_flow and is_restricted_update_flow:
-            raise serializers.ValidationError(f"{tag_type}' allows only contracts field to be updated")
+            raise serializers.ValidationError(f"{tag_type}' tag allows only contracts field to be updated")
 
         return attrs
 
