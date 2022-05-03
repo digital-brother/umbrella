@@ -11,17 +11,33 @@ from rest_framework.authtoken.models import Token
 
 
 class User(AbstractUser):
-    NO_REALM = 'no_realm'
+    DEFAULT_REALM_NAME = 'no_realm'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    realm = models.CharField(default=NO_REALM, max_length=255)
+    realm = models.CharField(default=DEFAULT_REALM_NAME, max_length=255)
 
     def __str__(self):
         return self.username
 
+    @classmethod
+    def create_user_with_default_group(cls, *args, **kwargs):
+        user = cls.objects.create_user(*args, **kwargs)
+        user.assign_default_group()
+        return user
+
+    @classmethod
+    def create_superuser_with_default_group(cls, *args, **kwargs):
+        user = cls.objects.create_superuser(*args, **kwargs)
+        user.assign_default_group()
+        return user
+
+    def assign_default_group(self):
+        default_group = Group.objects.get_or_create(name=Group.DEFAULT_GROUP_NAME)[0]
+        self.groups.add(default_group)
+
 
 class Group(DjangoGroup):
-    NO_GROUP_NAME = 'no_group'
+    DEFAULT_GROUP_NAME = 'no_group'
     """
     Used instead of native Django Group model. It is treated as the same model as Django Group,
     when working with the ORM, even though they are two separate database tables.

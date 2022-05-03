@@ -35,4 +35,4 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
-    name = Group.NO_GROUP_NAME
+    name = Group.DEFAULT_GROUP_NAME

@@ -63,7 +63,7 @@ class Contract(CustomModel):
             errors['created_by'] = "created_by field is required"
             raise ValidationError(errors)
 
-        realm = self.created_by.realm or User.NO_REALM
+        realm = self.created_by.realm or User.DEFAULT_REALM_NAME
 
         duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(
             pk=self.pk)
