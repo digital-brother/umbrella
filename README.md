@@ -56,6 +56,10 @@ group: local-group
 username: umbrella
 password: umbrella 
 ```
+# For Windows users execute below command to convert Dos 2 Unix formatting files in gitbash
+``` bash 
+git ls-files -z | xargs -0 dos2unix
+```
 
 # Useful links
 
