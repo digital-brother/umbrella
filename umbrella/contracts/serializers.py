@@ -32,7 +32,7 @@ class TagSerializer(CustomModelSerializer):
 
         is_create_flow = not self.instance
         is_update_flow = self.instance
-        tag_is_protected = tag_type != Tag.TagTypes.OTHERS
+        tag_is_protected = tag_type != Tag.Types.OTHERS
         is_restricted_update_flow = not('contracts' in attrs.keys() and len(attrs) == 1)
 
         if tag_is_protected and is_create_flow:

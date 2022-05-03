@@ -111,14 +111,14 @@ class Contract(CustomModel):
 
 
 class Tag(CustomModel):
-    class TagTypes(models.TextChoices):
+    class Types(models.TextChoices):
         NATURE = 'nature', 'Nature'
         TYPE = 'type', 'Type'
         GROUP = 'group', 'Group'
         OTHERS = 'others', 'Others'
 
     name = models.CharField(max_length=128)
-    type = models.CharField(max_length=128, choices=TagTypes.choices)
+    type = models.CharField(max_length=128, choices=Types.choices)
     # Used for group Tags only
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 

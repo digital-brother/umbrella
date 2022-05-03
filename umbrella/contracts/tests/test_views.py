@@ -134,7 +134,7 @@ def test__update_tag__with_others_type(client, tag):
 
 
 def test__update_tag__with_nature_type(client, contract):
-    tag = TagFactory(type=Tag.TagTypes.NATURE)
+    tag = TagFactory(type=Tag.Types.NATURE)
     data = {"name": "updated_test_nature_tag"}
     url = reverse('tag-detail', args=[tag.id])
     response = client.patch(url, data=data, format='json')
@@ -149,7 +149,7 @@ def test__delete_tag__with_others_type(client, tag):
 
 
 def test__delete_tag__with_nature_type(client, contract):
-    tag = TagFactory(type=Tag.TagTypes.NATURE)
+    tag = TagFactory(type=Tag.Types.NATURE)
     url = reverse('tag-detail', args=[tag.id])
     response = client.delete(url, format='json')
     assert response.status_code == 400
