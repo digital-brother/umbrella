@@ -3,10 +3,11 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    groups = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name',)
+        fields = ('id', 'username', 'first_name', 'last_name', 'groups')
         read_only_fields = ('username', )
 
 
