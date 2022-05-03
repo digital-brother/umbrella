@@ -3,7 +3,6 @@ from rest_framework.relations import PrimaryKeyRelatedField
 
 from umbrella.contracts.models import Contract, Node, Tag
 from umbrella.core.serializers import CustomModelSerializer, CustomWritableNestedModelSerializer
-from umbrella.users.serializers import UserSerializer
 
 
 class TagSerializer(CustomModelSerializer):
@@ -31,7 +30,8 @@ class TagSerializer(CustomModelSerializer):
 class ContractSerializer(CustomWritableNestedModelSerializer):
     tags = TagSerializer(many=True, required=False)
     children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
-    created_by = UserSerializer(read_only=True)
+    created_by = serializers.StringRelatedField(read_only=True)
+    groups = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Contract

@@ -3,7 +3,7 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    groups = serializers.StringRelatedField(many=True)
+    groups = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
