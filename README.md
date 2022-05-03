@@ -9,55 +9,56 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 - Docker version 20.10.12
 - docker-compose version 1.29.2
 
-# Local Development
+# Running a project
 - Copy content from `.envs/.local.example` to `.envs/.local`
 
-
 - To enable JWT Keycloak auth:
-
-
-    Add '127.0.0.1 keycloak' to your local '/etc/hosts' file (Linux).
-
-    You should do auth requests to Keycloak using 'http://keycloak:8080' host.
+  - Add `127.0.0.1 keycloak` to your local `/etc/hosts` file (Linux). 
+  - You should do auth requests to Keycloak using 'http://keycloak:8080' host.
     Otherwise JWT token check will fail in Docker container. 
     That is because web container sees keycloak container under 'keycloak' name.
-
-- To run web container outside of docker-compose, i.e. in PyCharm or shell:
-
-
-     Add '127.0.0.1 redis' to your local '/etc/hosts' file (Linux).
-     Add '127.0.0.1 postgres' to your local '/etc/hosts' file (Linux).
 
 
 - Start the dev server for local development:
 ```bash
-sudo docker-compose -f local.yml build
-sudo docker-compose -f local.yml up
-
+sudo docker-compose -f local.yml up -d --build
 ```
 
-- Run a command inside the docker container:
+# Backend developer environment
+- To run pystest and flake8 automatically during git push:
+```
+pre-commit install --hook-type pre-push
+``` 
 
-```bash
+- To run web container outside of docker-compose, i.e. in PyCharm or shell:
+  - Add `127.0.0.1 redis` to your local `/etc/hosts` file (Linux, macOS).
+  - Add `127.0.0.1 postgres` to your local `/etc/hosts` file (Linux, macOS).
+
+
+- Run a command inside the docker container:
+```
 sudo docker-compose run --rm web [command]
 ```
 
+# Default credentials
 - Default local admin credentials:
-```bash
+```
 username: admin
 password: admin
 auth_token: 2e8c259163886711152ce41256fbedc1fa125569
 ```
 
 - Default Keycloak credentials:
-```bash
+```
 realm: local-realm
 group: local-group
 username: umbrella
 password: umbrella 
 ```
+
+# Windows
 - For Windows users execute below command to convert Dos 2 Unix formatting files in gitbash
-``` bash 
+```
 git ls-files -z | xargs -0 dos2unix
 ```
 
