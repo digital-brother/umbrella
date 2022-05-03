@@ -21,6 +21,7 @@ class User(AbstractUser):
 
 
 class Group(DjangoGroup):
+    NO_GROUP_NAME = 'no_group'
     """
     Used instead of native Django Group model. It is treated as the same model as Django Group,
     when working with the ORM, even though they are two separate database tables.
