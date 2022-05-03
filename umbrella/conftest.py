@@ -23,8 +23,7 @@ def client(user):
 
 @pytest.fixture
 def user(group):
-    user = UserFactory(groups=[group])
-    return user
+    return UserFactory(groups=[group])
 
 
 @pytest.fixture
@@ -45,8 +44,7 @@ def parent_contract(contract):
 
 @pytest.fixture
 def task(user):
-    task = TaskFactory(assignees=[user])
-    return task
+    return TaskFactory(assignees=[user])
 
 
 def reverse_with_params(viewname, args=None, kwargs=None, query_kwargs=None):

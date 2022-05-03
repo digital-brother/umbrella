@@ -19,7 +19,7 @@ def test_task_list(client, task):
     assert response_contract_data['id'] == str(task.id)
 
 
-def test_task_list_ordering(client, task):
+def test__task_list_ordering(client, task):
     another_task = TaskFactory()
     url = reverse_with_params('task-list', query_kwargs={"ordering": "-title"})
     response = client.get(url, format='json')
@@ -32,17 +32,17 @@ def test_task_detail(client, task):
     url = reverse('task-detail', args=[task.id])
     response = client.get(url, format='json')
     assert response.status_code == 200
-    assert response.data["title"] == task.title
+    assert response.data["id"] == str(task.id)
 
 
 def test_task_create(client, contract):
     url = reverse('task-list')
     data = {
         "contract": contract.id,
-        "contract_clause_type": "Test Clause",
-        "contract_business_intelligence_type": "Test BI Type",
-        "link_to_contract_text": "test_link",
-        "title": "Test Task"
+        "contract_clause_type": "Created task Test clause",
+        "contract_business_intelligence_type": "Created task Test BI type",
+        "link_to_contract_text": "created_task_test_link",
+        "title": "Created Test task"
     }
     response = client.post(url, data=data, format='json')
     assert response.status_code == 201
@@ -64,6 +64,7 @@ def test_task_delete(client, task):
     url = reverse('task-detail', args=[task.id])
     response = client.delete(url, format='json')
     assert response.status_code == 204
+    assert Task.objects.count() == 0
 
 
 def test_task_comment_create(client, task):

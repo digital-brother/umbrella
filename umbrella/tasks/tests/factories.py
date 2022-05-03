@@ -6,7 +6,7 @@ from umbrella.tasks.models import Task
 
 
 class TaskFactory(DjangoModelFactory):
-    title = factory.Sequence(lambda n: f"Task_{n}")
+    title = factory.Sequence(lambda n: f"Task {n}")
     contract = factory.SubFactory(ContractFactory)
     contract_clause_type = factory.Sequence(lambda n: f"Test Clause {n}")
     contract_business_intelligence_type = factory.Sequence(lambda n: f"BI Type {n}")
