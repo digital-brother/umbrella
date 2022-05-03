@@ -25,7 +25,9 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 - To run web container outside of docker-compose, i.e. in PyCharm or shell:
 
 
-     Add '127.0.0.1 umbrella_local_redis' to your local '/etc/hosts' file (Linux).
+     Add '127.0.0.1 redis' to your local '/etc/hosts' file (Linux).
+     Add '127.0.0.1 postgres' to your local '/etc/hosts' file (Linux).
+
 
 - Start the dev server for local development:
 ```bash

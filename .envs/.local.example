@@ -7,10 +7,10 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 # Celery
 CELERY_FLOWER_USER=flower
 CELERY_FLOWER_PASSWORD=flower
-CELERY_BROKER_URL=redis://umbrella_local_redis:6379
+CELERY_BROKER_URL=redis://redis:6379
 
 # Channels
-REDIS_HOST=umbrella_local_redis
+REDIS_HOST=redis
 
 # AWS
 AWS_ACCESS_KEY_ID=
