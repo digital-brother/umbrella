@@ -31,7 +31,9 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 
 - Start the dev server for local development:
 ```bash
-sudo docker-compose -f local.yml up -d --build
+sudo docker-compose -f local.yml build
+sudo docker-compose -f local.yml up
+
 ```
 
 - Run a command inside the docker container:
