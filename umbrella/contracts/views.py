@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, ContractCreateSerializer, TagSerializer
+    KDPClauseSerializer, TagSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
 User = get_user_model()
@@ -52,7 +52,7 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
 
 
 class ContractCreateView(CreateAPIView):
-    serializer_class = ContractCreateSerializer
+    serializer_class = ContractSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

@@ -1,25 +1,8 @@
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from umbrella.contracts.models import Contract, Node, Tag
 from umbrella.core.serializers import CustomModelSerializer, CustomWritableNestedModelSerializer
-
-
-class ContractCreateSerializer(CustomModelSerializer):
-    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = Contract
-        fields = ('id', 'file_name', 'file_size', 'file_hash', 'created_by')
-
-    def validate(self, attrs):
-        """
-        Validate before call to AWS presigned url
-        https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
-        """
-        data = {**attrs, **{'modified_file_name': Contract.generate_modified_file_name(attrs['file_name'])}}
-        instance = Contract(**data)
-        instance.full_clean()
-        return attrs
 
 
 class TagSerializer(CustomModelSerializer):
@@ -45,7 +28,9 @@ class TagSerializer(CustomModelSerializer):
 
 
 class ContractSerializer(CustomWritableNestedModelSerializer):
-    tags = TagSerializer(many=True)
+    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    tags = TagSerializer(many=True, required=False)
+    children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
 
     class Meta:
         model = Contract
