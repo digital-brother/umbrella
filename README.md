@@ -31,7 +31,9 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 
 - Start the dev server for local development:
 ```bash
-sudo docker-compose -f local.yml up -d --build
+sudo docker-compose -f local.yml build
+sudo docker-compose -f local.yml up
+
 ```
 
 - Run a command inside the docker container:
@@ -53,6 +55,10 @@ realm: local-realm
 group: local-group
 username: umbrella
 password: umbrella 
+```
+# For Windows users execute below command to convert Dos 2 Unix formatting files in gitbash
+``` bash 
+git ls-files -z | xargs -0 dos2unix
 ```
 
 # Useful links
