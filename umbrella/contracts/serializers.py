@@ -28,7 +28,6 @@ class TagSerializer(CustomModelSerializer):
 
 
 class ContractSerializer(CustomWritableNestedModelSerializer):
-    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     tags = TagSerializer(many=True, required=False)
     children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
 
@@ -37,6 +36,10 @@ class ContractSerializer(CustomWritableNestedModelSerializer):
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent',
                   'tags', 'groups', 'children']
         read_only_fields = ['groups']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['created_by'].read_only = True
 
 
 class ClauseSerializer(CustomModelSerializer):

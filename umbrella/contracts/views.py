@@ -73,7 +73,7 @@ class ContractCreateView(CreateAPIView):
 
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
-        serializer.save(groups=user_groups)
+        serializer.save(groups=user_groups, created_by=self.request.user)
 
 
 class GroupFilterBackend(filters.BaseFilterBackend):
@@ -93,7 +93,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
-        serializer.save(groups=user_groups)
+        serializer.save(groups=user_groups, created_by=self.request.user)
 
 
 class ContractProcessedAWSWebhookView(APIView):
