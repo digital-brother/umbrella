@@ -103,8 +103,12 @@ class ContractProcessedAWSWebhookView(APIView):
         if not contract:
             raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
 
-        load_aws_analytics_jsons_to_db.delay(contract_id)
-        return Response(f"Downloading data for contract {contract_id}")
+        file_name = request.data.get("file_name")
+        if not file_name:
+            raise ValidationError({'file_name': f"file_name is required"})
+
+        load_aws_analytics_jsons_to_db(contract_id, file_name)
+        return Response(f"Parsing {file_name} for contract {contract_id}")
 
 
 class KDPClauseView(ListAPIView):
