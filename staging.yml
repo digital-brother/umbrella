@@ -21,8 +21,7 @@ services:
     env_file:
       - .envs/.staging
       - .envs/.staging.db
-    environment:
-      VIRTUAL_HOST: api.staging.riverus.in
+      - .envs/.staging.web
 
   nginx-proxy:
     build: compose/nginx
@@ -44,7 +43,7 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: umbrella_staging_nginx_proxy_companion
     env_file:
-      - .envs/.staging.proxy-companion
+      - .envs/.proxy-companion
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
@@ -62,8 +61,9 @@ services:
       - redis
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO -E
-    environment:
-      VIRTUAL_HOST: disabled
+    env_file:
+      - .envs/.staging
+      - .envs/.staging.db
 
   flower:
     <<: *web
@@ -72,8 +72,9 @@ services:
     ports:
       - "5555:5555"
     command: ./compose/start-flower
-    environment:
-      VIRTUAL_HOST: disabled
+    env_file:
+      - .envs/.staging
+      - .envs/.staging.db
 
   redis:
     image: redis:6
