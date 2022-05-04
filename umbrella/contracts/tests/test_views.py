@@ -47,10 +47,11 @@ def test_kdp_clause_list(client):
     assert kdp_data["clause"]["id"] == str(start_kdp.clause.id)
 
 
-@mock.patch('umbrella.contracts.views.load_aws_analytics_jsons_to_db', Mock())
+@mock.patch('umbrella.contracts.views.parse_aws_clause_async', Mock())
 def test_contract_clause_processed_webhook(client, contract):
-    url = reverse('contract_clause_processed_webhook', args=[contract.id])
-    data = {"file_name": "test.json"}
+    url = reverse('contract_clause_processed_webhook')
+    aws_contract_folder = str(contract.id).upper()
+    data = {"aws_file_path": f"/{aws_contract_folder}/consent.json"}
     response = client.post(url, data)
     assert response.status_code == 200
 
