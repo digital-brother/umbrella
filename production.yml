@@ -15,17 +15,17 @@ services:
       - ./:/code
     expose:
       - 8000
-    env_file:
-      - .envs/.prod
-      - .envs/.prod.db
     depends_on:
       - celeryworker
       - redis
+    env_file:
+      - .envs/.prod
+      - .envs/.prod.db
+      - .envs/.prod.web
 
   nginx-proxy:
     build: compose/nginx
-    image: umbrella_production_nginx_proxy
-    container_name: umbrella_production_nginx_proxy
+    container_name: nginx-proxy
     restart: always
     ports:
       - 443:443
@@ -40,9 +40,9 @@ services:
 
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: umbrella_production_nginx_proxy_companion
+    container_name: nginx-proxy-letsencrypt
     env_file:
-      - .envs/.prod.proxy-companion
+      - .envs/.proxy-companion
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
@@ -60,6 +60,9 @@ services:
       - redis
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO -E
+    env_file:
+      - .envs/.prod
+      - .envs/.prod.db
 
   flower:
     <<: *web
@@ -68,6 +71,9 @@ services:
     ports:
       - "5555:5555"
     command: ./compose/start-flower
+    env_file:
+      - .envs/.prod
+      - .envs/.prod.db
 
   redis:
     image: redis:6

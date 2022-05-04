@@ -23,7 +23,7 @@ def test_contract_list(client, contract):
 
 @mock.patch('umbrella.contracts.views.create_presigned_post', Mock(return_value={}))
 def test_contract_create(client):
-    url = reverse('contract-create')
+    url = reverse('contract-aws-presigned-url')
     data = {
         "file_name": "contract.pdf",
         "file_size": 1024,
