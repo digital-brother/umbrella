@@ -54,8 +54,8 @@ class Group(DjangoGroup):
     @classmethod
     def create_keycloak_group_and_tag(cls, group_name):
         from umbrella.contracts.models import Tag
-        group = cls.objects.create(name=group_name, type=cls.Types.Keycloak)
-        Tag.objects.create(name=group_name, group=group, type=Tag.Types.GROUP)
+        group, _ = cls.objects.get_or_create(name=group_name, type=cls.Types.Keycloak)
+        Tag.objects.get_or_create(name=group_name, group=group, type=Tag.Types.GROUP)
         return group
 
 
