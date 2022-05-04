@@ -131,7 +131,6 @@ class DocumentLibraryListView(ListAPIView):
     ordering_fields = ['file_name', 'clauses__content__start_date']
 
 
-
 @api_view(('GET',))
 def contracts_statistics(request, *args, **kwargs):
     data = {
