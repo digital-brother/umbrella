@@ -25,6 +25,7 @@ services:
 
   nginx-proxy:
     build: compose/nginx
+    container_name: nginx-proxy
     restart: always
     ports:
       - 443:443
@@ -39,6 +40,7 @@ services:
 
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-proxy-letsencrypt
     env_file:
       - .envs/.proxy-companion
     volumes:
