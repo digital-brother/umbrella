@@ -146,8 +146,7 @@ def parse_kdp(node_type, node_json, contract, clause_type):
 def _get_contract_from_clause_file_path(clause_file):
     upper_uuid = clause_file.parent.name
     contract_uuid = upper_uuid.lower()
-    # contract = Contract.objects.filter(id=contract_uuid).first()
-    contract = Contract.objects.first()
+    contract = Contract.objects.filter(id=contract_uuid).first()
     if not contract:
         raise UmbrellaError(f"No Contracts with id: {contract_uuid}")
     return contract
