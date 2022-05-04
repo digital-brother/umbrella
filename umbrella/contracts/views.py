@@ -104,20 +104,18 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 
 class ContractClauseProcessedWebhookView(APIView):
-
     def post(self, request):
         aws_file_path_str = request.data.get("aws_file_path")
         if not aws_file_path_str:
             raise ValidationError({'aws_file_path': "aws_file_path is required"})
 
         aws_file_path = Path(aws_file_path_str)
-
         try:
             _get_contract_from_clause_file_path(aws_file_path)
         except UmbrellaError as err:
             raise ValidationError(err.detail) from err
 
-        parse_aws_clause_async.delay(aws_file_path)
+        parse_aws_clause_async.delay(aws_file_path_str)
         return Response(f"Parsing {aws_file_path}")
 
 

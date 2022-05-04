@@ -111,7 +111,7 @@ def parse_aws_clause_file(clause_file):
     clause_nodes = {}
     for node_type, nodes_list in json_data.items():
         clause_nodes[node_type] = parse_node_list(node_type, nodes_list, contract, clause_type)
-
+    logger.info(f"Parsing done.")
     return clause_nodes
 
 
@@ -123,17 +123,14 @@ def parse_node_list(node_type, nodes_list, contract, clause_type):
     for node_json in nodes_list:
         node = handler(node_type, node_json, contract, clause_type)
         node_list.append(node)
-        logger.info(f"Parsed node {model_to_dict(node)}")
+        logger.info(f"Parsed node {node}")
 
     return node_list
 
 
 def parse_clause(node_type, node_json, contract, _):
-    return Node.create(
-        type=node_type,
-        content=node_json,
-        contract=contract
-    )
+    clause = Node.create(type=node_type, content=node_json, contract=contract)
+    return model_to_dict(clause)
 
 
 def parse_kdp(node_type, node_json, contract, clause_type):
@@ -142,17 +139,15 @@ def parse_kdp(node_type, node_json, contract, clause_type):
     if not clause:
         raise UmbrellaError(f"No '{clause_type}' clause found for '{node_type}' KDP with paraId '{para_id}'.")
 
-    return Node.create(
-        type=node_type,
-        content=node_json,
-        clause=clause,
-    )
+    kdp = Node.create(type=node_type, content=node_json, clause=clause, )
+    return model_to_dict(kdp)
 
 
 def _get_contract_from_clause_file_path(clause_file):
     upper_uuid = clause_file.parent.name
     contract_uuid = upper_uuid.lower()
-    contract = Contract.objects.filter(id=contract_uuid).first()
+    # contract = Contract.objects.filter(id=contract_uuid).first()
+    contract = Contract.objects.first()
     if not contract:
         raise UmbrellaError(f"No Contracts with id: {contract_uuid}")
     return contract
