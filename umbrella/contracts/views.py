@@ -104,6 +104,7 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 
 class ContractClauseProcessedWebhookView(APIView):
+    permission_classes = []
     """
     Reads a clause json from AWS. Loads the clause and kdps to the database.
     """
