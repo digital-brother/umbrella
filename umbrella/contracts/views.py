@@ -104,6 +104,9 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 
 class ContractClauseProcessedWebhookView(APIView):
+    """
+    Reads a clause json from AWS and loads the clause and kdps to the database.
+    """
     def post(self, request):
         aws_file_path_str = request.data.get("aws_file_path")
         if not aws_file_path_str:
