@@ -107,7 +107,7 @@ class ContractProcessedAWSWebhookView(APIView):
         if not file_name:
             raise ValidationError({'file_name': "file_name is required"})
 
-        load_aws_analytics_jsons_to_db(contract_id, file_name)
+        load_aws_analytics_jsons_to_db.delay(contract_id, file_name)
         return Response(f"Parsing {file_name} for contract {contract_id}")
 
 
