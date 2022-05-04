@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
-from umbrella.contracts.serializers import ContractPresignedUrlSerializer, DocumentLibrarySerializer, ClauseSerializer, \
+from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, TagSerializer
 from umbrella.contracts.tasks import parse_aws_clause_file_async
 from umbrella.contracts.utils import _get_contract_from_clause_file_path
@@ -59,7 +59,7 @@ class ContractPresignedUrlView(CreateAPIView):
     Creates a contract record in the database.
     Returns the contract data and a presigned url data for file upload from frontend.
     """
-    serializer_class = ContractPresignedUrlSerializer
+    serializer_class = ContractSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -95,7 +95,7 @@ class GroupFilterBackend(filters.BaseFilterBackend):
 
 class ContractViewSet(viewsets.ModelViewSet):
     queryset = Contract.objects.all()
-    serializer_class = ContractPresignedUrlSerializer
+    serializer_class = ContractSerializer
     filter_backends = [GroupFilterBackend]
 
     def perform_create(self, serializer):
@@ -111,12 +111,17 @@ class ContractClauseProcessedWebhookView(APIView):
 
         aws_file_path = Path(aws_file_path_str)
         try:
-            _get_contract_from_clause_file_path(aws_file_path)
+            contract = _get_contract_from_clause_file_path(aws_file_path)
         except UmbrellaError as err:
-            raise ValidationError(err.detail) from err
+            raise ValidationError({'error': err.detail}) from err
 
         parse_aws_clause_file_async.delay(aws_file_path_str)
-        return Response(f"Parsing {aws_file_path}")
+
+        response_data = {
+            'message': f"Parsing {aws_file_path}",
+            'contract': ContractSerializer(contract).data,
+        }
+        return Response(response_data)
 
 
 class KDPClauseView(ListAPIView):

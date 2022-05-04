@@ -148,7 +148,7 @@ def _get_contract_from_clause_file_path(clause_file):
     contract_uuid = upper_uuid.lower()
     contract = Contract.objects.filter(id=contract_uuid).first()
     if not contract:
-        raise UmbrellaError(f"No Contracts with id: {contract_uuid}")
+        raise UmbrellaError(f"Contract {contract_uuid} not found.")
     return contract
 
 
