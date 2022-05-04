@@ -18,6 +18,8 @@ services:
     env_file:
       - .envs/.prod
       - .envs/.prod.db
+    environment:
+      VIRTUAL_HOST: api.riverus.in
     depends_on:
       - celeryworker
       - redis

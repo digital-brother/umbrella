@@ -18,6 +18,8 @@ services:
     env_file:
       - .envs/.staging
       - .envs/.staging.db
+    environment:
+      VIRTUAL_HOST: api.staging.riverus.in
 
   nginx-proxy:
     build: compose/nginx
