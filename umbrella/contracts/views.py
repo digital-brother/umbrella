@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
-from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
+from umbrella.contracts.serializers import ContractAWSPreSignedUrlSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, TagSerializer
 from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
 
@@ -51,8 +51,8 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
     return response
 
 
-class ContractCreateView(CreateAPIView):
-    serializer_class = ContractSerializer
+class ContractAWSPresignedUrlView(CreateAPIView):
+    serializer_class = ContractAWSPreSignedUrlSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -88,7 +88,7 @@ class GroupFilterBackend(filters.BaseFilterBackend):
 
 class ContractViewSet(viewsets.ModelViewSet):
     queryset = Contract.objects.all()
-    serializer_class = ContractSerializer
+    serializer_class = ContractAWSPreSignedUrlSerializer
     filter_backends = [GroupFilterBackend]
 
     def perform_create(self, serializer):

@@ -27,7 +27,7 @@ class TagSerializer(CustomModelSerializer):
         return attrs
 
 
-class ContractSerializer(CustomWritableNestedModelSerializer):
+class ContractAWSPreSignedUrlSerializer(CustomWritableNestedModelSerializer):
     tags = TagSerializer(many=True, required=False)
     children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
     created_by = serializers.StringRelatedField(read_only=True)
