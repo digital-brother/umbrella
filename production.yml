@@ -22,8 +22,6 @@ services:
       - .envs/.prod
       - .envs/.prod.db
       - .envs/.prod.web
-    environment:
-      VIRTUAL_HOST: api.riverus.in
 
   nginx-proxy:
     build: compose/nginx
