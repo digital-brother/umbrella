@@ -25,8 +25,6 @@ services:
 
   nginx-proxy:
     build: compose/nginx
-    image: umbrella_production_nginx_proxy
-    container_name: umbrella_production_nginx_proxy
     restart: always
     ports:
       - 443:443
@@ -41,11 +39,8 @@ services:
 
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: umbrella_production_nginx_proxy_companion
     env_file:
       - .envs/.proxy-companion
-    environment:
-      NGINX_DOCKER_GEN_CONTAINER: umbrella_production_nginx_proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
