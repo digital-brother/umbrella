@@ -15,6 +15,10 @@ services:
       - ./:/code
     expose:
       - 8000
+    depends_on:
+      - postgres
+      - celeryworker
+      - redis
     env_file:
       - .envs/.staging
       - .envs/.staging.db
@@ -59,6 +63,8 @@ services:
       - redis
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO -E
+    environment:
+      VIRTUAL_HOST:
 
   flower:
     <<: *web
@@ -67,6 +73,8 @@ services:
     ports:
       - "5555:5555"
     command: ./compose/start-flower
+    environment:
+      VIRTUAL_HOST:
 
   redis:
     image: redis:6
