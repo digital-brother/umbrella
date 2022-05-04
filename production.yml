@@ -63,7 +63,7 @@ services:
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO -E
     environment:
-      VIRTUAL_HOST:
+      VIRTUAL_HOST: disabled
 
   flower:
     <<: *web
@@ -73,7 +73,7 @@ services:
       - "5555:5555"
     command: ./compose/start-flower
     environment:
-      VIRTUAL_HOST:
+      VIRTUAL_HOST: disabled
 
   redis:
     image: redis:6
