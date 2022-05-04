@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractPresignedUrlSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, TagSerializer
-from umbrella.contracts.tasks import parse_aws_clause_async
+from umbrella.contracts.tasks import parse_aws_clause_file_async
 from umbrella.contracts.utils import _get_contract_from_clause_file_path
 from umbrella.core.exceptions import UmbrellaError
 
@@ -115,7 +115,7 @@ class ContractClauseProcessedWebhookView(APIView):
         except UmbrellaError as err:
             raise ValidationError(err.detail) from err
 
-        parse_aws_clause_async.delay(aws_file_path_str)
+        parse_aws_clause_file_async.delay(aws_file_path_str)
         return Response(f"Parsing {aws_file_path}")
 
 
