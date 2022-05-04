@@ -18,6 +18,6 @@ urlpatterns = [
     path('<uuid:contract_uuid>/clauses/<str:clause_type>/', ClauseView.as_view(), name='clause'),
 
     path('document-library/', DocumentLibraryListView.as_view(), name='document_library'),
-    path('contracts-statistics/', contracts_statistics, name='contracts_statistics'),
+    path('statistics/', contracts_statistics, name='contracts_statistics'),
     path('', include(router.urls)),
 ]
