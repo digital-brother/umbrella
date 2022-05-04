@@ -55,6 +55,10 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
 
 
 class ContractPresignedUrlView(CreateAPIView):
+    """
+    Creates a contract record in the database.
+    Returns the contract data and a presigned url data for file upload from frontend.
+    """
     serializer_class = ContractPresignedUrlSerializer
 
     def post(self, request, *args, **kwargs):
