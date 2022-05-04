@@ -95,19 +95,6 @@ def parse_aws_contract(contract_id):
     return contract_nodes
 
 
-def parse_aws_clause(contract_id, file_name):
-    aws_dir = str(contract_id).upper()
-    aws_file = f"{aws_dir}/{file_name}"
-
-    if not aws_file.endswith('.json'):
-        return
-
-    clause_path = Path(aws_file)
-    clause_nodes = parse_aws_clause_file(clause_path)
-
-    return {clause_path.name: clause_nodes}
-
-
 def parse_aws_clause_file(clause_file):
     contract = _get_contract_from_clause_file_path(clause_file)
     logger.info(f"Parsing '{clause_file}'.")

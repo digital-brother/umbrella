@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError
@@ -16,7 +17,9 @@ from rest_framework.views import APIView
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, TagSerializer
-from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
+from umbrella.contracts.tasks import parse_aws_clause_async
+from umbrella.contracts.utils import _get_contract_from_clause_file_path
+from umbrella.core.exceptions import UmbrellaError
 
 User = get_user_model()
 
@@ -96,19 +99,22 @@ class ContractViewSet(viewsets.ModelViewSet):
         serializer.save(groups=user_groups, created_by=self.request.user)
 
 
-class ContractProcessedAWSWebhookView(APIView):
+class ContractClauseProcessedWebhookView(APIView):
 
-    def post(self, request, contract_id):
-        contract = Contract.objects.filter(id=contract_id)
-        if not contract:
-            raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
+    def post(self, request):
+        aws_file_path_str = request.data.get("aws_file_path")
+        if not aws_file_path_str:
+            raise ValidationError({'aws_file_path': "aws_file_path is required"})
 
-        file_name = request.data.get("file_name")
-        if not file_name:
-            raise ValidationError({'file_name': "file_name is required"})
+        aws_file_path = Path(aws_file_path_str)
 
-        load_aws_analytics_jsons_to_db.delay(contract_id, file_name)
-        return Response(f"Parsing {file_name} for contract {contract_id}")
+        try:
+            _get_contract_from_clause_file_path(aws_file_path)
+        except UmbrellaError as err:
+            raise ValidationError(err.detail) from err
+
+        parse_aws_clause_async.delay(aws_file_path)
+        return Response(f"Parsing {aws_file_path}")
 
 
 class KDPClauseView(ListAPIView):
