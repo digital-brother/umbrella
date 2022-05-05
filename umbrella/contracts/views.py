@@ -113,6 +113,9 @@ class ContractClauseProcessedWebhookView(APIView):
         if not aws_file_path_str:
             raise ValidationError({'aws_file_path': "aws_file_path is required"})
 
+        if not aws_file_path_str.endswith('.json'):
+            raise ValidationError({'error': f"File {aws_file_path_str} should have .json extension."})
+
         aws_file_path = Path(aws_file_path_str)
         try:
             contract = _get_contract_from_clause_file_path(aws_file_path)
