@@ -11,18 +11,36 @@ umbrella. Check out the project's [documentation](http://shuryhin-oleksandr.gith
 
 # Running a project
 - Copy content from `.envs/.local.example` to `.envs/.local`
-
 - To enable JWT Keycloak auth:
   - Add `127.0.0.1 keycloak` to your local `/etc/hosts` file (Linux). 
   - You should do auth requests to Keycloak using 'http://keycloak:8080' host.
     Otherwise JWT token check will fail in Docker container. 
     That is because web container sees keycloak container under 'keycloak' name.
-
-
 - Start the dev server for local development:
 ```bash
 sudo docker-compose -f local.yml up -d --build
 ```
+
+### Environment variables:
+- `AWS_CONTRACT_BUCKET_NAME` - contracts are uploaded to this bucket for AWS Lambda processing
+- `AWS_ANALYTICS_BUCKET_NAME` - processed contracts data is downloaded from this bucket after AWS Lambda processing
+
+# Default credentials
+- Default local admin credentials:
+```
+username: admin
+password: admin
+auth_token: 2e8c259163886711152ce41256fbedc1fa125569
+```
+
+- Default Keycloak credentials:
+```
+realm: local-realm
+group: local-group
+username: umbrella
+password: umbrella 
+```
+
 
 # Backend developer environment
 - To run pystest and flake8 automatically during git push:
@@ -40,21 +58,6 @@ pre-commit install --hook-type pre-push
 sudo docker-compose run --rm web [command]
 ```
 
-# Default credentials
-- Default local admin credentials:
-```
-username: admin
-password: admin
-auth_token: 2e8c259163886711152ce41256fbedc1fa125569
-```
-
-- Default Keycloak credentials:
-```
-realm: local-realm
-group: local-group
-username: umbrella
-password: umbrella 
-```
 
 # Windows
 - For Windows users execute below command to convert Dos 2 Unix formatting files in gitbash
