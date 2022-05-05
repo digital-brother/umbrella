@@ -36,7 +36,7 @@ class Contract(CustomModel):
     analytics_done = models.BooleanField(blank=False, null=False, default=False)
     normalization_done = models.BooleanField(blank=False, null=False, default=False)
     groups = models.ManyToManyField(Group, blank=True, related_name='contracts')
-    tags = models.ManyToManyField('Tag', related_name='contracts', blank=True, null=True)
+    tags = models.ManyToManyField('Tag', related_name='contracts', blank=True)
 
     def __str__(self):
         return self.file_name
@@ -63,7 +63,7 @@ class Contract(CustomModel):
             errors['created_by'] = "created_by field is required"
             raise ValidationError(errors)
 
-        realm = self.created_by.realm or User.NO_REALM
+        realm = self.created_by.realm or User.DEFAULT_REALM_NAME
 
         duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(
             pk=self.pk)
@@ -111,14 +111,14 @@ class Contract(CustomModel):
 
 
 class Tag(CustomModel):
-    class TagTypes(models.TextChoices):
+    class Types(models.TextChoices):
         NATURE = 'nature', 'Nature'
         TYPE = 'type', 'Type'
         GROUP = 'group', 'Group'
         OTHERS = 'others', 'Others'
 
     name = models.CharField(max_length=128)
-    type = models.CharField(max_length=128, choices=TagTypes.choices)
+    type = models.CharField(max_length=128, choices=Types.choices)
     # Used for group Tags only
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 

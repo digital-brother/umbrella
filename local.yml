@@ -15,8 +15,6 @@ services:
 
   web: &web
     restart: always
-    env_file:
-      - .envs/.local
     build: ./
     image: umbrella_local_web
     container_name: umbrella_local_web
@@ -33,6 +31,8 @@ services:
       - postgres
       - celeryworker
       - redis
+    env_file:
+      - .envs/.local
 
   keycloak:
     image: jboss/keycloak:16.1.1

@@ -78,7 +78,7 @@ class StartKDPFactory(DjangoModelFactory):
 
 class TagFactory(DjangoModelFactory):
     name = factory.Sequence(lambda n: f"tag_{n}")
-    type = Tag.TagTypes.OTHERS
+    type = Tag.Types.OTHERS
 
     class Meta:
         model = Tag

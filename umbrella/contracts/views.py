@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import boto3
 from botocore.exceptions import ClientError
@@ -19,8 +20,10 @@ from rest_framework.views import APIView
 from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryTagFilter
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, ContractCreateSerializer, TagSerializer
-from umbrella.contracts.tasks import load_aws_analytics_jsons_to_db
+    KDPClauseSerializer, TagSerializer
+from umbrella.contracts.tasks import parse_aws_clause_file_async
+from umbrella.contracts.utils import _get_contract_from_clause_file_path
+from umbrella.core.exceptions import UmbrellaError
 
 User = get_user_model()
 
@@ -55,8 +58,12 @@ def create_presigned_post(bucket_name, object_name, fields=None, conditions=None
     return response
 
 
-class ContractCreateView(CreateAPIView):
-    serializer_class = ContractCreateSerializer
+class ContractPresignedUrlView(CreateAPIView):
+    """
+    Creates a contract record in the database.
+    Returns the contract data and a presigned url data for file upload from frontend.
+    """
+    serializer_class = ContractSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -77,7 +84,7 @@ class ContractCreateView(CreateAPIView):
 
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
-        serializer.save(groups=user_groups)
+        serializer.save(groups=user_groups, created_by=self.request.user)
 
 
 class ContractViewSet(viewsets.ModelViewSet):
@@ -87,18 +94,35 @@ class ContractViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
-        serializer.save(groups=user_groups)
+        serializer.save(groups=user_groups, created_by=self.request.user)
 
 
-class ContractProcessedAWSWebhookView(APIView):
+class ContractClauseProcessedWebhookView(APIView):
+    permission_classes = []
+    """
+    Reads a clause json from AWS. Loads the clause and kdps to the database.
+    """
+    def post(self, request):
+        aws_file_path_str = request.data.get("aws_file_path")
+        if not aws_file_path_str:
+            raise ValidationError({'aws_file_path': "aws_file_path is required"})
 
-    def post(self, request, contract_id):
-        contract = Contract.objects.filter(id=contract_id)
-        if not contract:
-            raise ValidationError({'contract': f"No contract with uuid {contract_id}"})
+        if not aws_file_path_str.endswith('.json'):
+            raise ValidationError({'error': f"File {aws_file_path_str} should have .json extension."})
 
-        load_aws_analytics_jsons_to_db.delay(contract_id)
-        return Response(f"Downloading data for contract {contract_id}")
+        aws_file_path = Path(aws_file_path_str)
+        try:
+            contract = _get_contract_from_clause_file_path(aws_file_path)
+        except UmbrellaError as err:
+            raise ValidationError({'error': err.detail}) from err
+
+        parse_aws_clause_file_async.delay(aws_file_path_str)
+
+        response_data = {
+            'message': f"Parsing {aws_file_path}",
+            'contract': ContractSerializer(contract).data,
+        }
+        return Response(response_data)
 
 
 class KDPClauseView(ListAPIView):
@@ -146,7 +170,7 @@ class TagViewSet(viewsets.ModelViewSet):
         return Tag.objects.filter(Q(group=None) | Q(group__user=self.request.user))
 
     def perform_destroy(self, instance):
-        tag_is_protected = instance.type != Tag.TagTypes.OTHERS
+        tag_is_protected = instance.type != Tag.Types.OTHERS
         if tag_is_protected:
             raise ValidationError(f"'{instance.type}' tag cannot be deleted.")
         instance.delete()

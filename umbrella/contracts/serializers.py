@@ -1,25 +1,8 @@
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from umbrella.contracts.models import Contract, Node, Tag
 from umbrella.core.serializers import CustomModelSerializer, CustomWritableNestedModelSerializer
-
-
-class ContractCreateSerializer(CustomModelSerializer):
-    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = Contract
-        fields = ('id', 'file_name', 'file_size', 'file_hash', 'created_by')
-
-    def validate(self, attrs):
-        """
-        Validate before call to AWS presigned url
-        https://www.kye.id.au/posts/django-rest-framework-model-full-clean/
-        """
-        data = {**attrs, **{'modified_file_name': Contract.generate_modified_file_name(attrs['file_name'])}}
-        instance = Contract(**data)
-        instance.full_clean()
-        return attrs
 
 
 class TagSerializer(CustomModelSerializer):
@@ -32,7 +15,7 @@ class TagSerializer(CustomModelSerializer):
 
         is_create_flow = not self.instance
         is_update_flow = self.instance
-        tag_is_protected = tag_type != Tag.TagTypes.OTHERS
+        tag_is_protected = tag_type != Tag.Types.OTHERS
         is_restricted_update_flow = not('contracts' in attrs.keys() and len(attrs) == 1)
 
         if tag_is_protected and is_create_flow:
@@ -45,13 +28,20 @@ class TagSerializer(CustomModelSerializer):
 
 
 class ContractSerializer(CustomWritableNestedModelSerializer):
-    tags = TagSerializer(many=True)
+    tags = TagSerializer(many=True, required=False)
+    children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
+    created_by = serializers.StringRelatedField(read_only=True)
+    groups = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Contract
         fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent',
                   'tags', 'groups', 'children']
         read_only_fields = ['groups']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['created_by'].read_only = True
 
 
 class ClauseSerializer(CustomModelSerializer):

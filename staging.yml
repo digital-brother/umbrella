@@ -15,14 +15,17 @@ services:
       - ./:/code
     expose:
       - 8000
+    depends_on:
+      - celeryworker
+      - redis
     env_file:
       - .envs/.staging
       - .envs/.staging.db
+      - .envs/.staging.web
 
   nginx-proxy:
     build: compose/nginx
-    image: umbrella_staging_nginx_proxy
-    container_name: umbrella_staging_nginx_proxy
+    container_name: nginx-proxy
     restart: always
     ports:
       - 443:443
@@ -37,9 +40,9 @@ services:
 
   nginx-proxy-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: umbrella_staging_nginx_proxy_companion
+    container_name: nginx-proxy-letsencrypt
     env_file:
-      - .envs/.staging.proxy-companion
+      - .envs/.proxy-companion
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/etc/nginx/certs
@@ -57,6 +60,9 @@ services:
       - redis
     ports: [ ]
     command: celery -A config.celery_app worker -l INFO -E
+    env_file:
+      - .envs/.staging
+      - .envs/.staging.db
 
   flower:
     <<: *web
@@ -65,6 +71,9 @@ services:
     ports:
       - "5555:5555"
     command: ./compose/start-flower
+    env_file:
+      - .envs/.staging
+      - .envs/.staging.db
 
   redis:
     image: redis:6

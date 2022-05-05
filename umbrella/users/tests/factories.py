@@ -1,6 +1,7 @@
 import factory
-from django.contrib.auth.models import Group
 from factory.django import DjangoModelFactory
+
+from umbrella.users.models import Group
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -34,4 +35,4 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
-    name = 'no_group'
+    name = Group.DEFAULT_GROUP_NAME
