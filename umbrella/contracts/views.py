@@ -178,3 +178,4 @@ class TagViewSet(viewsets.ModelViewSet):
         if tag_is_protected:
             raise ValidationError(f"'{instance.type}' tag cannot be deleted.")
         instance.delete()
+
