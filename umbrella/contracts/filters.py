@@ -1,14 +1,14 @@
 import django_filters
-from umbrella.contracts.models import Contract
 from django_filters import rest_framework as filters
 
 
-class DocumentLibraryTagFilter(django_filters.FilterSet):
+class DocumentLibraryFilter(filters.FilterSet):
     tags = django_filters.BaseInFilter(field_name="tags__name", lookup_expr='in')
-
-    class Meta:
-        model = Contract
-        fields = ('tags', )
+    ordering = filters.OrderingFilter(
+        fields=[
+            ('file_name', 'file_name'),
+            ('clauses__content__start_date', 'start_date'),
+        ])
 
 
 class GroupFilterBackend(filters.DjangoFilterBackend):
@@ -22,7 +22,7 @@ class GroupFilterBackend(filters.DjangoFilterBackend):
 
 
 class TaskFilter(filters.FilterSet):
-    assignees__id = filters.CharFilter(lookup_expr="icontains")
+    assignees = filters.CharFilter(field_name='assignees_id', lookup_expr="icontains")
 
     ordering = filters.OrderingFilter(
         fields=['title', 'contract_clause_type', 'due_date', 'contract__file_name', 'progress', 'status']

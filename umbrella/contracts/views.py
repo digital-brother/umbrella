@@ -11,13 +11,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryTagFilter
+from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryFilter
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, TagSerializer
@@ -150,9 +149,8 @@ class ClauseView(ListAPIView):
 class DocumentLibraryListView(ListAPIView):
     queryset = Contract.objects.filter(parent=None)
     serializer_class = DocumentLibrarySerializer
-    filter_backends = [GroupFilterBackend, DjangoFilterBackend, OrderingFilter]
-    filter_class = DocumentLibraryTagFilter
-    ordering_fields = ['file_name', 'clauses__content__start_date']
+    filter_backends = [GroupFilterBackend, DjangoFilterBackend]
+    filterset_class = DocumentLibraryFilter
 
 
 @api_view(('GET',))
