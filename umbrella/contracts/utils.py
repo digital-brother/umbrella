@@ -96,7 +96,7 @@ def parse_aws_contract(contract_id):
 
 
 def parse_aws_clause_file(clause_file):
-    if not clause_file.suffix == 'json':
+    if not clause_file.suffix == '.json':
         raise UmbrellaError(f"File {clause_file} should have .json extension.")
     contract = _get_contract_from_clause_file_path(clause_file)
 
