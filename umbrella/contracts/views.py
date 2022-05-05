@@ -179,3 +179,4 @@ class TagViewSet(viewsets.ModelViewSet):
             raise ValidationError(f"'{instance.type}' tag cannot be deleted.")
         instance.delete()
 
+
