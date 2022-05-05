@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
+from umbrella.core.exceptions import UmbrellaError
 from umbrella.core.models import CustomModel
 
 User = get_user_model()
@@ -127,6 +128,10 @@ class Tag(CustomModel):
 
 
 class Node(CustomModel):
+    class Natures(models.TextChoices):
+        CLAUSE = 'clause', 'Clause'
+        KDP = 'KDP', 'KDP'
+
     """Stores both Clause and KDP objects"""
     type = models.CharField(max_length=128)
     # Used for KDP node type, otherwise null
@@ -135,6 +140,15 @@ class Node(CustomModel):
     contract = models.ForeignKey(Contract, related_name='clauses', on_delete=models.CASCADE, blank=True, null=True)
 
     content = models.JSONField(null=True, blank=True)
+
+    @property
+    def kind(self):
+        if self.contract:
+            return f"{self.type}_{self.Natures.CLAUSE}"
+        elif self.clause:
+            return f"{self.type}_{self.Natures.KDP}"
+        else:
+            raise UmbrellaError('Unknown node type')
 
 
 class ClauseManager(models.Manager):

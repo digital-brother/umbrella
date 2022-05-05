@@ -8,4 +8,4 @@ admin.site.register(Tag)
 
 @admin.register(Node)
 class NodeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'contract', 'type']
+    list_display = ['id', 'contract', 'kind']
