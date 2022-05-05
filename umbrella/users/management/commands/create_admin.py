@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from rest_framework.authtoken.models import Token
 
 from umbrella.contracts.tests.factories import ContractFactory
-from umbrella.users.models import User
+from umbrella.users.models import User, Group
 
 USERNAME = 'admin'
 EMAIL = 'admin@gmail.com'
@@ -30,9 +30,11 @@ class Command(BaseCommand):
         Token.objects.filter(user=admin_user).update(key=AUTH_TOKEN)
         print('Admin created successfully.')
 
+        default_group = Group.objects.get_or_create(name=Group.DEFAULT_GROUP_NAME)
         ContractFactory(
             id=CONTRACT_UUID,
             file_name='contract.pdf',
             created_by=admin_user,
+            groups=[default_group],
         )
         print('Contract created successfully.')

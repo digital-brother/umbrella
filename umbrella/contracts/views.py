@@ -6,7 +6,9 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from rest_framework import filters, status, viewsets
+
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.generics import CreateAPIView
@@ -14,6 +16,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryFilter
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
     KDPClauseSerializer, TagSerializer
@@ -83,16 +86,6 @@ class ContractPresignedUrlView(CreateAPIView):
         serializer.save(groups=user_groups, created_by=self.request.user)
 
 
-class GroupFilterBackend(filters.BaseFilterBackend):
-    """
-    Filter that only allows users to see objects related to their group
-    """
-
-    def filter_queryset(self, request, queryset, view):
-        user_groups = request.user.groups.all()
-        return queryset.filter(groups__in=user_groups)
-
-
 class ContractViewSet(viewsets.ModelViewSet):
     queryset = Contract.objects.all()
     serializer_class = ContractSerializer
@@ -156,7 +149,8 @@ class ClauseView(ListAPIView):
 class DocumentLibraryListView(ListAPIView):
     queryset = Contract.objects.filter(parent=None)
     serializer_class = DocumentLibrarySerializer
-    filter_backends = [GroupFilterBackend]
+    filter_backends = [GroupFilterBackend, DjangoFilterBackend]
+    filterset_class = DocumentLibraryFilter
 
 
 @api_view(('GET',))
