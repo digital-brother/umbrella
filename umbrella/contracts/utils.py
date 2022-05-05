@@ -114,7 +114,7 @@ def parse_aws_clause_file(clause_file):
     clause_nodes = {}
     for node_type, nodes_list in json_data.items():
         clause_nodes[node_type] = parse_node_list(node_type, nodes_list, contract, clause_type)
-    logger.info(f"Parsing done.")
+    logger.info("Parsing done.")
     return clause_nodes
 
 
