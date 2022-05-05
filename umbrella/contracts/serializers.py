@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from umbrella.contracts.models import Contract, Node, Tag
@@ -73,3 +74,14 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         fields = super(DocumentLibrarySerializer, self).get_fields()
         fields['children'] = DocumentLibrarySerializer(many=True)
         return fields
+
+
+class ContractClauseProcessedWebhookSerializer(serializers.Serializer):
+    aws_file_path = serializers.CharField()
+
+    def validate(self, attrs):
+        aws_file_path = attrs.get("aws_file_path")
+        if not aws_file_path.endswith('.json'):
+            raise ValidationError({'error': f"File {aws_file_path} should have .json extension."})
+
+        return attrs
