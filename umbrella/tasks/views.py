@@ -3,16 +3,9 @@ from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
+from umbrella.contracts.filters import TaskFilter
 from umbrella.tasks.models import Task, Comment
 from umbrella.tasks.serializers import TaskUpdateSerializer, TaskCommentSerializer, TaskSerializer
-
-
-class TaskFilter(filters.FilterSet):
-    assignees__id = filters.CharFilter(lookup_expr="icontains")
-
-    ordering = filters.OrderingFilter(
-        fields=['title', 'contract_clause_type', 'due_date', 'contract__file_name', 'progress', 'status']
-    )
 
 
 class TaskViewSet(viewsets.ModelViewSet):

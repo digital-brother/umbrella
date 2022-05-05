@@ -1,6 +1,6 @@
 import django_filters
 from umbrella.contracts.models import Contract
-from rest_framework import filters
+from django_filters import rest_framework as filters
 
 
 class DocumentLibraryTagFilter(django_filters.FilterSet):
@@ -11,7 +11,7 @@ class DocumentLibraryTagFilter(django_filters.FilterSet):
         fields = ('tags', )
 
 
-class GroupFilterBackend(filters.BaseFilterBackend):
+class GroupFilterBackend(filters.DjangoFilterBackend):
     """
     Filter that only allows users to see objects related to their group
     """
@@ -19,3 +19,11 @@ class GroupFilterBackend(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         user_groups = request.user.groups.all()
         return queryset.filter(groups__in=user_groups)
+
+
+class TaskFilter(filters.FilterSet):
+    assignees__id = filters.CharFilter(lookup_expr="icontains")
+
+    ordering = filters.OrderingFilter(
+        fields=['title', 'contract_clause_type', 'due_date', 'contract__file_name', 'progress', 'status']
+    )

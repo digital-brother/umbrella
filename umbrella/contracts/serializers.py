@@ -63,6 +63,7 @@ class DocumentLibrarySerializer(CustomModelSerializer):
     starts = KDPClauseSerializer(many=True, read_only=True)
     contract_types = KDPClauseSerializer(many=True, read_only=True)
     contracting_parties = KDPClauseSerializer(many=True, read_only=True)
+    groups = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Contract
