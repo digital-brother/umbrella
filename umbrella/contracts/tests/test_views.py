@@ -47,7 +47,7 @@ def test_kdp_clause_list(client):
     assert kdp_data["clause"]["id"] == str(start_kdp.clause.id)
 
 
-@mock.patch('umbrella.contracts.views.parse_aws_clause_async', Mock())
+@mock.patch('umbrella.contracts.views.parse_aws_clause_file_async', Mock())
 def test_contract_clause_processed_webhook(client, contract):
     url = reverse('contract_clause_processed_webhook')
     aws_contract_folder = str(contract.id).upper()
