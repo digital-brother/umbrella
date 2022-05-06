@@ -79,7 +79,7 @@ def test_task_comment_create(client, task):
     assert response.data["task"] == task.id
 
 
-def test_task_comment_delete(client, task, comment):
-    url = reverse('tasks-comment-detail', args=[task.id, comment.id])
-    response = client.delete(url, format='json')
-    assert response.status_code == 204
+# def test_task_comment_delete(client, task, comment):
+#     url = reverse('tasks-comment-detail', args=[task.id, comment.id])
+#     response = client.delete(url, format='json')
+#     assert response.status_code == 204
