@@ -102,11 +102,13 @@ class Contract(CustomModel):
         return self.clauses.filter(type='contractType')
 
     @classmethod
-    def contracts_task_statistic(cls):
+    def contracts_task_statistic(cls, user):
         statistics = {
-            'contracts_count': Contract.objects.all().count(),
-            'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
-            'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count()
+            'contracts_count': Contract.objects.filter(created_by=user).count(),
+            'contracts_with_task_count': Contract.objects.filter(created_by=user, tasks__isnull=False).count(),
+            'contracts_without_task_count': Contract.objects.filter(created_by=user,
+                                                                    tasks__contract=None).count(),
+            'total_contract_size': Contract.objects.filter(created_by=user).aggregate(models.Sum('file_size'))
         }
         return statistics
 
