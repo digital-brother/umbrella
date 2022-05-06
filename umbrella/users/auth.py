@@ -3,11 +3,13 @@ import time
 import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from drf_spectacular.plumbing import build_bearer_security_scheme_object
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from mozilla_django_oidc.contrib.drf import OIDCAuthentication
 from rest_framework import exceptions
 
-from umbrella.users.models import KeycloakGroup
+from umbrella.users.models import Group
 
 User = get_user_model()
 
@@ -37,9 +39,8 @@ class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             return user
 
         group_names = claims[self.groups_claim]
-        keycloak_groups = [KeycloakGroup.create_with_group_and_tag(group_name=group_name)
-                           for group_name in group_names]
-        groups = [keycloak_group.group for keycloak_group in keycloak_groups]
+        groups = [Group.create_keycloak_group_and_tag(group_name=group_name)
+                  for group_name in group_names]
         user.groups.set(groups)
         return user
 
@@ -50,6 +51,8 @@ class DynamicRealmOIDCAuthenticationBackend(OIDCAuthenticationBackend):
 
 
 class DynamicRealmOIDCAuthentication(OIDCAuthentication):
+    keyword = 'Bearer'
+
     def authenticate_cached(self, request):
         token_is_cached = request.session.get('oidc_access_token') == self.get_access_token(request)
         token_is_active = request.session.get('oidc_id_token_expiration', 0) > time.time()
@@ -80,3 +83,16 @@ class DynamicRealmOIDCAuthentication(OIDCAuthentication):
         request.session['oidc_access_token'] = access_token
         request.session['oidc_user_id'] = str(user.id)
         return user, access_token
+
+
+class KeycloakScheme(OpenApiAuthenticationExtension):
+    target_class = 'umbrella.users.auth.DynamicRealmOIDCAuthentication'
+    name = 'keycloakAuth'
+    match_subclasses = True
+    priority = -1
+
+    def get_security_definition(self, auto_schema):
+        return build_bearer_security_scheme_object(
+            header_name='Bearer',
+            token_prefix=self.target.keyword,
+        )

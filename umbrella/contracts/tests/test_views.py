@@ -22,8 +22,8 @@ def test_contract_list(client, contract):
 
 
 @mock.patch('umbrella.contracts.views.create_presigned_post', Mock(return_value={}))
-def test_contract_create(client):
-    url = reverse('contract-create')
+def test_contract_presigned_url(client):
+    url = reverse('contract-presigned-url')
     data = {
         "file_name": "contract.pdf",
         "file_size": 1024,
@@ -47,10 +47,12 @@ def test_kdp_clause_list(client):
     assert kdp_data["clause"]["id"] == str(start_kdp.clause.id)
 
 
-@mock.patch('umbrella.contracts.views.load_aws_analytics_jsons_to_db', Mock())
-def test_contract_processed_aws_webhook(client, contract):
-    url = reverse('contract_processed_aws_webhook', args=[contract.id])
-    response = client.post(url)
+@mock.patch('umbrella.contracts.views.parse_aws_clause_file_async', Mock())
+def test_contract_clause_processed_webhook(client, contract):
+    url = reverse('contract_clause_processed_webhook')
+    aws_contract_folder = str(contract.id).upper()
+    data = {"aws_file_path": f"/{aws_contract_folder}/consent.json"}
+    response = client.post(url, data)
     assert response.status_code == 200
 
 
@@ -134,7 +136,7 @@ def test__update_tag__with_others_type(client, tag):
 
 
 def test__update_tag__with_nature_type(client, contract):
-    tag = TagFactory(type=Tag.TagTypes.NATURE)
+    tag = TagFactory(type=Tag.Types.NATURE)
     data = {"name": "updated_test_nature_tag"}
     url = reverse('tag-detail', args=[tag.id])
     response = client.patch(url, data=data, format='json')
@@ -149,7 +151,7 @@ def test__delete_tag__with_others_type(client, tag):
 
 
 def test__delete_tag__with_nature_type(client, contract):
-    tag = TagFactory(type=Tag.TagTypes.NATURE)
+    tag = TagFactory(type=Tag.Types.NATURE)
     url = reverse('tag-detail', args=[tag.id])
     response = client.delete(url, format='json')
     assert response.status_code == 400

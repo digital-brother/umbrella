@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from umbrella.core.exceptions import UmbrellaError
 from umbrella.core.models import CustomModel
 
 User = get_user_model()
@@ -63,7 +64,7 @@ class Contract(CustomModel):
             errors['created_by'] = "created_by field is required"
             raise ValidationError(errors)
 
-        realm = self.created_by.realm or User.NO_REALM
+        realm = self.created_by.realm or User.DEFAULT_REALM_NAME
 
         duplicate_contracts = Contract.objects.filter(file_name=self.file_name, created_by__realm=realm).exclude(
             pk=self.pk)
@@ -111,14 +112,14 @@ class Contract(CustomModel):
 
 
 class Tag(CustomModel):
-    class TagTypes(models.TextChoices):
+    class Types(models.TextChoices):
         NATURE = 'nature', 'Nature'
         TYPE = 'type', 'Type'
         GROUP = 'group', 'Group'
         OTHERS = 'others', 'Others'
 
     name = models.CharField(max_length=128)
-    type = models.CharField(max_length=128, choices=TagTypes.choices)
+    type = models.CharField(max_length=128, choices=Types.choices)
     # Used for group Tags only
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, related_name='tags', blank=True, null=True)
 
@@ -127,6 +128,10 @@ class Tag(CustomModel):
 
 
 class Node(CustomModel):
+    class Natures(models.TextChoices):
+        CLAUSE = 'clause', 'Clause'
+        KDP = 'KDP', 'KDP'
+
     """Stores both Clause and KDP objects"""
     type = models.CharField(max_length=128)
     # Used for KDP node type, otherwise null
@@ -135,6 +140,15 @@ class Node(CustomModel):
     contract = models.ForeignKey(Contract, related_name='clauses', on_delete=models.CASCADE, blank=True, null=True)
 
     content = models.JSONField(null=True, blank=True)
+
+    @property
+    def kind(self):
+        if self.contract:
+            return f"{self.type}_{self.Natures.CLAUSE}"
+        elif self.clause:
+            return f"{self.type}_{self.Natures.KDP}"
+        else:
+            raise UmbrellaError('Unknown node type')
 
 
 class ClauseManager(models.Manager):
