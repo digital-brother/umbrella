@@ -74,3 +74,13 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         fields = super(DocumentLibrarySerializer, self).get_fields()
         fields['children'] = DocumentLibrarySerializer(many=True)
         return fields
+
+
+class ContractClauseProcessedSerializer(serializers.Serializer):
+    aws_file_path = serializers.CharField()
+
+    def validate_aws_file_path(self, value):
+        if not value.endswith('.json'):
+            raise serializers.ValidationError(f"File {value} should have .json extension.")
+
+        return value
