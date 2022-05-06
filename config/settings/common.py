@@ -5,6 +5,10 @@ from pathlib import Path
 import environ
 from configurations import Configuration
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Replacement for BASE_DIR
@@ -111,6 +115,15 @@ class Common(Configuration):
     STATICFILES_FINDERS = (
         'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    )
+
+    sentry_sdk.init(
+        dsn="https://d7f8bb5252194108aff3d7bce773f79e@o1234808.ingest.sentry.io/6384390",
+        integrations=[DjangoIntegration(), CeleryIntegration() ],
+
+        traces_sample_rate=1.0,
+
+        send_default_pii=True
     )
 
     # Media files
@@ -293,3 +306,5 @@ class Common(Configuration):
     CELERY_TASK_SOFT_TIME_LIMIT = 60
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
     CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+

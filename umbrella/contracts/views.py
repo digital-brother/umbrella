@@ -153,7 +153,7 @@ class DocumentLibraryListView(ListAPIView):
 @api_view(('GET',))
 def contracts_statistics(request, *args, **kwargs):
     data = {
-        'contracts_statistic': Contract.statistics(),
+        'contracts_statistic': Contract.statistics(request),
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
