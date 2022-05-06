@@ -13,9 +13,6 @@ router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'users', UserCreateViewSet)
 
-def trigger_error(request):
-    division_by_zero = 1 / 0
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),
@@ -26,8 +23,6 @@ urlpatterns = [
 
     path('api/v1/contracts/', include('umbrella.contracts.urls')),
     path('api/v1/', include('umbrella.tasks.urls')),
-
-    path('sentry-debug/', trigger_error),
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
