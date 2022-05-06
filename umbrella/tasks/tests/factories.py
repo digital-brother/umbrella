@@ -2,7 +2,8 @@ import factory
 from factory.django import DjangoModelFactory
 
 from umbrella.contracts.tests.factories import ContractFactory
-from umbrella.tasks.models import Task
+from umbrella.tasks.models import Task, Comment
+from umbrella.users.tests.factories import UserFactory
 
 
 class TaskFactory(DjangoModelFactory):
@@ -24,3 +25,12 @@ class TaskFactory(DjangoModelFactory):
             # A list of assignee were passed in, use them
             for extracted_assignee in extracted:
                 self.assignees.add(extracted_assignee)
+
+
+class CommentFactory(DjangoModelFactory):
+    message = factory.Sequence(lambda n: f"Comment {n}")
+    task = factory.SubFactory(TaskFactory)
+    created_by = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = Comment

@@ -68,13 +68,18 @@ def test_task_delete(client, task):
 
 
 def test_task_comment_create(client, task):
-    url = reverse('crate-task-comment')
+    url = reverse('tasks-comment-list', args=[task.id])
     message = "Test comment"
     data = {
-        "task": task.id,
         "message": message
     }
     response = client.post(url, data, format='json')
     assert response.status_code == 201
     assert response.data["message"] == message
     assert response.data["task"] == task.id
+
+
+def test_task_comment_delete(client, task, comment):
+    url = reverse('tasks-comment-detail', args=[task.id, comment.id])
+    response = client.delete(url, format='json')
+    assert response.status_code == 204

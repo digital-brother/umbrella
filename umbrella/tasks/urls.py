@@ -1,13 +1,17 @@
-from django.urls import path
-from rest_framework.routers import DefaultRouter
+from rest_framework_extensions.routers import ExtendedSimpleRouter
 
-from umbrella.tasks.views import TaskViewSet, TaskCommentCreateView
+from umbrella.tasks.views import TaskViewSet, TaskCommentViewSet
 
 urlpatterns = [
-    path('tasks/comments/', TaskCommentCreateView.as_view(), name="crate-task-comment"),
 ]
 
-router = DefaultRouter()
-router.register(r'tasks', TaskViewSet)
+router = ExtendedSimpleRouter()
+(
+    router.register(r'tasks', TaskViewSet)
+          .register(r'comments',
+                    TaskCommentViewSet,
+                    'tasks-comment',
+                    parents_query_lookups=['task_id'])
+)
 
 urlpatterns += router.urls

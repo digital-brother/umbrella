@@ -6,12 +6,13 @@ from pytest_factoryboy import register
 from rest_framework.test import APIClient
 
 from umbrella.contracts.tests.factories import ContractFactory, TagFactory, ContractingPartyFactory
-from umbrella.tasks.tests.factories import TaskFactory
+from umbrella.tasks.tests.factories import TaskFactory, CommentFactory
 from umbrella.users.tests.factories import UserFactory, GroupFactory
 
 register(GroupFactory)
 register(TagFactory)
 register(ContractingPartyFactory)
+register(CommentFactory)
 
 
 @pytest.fixture
