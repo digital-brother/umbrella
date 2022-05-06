@@ -76,7 +76,7 @@ class DocumentLibrarySerializer(CustomModelSerializer):
         return fields
 
 
-class ContractClauseProcessedWebhookSerializer(serializers.Serializer):
+class ContractClauseProcessedSerializer(serializers.Serializer):
     aws_file_path = serializers.CharField()
 
     def validate(self, attrs):

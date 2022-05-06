@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from umbrella.contracts.views import ContractPresignedUrlView, ContractClauseProcessedWebhookView, \
+from umbrella.contracts.views import ContractPresignedUrlView, ContractClauseProcessedView, \
     KDPClauseView, ClauseView, DocumentLibraryListView, contracts_statistics, TagViewSet, \
     ContractViewSet
 
@@ -12,7 +12,7 @@ router.register(r'', ContractViewSet, basename="contract")
 
 urlpatterns = [
     path('aws/presigned-url/', ContractPresignedUrlView.as_view(), name='contract-presigned-url'),
-    path('aws/clause-processed-webhook/', ContractClauseProcessedWebhookView.as_view(),
+    path('aws/clause-processed-webhook/', ContractClauseProcessedView.as_view(),
          name='contract_clause_processed_webhook'),
     path('<uuid:contract_uuid>/kdp-clauses/<str:clause_type>/', KDPClauseView.as_view(), name='kdp_clause'),
     path('<uuid:contract_uuid>/clauses/<str:clause_type>/', ClauseView.as_view(), name='clause'),

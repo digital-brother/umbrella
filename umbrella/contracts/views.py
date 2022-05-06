@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, TagSerializer, ContractClauseProcessedWebhookSerializer
+    KDPClauseSerializer, TagSerializer, ContractClauseProcessedSerializer
 from umbrella.contracts.tasks import parse_aws_clause_file_async
 from umbrella.contracts.utils import _get_contract_from_clause_file_path
 from umbrella.core.exceptions import UmbrellaError
@@ -102,8 +102,8 @@ class ContractViewSet(viewsets.ModelViewSet):
         serializer.save(groups=user_groups, created_by=self.request.user)
 
 
-class ContractClauseProcessedWebhookView(GenericAPIView):
-    serializer_class = ContractClauseProcessedWebhookSerializer
+class ContractClauseProcessedView(GenericAPIView):
+    serializer_class = ContractClauseProcessedSerializer
     permission_classes = []
     """
     Reads a clause json from AWS. Loads the clause and kdps to the database.
@@ -159,7 +159,7 @@ class DocumentLibraryListView(ListAPIView):
 @api_view(('GET',))
 def contracts_statistics(request, *args, **kwargs):
     data = {
-        'contracts_statistic': Contract.contracts_task_statistic(),
+        'contracts_statistic': Contract.statistics(),
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
