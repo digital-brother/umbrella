@@ -106,8 +106,7 @@ class Contract(CustomModel):
         statistics = {
             'contracts_count': Contract.objects.filter(created_by=user).count(),
             'contracts_with_task_count': Contract.objects.filter(created_by=user, tasks__isnull=False).count(),
-            'contracts_without_task_count': Contract.objects.filter(created_by=user,
-                                                                    tasks__contract=None).count(),
+            'contracts_without_task_count': Contract.objects.filter(created_by=user, tasks__contract=None).count(),
             'total_contract_size': Contract.objects.filter(created_by=user).aggregate(models.Sum('file_size'))
         }
         return statistics
