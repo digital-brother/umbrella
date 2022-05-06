@@ -105,12 +105,12 @@ class Contract(CustomModel):
     def contracts_task_statistic(cls):
         CONSTANT_FOR_MB = float(1 << 20)
         total_contracts_size = Contract.objects.all().aggregate(models.Sum('file_size'))
-        total_contracts_size_in_megabit = total_contracts_size['file_size__sum'] / CONSTANT_FOR_MB
+        total_contracts_size_in_megabite = total_contracts_size['file_size__sum'] / CONSTANT_FOR_MB
         statistics = {
             'contracts_count': Contract.objects.all().count(),
             'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
             'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count(),
-            'total_contracts_size': round(total_contracts_size_in_megabit, 3)
+            'total_contracts_size': round(total_contracts_size_in_megabite, 3)
         }
         return statistics
 
