@@ -107,7 +107,7 @@ class Contract(CustomModel):
             'contracts_count': Contract.objects.all().count(),
             'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
             'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count(),
-            'total_contract_size': Contract.objects.all().aggregate(models.Sum('file_size'))
+            'total_contracts_size': Contract.objects.all().aggregate(models.Sum('file_size'))
         }
         return statistics
 
