@@ -153,6 +153,7 @@ class DocumentLibraryListView(ListAPIView):
 
 @api_view(('GET',))
 def contracts_statistics(request, *args, **kwargs):
+    """Returns contracts_count, contracts_with_task_count, contracts_without_task_count"""
     data = {
         'contracts_statistic': Contract.statistic,
     }
