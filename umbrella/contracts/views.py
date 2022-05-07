@@ -96,11 +96,12 @@ class ContractViewSet(viewsets.ModelViewSet):
 
 
 class ContractClauseProcessedView(GenericAPIView):
-    serializer_class = ContractClauseProcessedSerializer
-    permission_classes = []
     """
     Reads a clause json from AWS. Loads the clause and kdps to the database.
     """
+    serializer_class = ContractClauseProcessedSerializer
+    permission_classes = []
+
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
