@@ -12,6 +12,9 @@ CELERY_BROKER_URL=redis://redis:6379
 # Channels
 REDIS_HOST=redis
 
+# Sentry
+SENTRY_DSN=https://d7f8bb5252194108aff3d7bce773f79e@o1234808.ingest.sentry.io/6384390
+
 # AWS
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
