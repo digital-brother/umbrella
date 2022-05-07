@@ -102,11 +102,27 @@ class Contract(CustomModel):
         return self.clauses.filter(type='contractType')
 
     @classmethod
-    def statistics(cls):
+    @property
+    def contracts_count(cls):
+        return cls.objects.all().count()
+
+    @classmethod
+    @property
+    def contracts_with_task_count(cls):
+        return Contract.objects.filter(tasks__isnull=False).count()
+
+    @classmethod
+    @property
+    def contracts_without_task_count(cls):
+        return Contract.objects.filter(tasks__contract=None).count()
+
+    @classmethod
+    @property
+    def statistic(cls):
         statistics = {
-            'contracts_count': Contract.objects.all().count(),
-            'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
-            'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count()
+            'contracts_count': cls.contracts_count,
+            'contracts_with_task_count': cls.contracts_with_task_count,
+            'contracts_without_task_count': cls.contracts_without_task_count,
         }
         return statistics
 
