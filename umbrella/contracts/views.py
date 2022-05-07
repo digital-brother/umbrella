@@ -123,7 +123,7 @@ class ContractClauseProcessedView(GenericAPIView):
 
 
 class KDPClauseView(ListAPIView):
-    """Iterate by KDPs, show Clause for each"""
+    """Returns KDPs list, clause for each"""
     serializer_class = KDPClauseSerializer
 
     def get_queryset(self):
@@ -134,7 +134,7 @@ class KDPClauseView(ListAPIView):
 
 
 class ClauseView(ListAPIView):
-    """Iterate by Clauses"""
+    """Returns clauses list"""
     serializer_class = ClauseSerializer
 
     def get_queryset(self):
