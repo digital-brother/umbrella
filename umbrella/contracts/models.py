@@ -157,6 +157,9 @@ class Node(CustomModel):
 
     content = models.JSONField(null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.kind} {self.id}"
+
     @property
     def kind(self):
         if self.contract:
@@ -179,9 +182,6 @@ class Clause(Node):
     class Meta:
         proxy = True
 
-    def __str__(self):
-        return f"{self.type} - {self.id}"
-
 
 class KDPManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -194,6 +194,3 @@ class KDP(Node):
 
     class Meta:
         proxy = True
-
-    def __str__(self):
-        return f"{self.type} - {self.id}"

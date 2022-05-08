@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryFilter
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, TagSerializer, ContractClauseProcessedSerializer
+    KDPClauseSerializer, TagSerializer, ContractClauseProcessedSerializer, ContractDetailSerializer
 from umbrella.contracts.tasks import parse_aws_clause_file_async
 from umbrella.contracts.utils import _get_contract_from_clause_file_path
 from umbrella.core.exceptions import UmbrellaError
@@ -89,6 +89,11 @@ class ContractViewSet(viewsets.ModelViewSet):
     queryset = Contract.objects.all()
     serializer_class = ContractSerializer
     filter_backends = [GroupFilterBackend]
+
+    def get_serializer_class(self):
+        if self.action == 'detail':
+            return ContractDetailSerializer
+        return ContractSerializer
 
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
