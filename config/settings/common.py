@@ -293,4 +293,3 @@ class Common(Configuration):
     CELERY_TASK_SOFT_TIME_LIMIT = 60
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
     CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-
