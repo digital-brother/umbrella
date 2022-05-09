@@ -294,4 +294,3 @@ class Common(Configuration):
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
     CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-
