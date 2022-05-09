@@ -11,6 +11,7 @@ from umbrella.core.exceptions import UmbrellaError
 from umbrella.core.models import CustomModel
 
 User = get_user_model()
+CONSTANT_FOR_GET_SIZE_IN_MB = float(1 << 20)
 
 
 class Contract(CustomModel):
@@ -119,7 +120,6 @@ class Contract(CustomModel):
     @classmethod
     @property
     def total_contracts_size(cls):
-        CONSTANT_FOR_GET_SIZE_IN_MB = float(1 << 20)
         total_contracts_size = Contract.objects.all().aggregate(models.Sum('file_size'))
         total_contracts_size_in_megabite = total_contracts_size['file_size__sum'] / CONSTANT_FOR_GET_SIZE_IN_MB
         return round(total_contracts_size_in_megabite, 1)
