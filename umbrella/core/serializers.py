@@ -1,5 +1,6 @@
 import traceback
 
+from django.core.exceptions import ValidationError as DjangoValidationError
 from drf_writable_nested import NestedCreateMixin, NestedUpdateMixin
 from rest_framework import serializers
 from rest_framework.serializers import raise_errors_on_nested_writes
@@ -14,12 +15,17 @@ class CustomModelSerializer(serializers.ModelSerializer):
 
     def create_instance(self, **validated_data):
         ModelClass = self.Meta.model
-        instance = ModelClass.create(**validated_data)
+        try:
+            instance = ModelClass.create(**validated_data)
+        except DjangoValidationError as err:
+            raise serializers.ValidationError(err.message_dict) from err
         return instance
 
     def update_instance(self, instance, **validated_data):
-        instance.update(**validated_data)
-        return instance
+        try:
+            instance.update(**validated_data)
+        except DjangoValidationError as err:
+            raise serializers.ValidationError(err.message_dict) from err
 
     # Default `create` and `update` behavior...
     def create(self, validated_data):

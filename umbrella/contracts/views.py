@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryFilter
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, TagSerializer, ContractClauseProcessedSerializer
+    KDPClauseSerializer, TagSerializer, ContractClauseProcessedSerializer, ContractDetailSerializer
 from umbrella.contracts.tasks import parse_aws_clause_file_async
 from umbrella.contracts.utils import _get_contract_from_clause_file_path
 from umbrella.core.exceptions import UmbrellaError
@@ -90,17 +90,23 @@ class ContractViewSet(viewsets.ModelViewSet):
     serializer_class = ContractSerializer
     filter_backends = [GroupFilterBackend]
 
+    def get_serializer_class(self):
+        if self.action == 'detail':
+            return ContractDetailSerializer
+        return ContractSerializer
+
     def perform_create(self, serializer):
         user_groups = self.request.user.groups.all()
         serializer.save(groups=user_groups, created_by=self.request.user)
 
 
 class ContractClauseProcessedView(GenericAPIView):
-    serializer_class = ContractClauseProcessedSerializer
-    permission_classes = []
     """
     Reads a clause json from AWS. Loads the clause and kdps to the database.
     """
+    serializer_class = ContractClauseProcessedSerializer
+    permission_classes = []
+
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -122,7 +128,7 @@ class ContractClauseProcessedView(GenericAPIView):
 
 
 class KDPClauseView(ListAPIView):
-    """Iterate by KDPs, show Clause for each"""
+    """Returns KDPs list, clause for each"""
     serializer_class = KDPClauseSerializer
 
     def get_queryset(self):
@@ -133,7 +139,7 @@ class KDPClauseView(ListAPIView):
 
 
 class ClauseView(ListAPIView):
-    """Iterate by Clauses"""
+    """Returns clauses list"""
     serializer_class = ClauseSerializer
 
     def get_queryset(self):
@@ -152,8 +158,9 @@ class DocumentLibraryListView(ListAPIView):
 
 @api_view(('GET',))
 def contracts_statistics(request, *args, **kwargs):
+    """Returns contracts_count, contracts_with_task_count, contracts_without_task_count"""
     data = {
-        'contracts_statistic': Contract.statistics(),
+        'contracts_statistic': Contract.statistic,
     }
     return Response(data=data, status=status.HTTP_200_OK)
 

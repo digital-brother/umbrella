@@ -27,27 +27,18 @@ class TagSerializer(CustomModelSerializer):
         return attrs
 
 
-class ContractSerializer(CustomWritableNestedModelSerializer):
-    tags = TagSerializer(many=True, required=False)
-    children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
-    created_by = serializers.StringRelatedField(read_only=True)
-    groups = serializers.StringRelatedField(many=True, read_only=True)
-
+class KDPSerializer(CustomModelSerializer):
     class Meta:
-        model = Contract
-        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent',
-                  'tags', 'groups', 'children']
-        read_only_fields = ['groups']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['created_by'].read_only = True
+        model = Node
+        fields = ("id", "type", "clause", "content")
 
 
 class ClauseSerializer(CustomModelSerializer):
+    kdps = KDPSerializer(many=True, read_only=True)
+
     class Meta:
         model = Node
-        fields = ("id", "type", "contract", "content")
+        fields = ("id", "type", "contract", "content", 'kdps')
 
 
 class KDPClauseSerializer(CustomModelSerializer):
@@ -56,6 +47,30 @@ class KDPClauseSerializer(CustomModelSerializer):
     class Meta:
         model = Node
         fields = ["id", "type", "content", "clause"]
+
+
+class ContractSerializer(CustomWritableNestedModelSerializer):
+    children = PrimaryKeyRelatedField(many=True, required=False, queryset=Contract.objects.all())
+    created_by = serializers.StringRelatedField(read_only=True)
+    groups = serializers.StringRelatedField(many=True, read_only=True)
+    tags = serializers.StringRelatedField(many=True, read_only=True)
+    clauses = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Contract
+        fields = ['id', 'file_name', 'created_by', 'created_on', 'file_size', 'file_hash', 'status', 'parent',
+                  'tags', 'groups', 'children', 'clauses']
+        read_only_fields = ['groups']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['created_by'].read_only = True
+        self.fields['id'].read_only = False
+
+
+class ContractDetailSerializer(ContractSerializer):
+    clauses = ClauseSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, required=False)
 
 
 class DocumentLibrarySerializer(CustomModelSerializer):

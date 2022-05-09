@@ -4,8 +4,8 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.db import models
-from rest_framework.exceptions import ValidationError
 
 from umbrella.core.exceptions import UmbrellaError
 from umbrella.core.models import CustomModel
@@ -102,11 +102,27 @@ class Contract(CustomModel):
         return self.clauses.filter(type='contractType')
 
     @classmethod
-    def statistics(cls):
+    @property
+    def contracts_count(cls):
+        return cls.objects.all().count()
+
+    @classmethod
+    @property
+    def contracts_with_task_count(cls):
+        return Contract.objects.filter(tasks__isnull=False).count()
+
+    @classmethod
+    @property
+    def contracts_without_task_count(cls):
+        return Contract.objects.filter(tasks__contract=None).count()
+
+    @classmethod
+    @property
+    def statistic(cls):
         statistics = {
-            'contracts_count': Contract.objects.all().count(),
-            'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
-            'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count()
+            'contracts_count': cls.contracts_count,
+            'contracts_with_task_count': cls.contracts_with_task_count,
+            'contracts_without_task_count': cls.contracts_without_task_count,
         }
         return statistics
 
@@ -141,6 +157,9 @@ class Node(CustomModel):
 
     content = models.JSONField(null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.kind} {self.id}"
+
     @property
     def kind(self):
         if self.contract:
@@ -163,9 +182,6 @@ class Clause(Node):
     class Meta:
         proxy = True
 
-    def __str__(self):
-        return f"{self.type} - {self.id}"
-
 
 class KDPManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -178,6 +194,3 @@ class KDP(Node):
 
     class Meta:
         proxy = True
-
-    def __str__(self):
-        return f"{self.type} - {self.id}"
