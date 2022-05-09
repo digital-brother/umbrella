@@ -4,7 +4,7 @@ from faker import Faker
 
 from umbrella.conftest import reverse_with_params
 from umbrella.tasks.models import Task
-from umbrella.tasks.tests.factories import TaskFactory
+from umbrella.tasks.tests.factories import TaskFactory, CommentFactory
 
 fake = Faker()
 pytestmark = pytest.mark.django_db
@@ -79,7 +79,8 @@ def test_task_comment_create(client, task):
     assert response.data["task"] == task.id
 
 
-# def test_task_comment_delete(client, task, comment):
-#     url = reverse('tasks-comment-detail', args=[task.id, comment.id])
-#     response = client.delete(url, format='json')
-#     assert response.status_code == 204
+def test_task_comment_delete(client, task):
+    comment = CommentFactory(task=task)
+    url = reverse('tasks-comment-detail', args=[task.id, comment.id])
+    response = client.delete(url, format='json')
+    assert response.status_code == 204
