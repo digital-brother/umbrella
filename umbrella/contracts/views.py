@@ -11,15 +11,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException, ValidationError
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from umbrella.contracts.filters import GroupFilterBackend, DocumentLibraryFilter
 from umbrella.contracts.models import Contract, Clause, KDP, Tag
 from umbrella.contracts.serializers import ContractSerializer, DocumentLibrarySerializer, ClauseSerializer, \
-    KDPClauseSerializer, TagSerializer
+    KDPClauseSerializer, TagSerializer, ContractClauseProcessedSerializer
 from umbrella.contracts.tasks import parse_aws_clause_file_async
 from umbrella.contracts.utils import _get_contract_from_clause_file_path
 from umbrella.core.exceptions import UmbrellaError
@@ -96,18 +95,17 @@ class ContractViewSet(viewsets.ModelViewSet):
         serializer.save(groups=user_groups, created_by=self.request.user)
 
 
-class ContractClauseProcessedWebhookView(APIView):
-    permission_classes = []
+class ContractClauseProcessedView(GenericAPIView):
     """
     Reads a clause json from AWS. Loads the clause and kdps to the database.
     """
-    def post(self, request):
-        aws_file_path_str = request.data.get("aws_file_path")
-        if not aws_file_path_str:
-            raise ValidationError({'aws_file_path': "aws_file_path is required"})
+    serializer_class = ContractClauseProcessedSerializer
+    permission_classes = []
 
-        if not aws_file_path_str.endswith('.json'):
-            raise ValidationError({'error': f"File {aws_file_path_str} should have .json extension."})
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        aws_file_path_str = serializer.validated_data['aws_file_path']
 
         aws_file_path = Path(aws_file_path_str)
         try:
@@ -125,7 +123,7 @@ class ContractClauseProcessedWebhookView(APIView):
 
 
 class KDPClauseView(ListAPIView):
-    """Iterate by KDPs, show Clause for each"""
+    """Returns KDPs list, clause for each"""
     serializer_class = KDPClauseSerializer
 
     def get_queryset(self):
@@ -136,7 +134,7 @@ class KDPClauseView(ListAPIView):
 
 
 class ClauseView(ListAPIView):
-    """Iterate by Clauses"""
+    """Returns clauses list"""
     serializer_class = ClauseSerializer
 
     def get_queryset(self):
@@ -155,8 +153,9 @@ class DocumentLibraryListView(ListAPIView):
 
 @api_view(('GET',))
 def contracts_statistics(request, *args, **kwargs):
+    """Returns contracts_count, contracts_with_task_count, contracts_without_task_count"""
     data = {
-        'contracts_statistic': Contract.contracts_task_statistic(),
+        'contracts_statistic': Contract.statistic,
     }
     return Response(data=data, status=status.HTTP_200_OK)
 

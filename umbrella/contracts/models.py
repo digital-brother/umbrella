@@ -102,6 +102,23 @@ class Contract(CustomModel):
         return self.clauses.filter(type='contractType')
 
     @classmethod
+    @property
+    def contracts_count(cls):
+        return cls.objects.all().count()
+
+    @classmethod
+    @property
+    def contracts_with_task_count(cls):
+        return Contract.objects.filter(tasks__isnull=False).count()
+
+    @classmethod
+    @property
+    def contracts_without_task_count(cls):
+        return Contract.objects.filter(tasks__contract=None).count()
+
+    @classmethod
+    @property
+    def statistic(cls):
     def contracts_task_statistic(cls):
         CONSTANT_FOR_MB = float(1 << 20)
         total_contracts_size = Contract.objects.all().aggregate(models.Sum('file_size'))
@@ -111,6 +128,9 @@ class Contract(CustomModel):
             'contracts_with_task_count': Contract.objects.filter(tasks__isnull=False).count(),
             'contracts_without_task_count': Contract.objects.filter(tasks__contract=None).count(),
             'total_contracts_size': round(total_contracts_size_in_megabite, 3)
+            'contracts_count': cls.contracts_count,
+            'contracts_with_task_count': cls.contracts_with_task_count,
+            'contracts_without_task_count': cls.contracts_without_task_count,
         }
         return statistics
 
