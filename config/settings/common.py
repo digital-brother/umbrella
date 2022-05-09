@@ -5,9 +5,6 @@ from pathlib import Path
 import environ
 from configurations import Configuration
 
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Replacement for BASE_DIR
@@ -297,16 +294,4 @@ class Common(Configuration):
     # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
     CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-    # Sentry
-    # ------------------------------------------------------------------------------
-    sentry_sdk.init(
-        integrations=[DjangoIntegration()],
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production,
-        traces_sample_rate=1.0,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-        environment="testing",
-    )
+

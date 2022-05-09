@@ -1,6 +1,9 @@
 from .common import Common
 from .common import env
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 
 class Production(Common):
     INSTALLED_APPS = Common.INSTALLED_APPS
@@ -38,3 +41,17 @@ class Production(Common):
     SECURE_SSL_REDIRECT = env('DJANGO_SECURE_SSL_REDIRECT', default=True)
 
     CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=["https://contracts.riverus.in"])
+
+    # Sentry
+    # ------------------------------------------------------------------------------
+    sentry_sdk.init(
+        integrations=[DjangoIntegration()],
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production,
+        traces_sample_rate=1.0,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+        environment="testing",
+    )
