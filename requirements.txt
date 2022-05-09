@@ -26,6 +26,7 @@ djangorestframework==3.13.1
 drf-writable-nested==0.6.3
 Markdown==3.3.6
 django-filter==21.1
+drf-extensions==0.7.1
 
 # Developer Tools
 ipdb==0.13.9
