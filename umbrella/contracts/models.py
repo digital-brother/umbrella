@@ -11,7 +11,7 @@ from umbrella.core.exceptions import UmbrellaError
 from umbrella.core.models import CustomModel
 
 User = get_user_model()
-CONSTANT_FOR_GET_SIZE_IN_MB = float(1 << 20)
+CONSTANT_FOR_GET_SIZE_IN_MB = float(1024 * 1024)
 
 
 class Contract(CustomModel):
