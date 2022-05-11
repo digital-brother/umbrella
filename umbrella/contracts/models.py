@@ -119,7 +119,9 @@ class Contract(CustomModel):
     @classmethod
     @property
     def total_contracts_size(cls):
-        return Contract.objects.all().aggregate(models.Sum('file_size'))
+        from umbrella.contracts.utils import total_contracts_size
+        total_byte_size = Contract.objects.all().aggregate(models.Sum('file_size'))
+        return total_contracts_size(total_byte_size['file_size__sum'])
 
     @classmethod
     @property
