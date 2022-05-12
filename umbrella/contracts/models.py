@@ -1,6 +1,5 @@
 import os
 import uuid
-from hurry.filesize import size, alternative
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -121,8 +120,8 @@ class Contract(CustomModel):
     @classmethod
     @property
     def total_contracts_size(cls):
-        total_byte_size = Contract.objects.all().aggregate(models.Sum('file_size'))
-        return size(total_byte_size['file_size__sum'], system=alternative)
+        return Contract.objects.all().aggregate(models.Sum('file_size'))
+
 
     @classmethod
     @property
@@ -131,7 +130,6 @@ class Contract(CustomModel):
             'contracts_count': cls.contracts_count,
             'contracts_with_task_count': cls.contracts_with_task_count,
             'contracts_without_task_count': cls.contracts_without_task_count,
-            'total_contracts_size': cls.total_contracts_size,
         }
         return statistics
 
