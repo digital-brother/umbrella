@@ -160,13 +160,3 @@ def _get_clause_type_from_file_name(file_path):
     parsed_path = Path(file_path)
     file_name = parsed_path.stem
     return file_name
-
-
-def total_contracts_size(total_byte_size):
-    if total_byte_size == 0:
-        return "0B"
-    size_name = ("B", "KB", "MB", "GB")
-    index_in_size_name = int(math.floor(math.log(total_byte_size, 1024)))
-    const_for_getting_size = math.pow(1024, index_in_size_name)
-    size = round(total_byte_size / const_for_getting_size, 2)
-    return "%s %s" % (size, size_name[index_in_size_name])
