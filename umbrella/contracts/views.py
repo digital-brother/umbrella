@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from hurry.filesize import size, alternative
 
 import boto3
 from botocore.exceptions import ClientError
@@ -157,7 +156,6 @@ def contracts_statistics(request, *args, **kwargs):
     """Returns contracts_count, contracts_with_task_count, contracts_without_task_count"""
     data = {
         'contracts_statistic': Contract.statistic,
-        'total_contracts_size': size(Contract.total_contracts_size['file_size__sum'], system=alternative)
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
