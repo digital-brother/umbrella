@@ -122,7 +122,6 @@ class Contract(CustomModel):
     def total_contracts_size(cls):
         return Contract.objects.all().aggregate(models.Sum('file_size'))
 
-
     @classmethod
     @property
     def statistic(cls):
