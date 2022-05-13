@@ -1,5 +1,6 @@
 import os
 import uuid
+from hurry.filesize import size, alternative
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -9,6 +10,7 @@ from django.db import models
 
 from umbrella.core.exceptions import UmbrellaError
 from umbrella.core.models import CustomModel
+
 
 User = get_user_model()
 
@@ -118,11 +120,17 @@ class Contract(CustomModel):
 
     @classmethod
     @property
+    def total_contracts_size(cls):
+        return Contract.objects.all().aggregate(models.Sum('file_size'))
+
+    @classmethod
+    @property
     def statistic(cls):
         statistics = {
             'contracts_count': cls.contracts_count,
             'contracts_with_task_count': cls.contracts_with_task_count,
             'contracts_without_task_count': cls.contracts_without_task_count,
+            'total_contracts_size': size(Contract.total_contracts_size['file_size__sum'], system=alternative)
         }
         return statistics
 

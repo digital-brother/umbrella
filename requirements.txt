@@ -12,6 +12,7 @@ flower==1.0.0
 # Utils
 django-environ==0.8.1
 uuid==1.30
+hurry.filesize==0.9
 
 # For the persistence stores
 psycopg2==2.9.3
