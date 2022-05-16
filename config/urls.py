@@ -5,9 +5,15 @@ from django.urls import path, re_path, include, reverse_lazy
 from django.views.generic.base import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken import views
+from rest_framework.exceptions import APIException
 from rest_framework.routers import DefaultRouter
 
 from umbrella.users.views import UserViewSet, UserCreateViewSet
+
+
+def trigger_error(request):
+    raise APIException("Sentry debug")
+
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -24,6 +30,7 @@ urlpatterns = [
     path('api/v1/contracts/', include('umbrella.contracts.urls')),
     path('api/v1/', include('umbrella.tasks.urls')),
 
+    path('sentry-debug/', trigger_error),
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
     re_path(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False)),
