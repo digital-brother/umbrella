@@ -6,6 +6,10 @@ channel_layer = get_channel_layer()
 
 
 class NotificationsConsumer(JsonWebsocketConsumer):
+    """
+    Once the user connects to the endpoint, he is added to the channel group named the same as his realm.
+    To send a message to all connected users belonging a specific realm, use send_message_to_channels_group().
+    """
     def connect(self):
         self.accept()
         self.user = self.scope['user']
